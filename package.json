@@ -1,0 +1,25 @@
+{
+  "name": "species-id",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:frontend": "cd packages/frontend && npm run start",
+    "start:api": "cd packages/api && npm run start:dev",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-petevieiratlc:languageconservancy/species-id.git"
+  },
+  "author": "Peter Vieira",
+  "license": "ISC",
+  "description": "",
+  "private": true,
+  "workspace": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  }
+}
