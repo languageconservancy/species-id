@@ -1,0 +1,33 @@
+import { bootstrapApplication } from '@angular/platform-browser';
+import {
+  RouteReuseStrategy,
+  provideRouter,
+  withPreloading,
+  PreloadAllModules,
+} from '@angular/router';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
+import { enableProdMode } from '@angular/core';
+import { environment } from './environments/environment';
+import { SqliteService } from 'app/services/sqlite.service';
+
+import { routes } from 'app/app.routes';
+import { AppComponent } from 'app/app.component';
+
+if (environment.production) {
+  enableProdMode();
+}
+
+const appPromise = bootstrapApplication(AppComponent, {
+  providers: [
+    SqliteService,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    provideIonicAngular(),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
+  ],
+});
+
+// Once app bootstraps, initialize the SQLite service
+appPromise.then(async (appRef) => {
+  const sqliteService = appRef.injector.get(SqliteService);
+  await sqliteService.init();
+});
