@@ -1,44 +1,81 @@
 import { Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import {
   IonMenu,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonList,
   IonItem,
   IonIcon,
   IonLabel,
+  IonListHeader,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { leaf, search, settings, informationCircle } from 'ionicons/icons';
+import { bird } from '../../../assets/icon/bird';
+import { leaf, search, settings, informationCircle, close, chevronBack } from 'ionicons/icons';
+import { environment as env } from 'environments/environment';
+import { Router } from '@angular/router';
+
+interface MenuItem {
+  label: string;
+  icon: string;
+  link: string;
+}
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
-  imports: [
-    IonMenu,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonList,
-    IonItem,
-    IonIcon,
-    IonLabel,
-  ],
+  imports: [IonMenu, IonContent, IonList, IonItem, IonIcon, IonLabel, IonListHeader, RouterModule],
 })
-export class MenuComponent implements OnInit {
-  constructor() {
+export class MenuComponent {
+  env = env;
+  // Define the menu items
+  menuItems: MenuItem[] = [
+    {
+      label: 'Birds',
+      icon: 'bird',
+      link: '/tabs/tab1',
+    },
+    {
+      label: 'Plants',
+      icon: 'leaf',
+      link: '/tabs/tab2',
+    },
+    {
+      label: 'About',
+      icon: 'information-circle',
+      link: '/about',
+    },
+    {
+      label: 'Settings',
+      icon: 'settings',
+      link: '/tabs/tab3',
+    },
+  ];
+  constructor(private router: Router) {
     // Add icons to the menu
     addIcons({
       leaf,
       search,
       settings,
       informationCircle,
+      bird,
+      close,
+      chevronBack,
     });
   }
 
-  ngOnInit() {}
+  menuItemClicked(link: string) {
+    // Navigate to the selected menu item using Angular Router
+    this.router.navigate([link]);
+    // Close the menu after navigation
+    this.closeMenu();
+  }
+
+  closeMenu() {
+    const menu = document.querySelector('ion-menu');
+    if (menu) {
+      menu.close();
+    }
+  }
 }

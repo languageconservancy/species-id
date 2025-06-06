@@ -10,6 +10,7 @@ export const environment = {
   dbEncrypted: false,
   dbReadonly: false,
   imagePrefix: 'assets/images/',
+  mainMenuLabel: 'Crow Birds & Plants',
 };
 
 /*

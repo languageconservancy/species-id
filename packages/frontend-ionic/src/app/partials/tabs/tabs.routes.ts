@@ -12,6 +12,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () => import('app/pages/tab1/tab1.page').then((m) => m.Tab1Page),
+            data: { enableSearch: true },
           },
           {
             path: 'detail/:type/:id',
@@ -31,6 +32,7 @@ export const routes: Routes = [
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full',
+        data: { enableSearch: true },
       },
     ],
   },
@@ -38,5 +40,6 @@ export const routes: Routes = [
     path: '',
     redirectTo: '/tabs/tab1',
     pathMatch: 'full',
+    data: { enableSearch: true },
   },
 ];

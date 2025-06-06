@@ -1,2 +1,12 @@
 // For information on how to create your own theme, please see:
 // http://ionicframework.com/docs/theming/
+@font-face {
+  font-family: 'Architects Daughter';
+  src: url('../assets/fonts/ArchitectsDaughter-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --ion-font-family-local-names: 'Architects Daughter', cursive;
+}
