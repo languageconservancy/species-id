@@ -37,8 +37,8 @@ export class PlantQueriesService {
         FROM plants
         LEFT JOIN plant_images ON plants.id = plant_images.plant_id
         LEFT JOIN plant_orders ON plants.order_id = plant_orders.id
-        WHERE plants.id = ${id}
-      ;`
+        WHERE plants.id = ?;`,
+        [id]
       );
       if (result.values.length === 0) {
         return null;

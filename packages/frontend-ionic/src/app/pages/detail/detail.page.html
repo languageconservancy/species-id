@@ -1,9 +1,35 @@
-<ion-content [fullscreen]="true" class="pb-safe pt-safe">
-  <swiper-container class="bg-black" pagination="true" navigation="true">
+<div class="pt-safe pb-safe">
+  <!-- Images carousel -->
+  <swiper-container class="bg-black" pagination="false" navigation="true">
     @for (image of species?.images; track species; let index = $index) {
     <swiper-slide lazy="true">
       <img class="w-full h-60" [src]="speciesService.getImageUrl(image.fileName)" loading="lazy" />
+      <!-- caption -->
+      <div class="w-full bg-black bg-opacity-25 text-white text-center">
+        <p class="text-sm p1">{{ image.caption }}</p>
+      </div>
     </swiper-slide>
     }
   </swiper-container>
-</ion-content>
+
+  <ion-content class="ion-padding">
+    <!-- Header section -->
+    <ion-label class="">
+      <span class="inline-flex cursor-pointer group" (click)="playTextAudio(species?.nameLocal)">
+        <h1 class="font-localNames">{{ species?.nameLocal }}</h1>
+        <ion-icon
+          name="volume-high"
+          class="ml-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100"
+        ></ion-icon>
+      </span>
+      <p class="font-medium">{{ species?.nameEn }}</p>
+      <p class="italic">{{ species?.nameScientific }}</p>
+    </ion-label>
+
+    <!-- Description in local language and English -->
+    <ion-label class="px-4 mx-auto max-w-prose text-gray-800">
+      <p class="text-sm leading-6" [innerHTML]="species?.descriptionLocal"></p>
+      <p class="text-sm leading-relaxed" [innerHTML]="species?.descriptionEn"></p>
+    </ion-label>
+  </ion-content>
+</div>

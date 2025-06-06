@@ -1,4 +1,11 @@
 <ion-list class="pt-2">
+  @if (items.length === 0) {
+    <ion-item class="ion-text-center">
+      <ion-label>
+        <p class="text-sm">No items found. Try a different search.</p>
+      </ion-label>
+    </ion-item>
+  }
   @for (item of items; track item; let index = $index) {
     <ion-item
       class="ion-activatable ripple-parent"

@@ -67,12 +67,12 @@ export class SqliteService {
    * @param {string} query - The SQL query to execute.
    * @returns {Promise<any>} A promise that resolves with the query result.
    */
-  async executeQuery(query: string): Promise<any> {
+  async executeQuery(query: string, params?: any[]): Promise<any> {
     if (!this._db) {
       throw new Error('SQLiteService: executeQuery - Database is not initialized.');
     }
     try {
-      const result = await this._db.query(query);
+      const result = await this._db.query(query, params ?? []);
       return result;
     } catch (error) {
       console.error('SQLiteService: executeQuery - Error executing query:', error);

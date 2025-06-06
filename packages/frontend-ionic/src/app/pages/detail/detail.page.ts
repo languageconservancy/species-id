@@ -8,6 +8,9 @@ import { SpeciesType, Species } from 'app/models/species.model';
 import { BirdQueriesService } from 'app/services/bird-queries.service';
 import { PlantQueriesService } from 'app/services/plant-queries.service';
 import { SpeciesService } from 'app/services/species.service';
+import { TextAudioQueriesService } from 'app/services/text-audio-queries.service';
+import { volumeHigh } from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-detail',
@@ -25,8 +28,11 @@ export class DetailPage implements OnInit {
     private paramsService: ParamsService,
     private birdQueriesService: BirdQueriesService,
     private plantQueriesService: PlantQueriesService,
-    public speciesService: SpeciesService
-  ) {}
+    public speciesService: SpeciesService,
+    private textAudioService: TextAudioQueriesService
+  ) {
+    addIcons({ volumeHigh });
+  }
 
   ngOnInit() {
     let ok = this._loadSpeciesFromParams();
@@ -68,6 +74,25 @@ export class DetailPage implements OnInit {
     if (this.species === null) {
       console.error(`Species with ID ${id} not found for type ${type}`);
       return;
+    }
+  }
+
+  public async playTextAudio(text: string | undefined) {
+    if (!text) {
+      console.warn('No text provided for audio playback');
+      return;
+    }
+
+    try {
+      const textAudio = await this.textAudioService.getByText(text);
+      if (textAudio) {
+        const audio = new Audio(`assets/audio/${textAudio.fileName}`);
+        audio.play().catch((error) => console.error('Error playing audio:', error));
+      } else {
+        console.warn(`No audio found for text: ${text}`);
+      }
+    } catch (error) {
+      console.error('Error playing text audio:', error);
     }
   }
 }

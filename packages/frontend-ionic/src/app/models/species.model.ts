@@ -50,27 +50,27 @@ export function mapSpecies(row: any, kind: 'bird' | 'plant'): Species {
 export function mapBird(row: any): Bird {
   return {
     type: SpeciesType.Bird,
-    id: row.id,
-    nameLocal: row.name_local,
-    nameScientific: row.name_scientific,
-    nameEn: row.name_en,
-    nameMeaningEn: row.name_meaning_en,
-    descriptionLocal: row.description_local,
-    descriptionEn: row.description_en,
-    orderId: row.order_id,
+    id: row.species_id,
+    nameLocal: row.species_name_local,
+    nameScientific: row.species_name_scientific,
+    nameEn: row.species_name_en,
+    nameMeaningEn: row.species_name_meaning_en,
+    descriptionLocal: row.species_description_local,
+    descriptionEn: row.species_description_en,
+    orderId: row.species_order_id,
   };
 }
 
 export function mapPlant(row: any): Plant {
   return {
     type: SpeciesType.Plant,
-    id: row.id,
-    nameLocal: row.name_local,
-    nameScientific: row.name_scientific,
-    nameEn: row.name_en,
-    nameMeaningEn: row.name_meaning_en,
-    descriptionLocal: row.description_local,
-    descriptionEn: row.description_en,
+    id: row.species_id,
+    nameLocal: row.species_name_local,
+    nameScientific: row.species_name_scientific,
+    nameEn: row.species_name_en,
+    nameMeaningEn: row.species_name_meaning_en,
+    descriptionLocal: row.species_description_local,
+    descriptionEn: row.species_description_en,
     orderId: row.order_id,
   };
 }
@@ -79,7 +79,7 @@ export function mapSpeciesWithImagesAndOrder(rows: any[]): Species[] {
   const speciesMap: Record<number, Species> = {};
 
   rows.forEach((row) => {
-    const speciesId = row.id;
+    const speciesId = row.species_id;
     if (!speciesMap[speciesId]) {
       speciesMap[speciesId] = mapBird(row);
       speciesMap[speciesId].images = [];
@@ -89,14 +89,17 @@ export function mapSpeciesWithImagesAndOrder(rows: any[]): Species[] {
         descriptionLocal: row.order_description_local,
       };
     }
-    if (row.file_name) {
+    if (row.image_file_name) {
       speciesMap[speciesId].images?.push({
-        fileName: row.file_name,
-        caption: row.caption,
-        sortOrder: row.sort_order,
+        fileName: row.image_file_name,
+        caption: row.image_caption,
+        sortOrder: row.image_sort_order,
       });
     }
-    speciesMap[speciesId].images?.sort((a, b) => a.sortOrder - b.sortOrder);
+  });
+
+  Object.values(speciesMap).forEach((species) => {
+    species.images?.sort((a, b) => a.sortOrder - b.sortOrder);
   });
 
   return Object.values(speciesMap);
