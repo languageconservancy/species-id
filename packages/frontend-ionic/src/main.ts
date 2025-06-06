@@ -12,6 +12,9 @@ import { SqliteService } from 'app/services/sqlite.service';
 
 import { routes } from 'app/app.routes';
 import { AppComponent } from 'app/app.component';
+import { register as registerSwiperElements } from 'swiper/element/bundle';
+
+registerSwiperElements();
 
 if (environment.production) {
   enableProdMode();

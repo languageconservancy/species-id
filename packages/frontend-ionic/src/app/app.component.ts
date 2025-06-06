@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { SqliteService } from './services/sqlite.service';
+import { MenuComponent } from './partials/menu/menu.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonApp, IonRouterOutlet],
+  imports: [IonApp, IonRouterOutlet, MenuComponent],
 })
 export class AppComponent {
   constructor(private sqliteService: SqliteService) {}

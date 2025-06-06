@@ -9,6 +9,7 @@ export const environment = {
   dbMode: 'no-encryption',
   dbEncrypted: false,
   dbReadonly: false,
+  imagePrefix: 'assets/images/',
 };
 
 /*

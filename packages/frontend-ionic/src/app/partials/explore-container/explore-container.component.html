@@ -1,0 +1,23 @@
+<ion-list>
+  @for (item of items; track item; let index = $index) {
+    <ion-item
+      class="ion-activatable ripple-parent"
+      [routerLink]="['/tabs/detail', item.type, item.id]"
+    >
+      @if (item.images && item.images.length > 0) {
+        <div class="rounded-md">
+          <ion-img
+            class="object-cover w-24 aspect-4/3"
+            [src]="speciesService.getImageUrl(item.images[0].fileName)"
+          ></ion-img>
+        </div>
+      }
+      <ion-label class="ml-4">
+        <h2>{{ item.nameLocal }}</h2>
+        <p>{{ item.nameEn }}</p>
+        <p>{{ item.nameScientific }}</p>
+      </ion-label>
+      <ion-icon slot="end" name="chevron-forward"></ion-icon>
+    </ion-item>
+  }
+</ion-list>

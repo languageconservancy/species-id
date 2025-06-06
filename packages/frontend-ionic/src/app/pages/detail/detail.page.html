@@ -1,0 +1,9 @@
+<ion-content [fullscreen]="true" class="pb-safe pt-safe">
+  <swiper-container class="bg-black" pagination="true" navigation="true">
+    @for (image of species?.images; track species; let index = $index) {
+    <swiper-slide lazy="true">
+      <img class="w-full h-60" [src]="speciesService.getImageUrl(image.fileName)" loading="lazy" />
+    </swiper-slide>
+    }
+  </swiper-container>
+</ion-content>

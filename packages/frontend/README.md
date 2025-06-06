@@ -2,6 +2,35 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.3.
 
+## Module/Components Design
+
+### Modules
+
+#### Explore Module
+
+- **Section Header**
+- **List Item**
+
+#### Search Bar Module
+
+- **Search Bar**
+- **Filters**
+
+### Bottom Tabs Module
+
+- **Tab Button**
+
+### DetailView Module
+
+- **Image Carousel**
+
+### Standalone Components
+
+- Main Menu
+- Header
+- Species Name Block
+- Back Button
+
 ## Development server
 
 To start a local development server, run:

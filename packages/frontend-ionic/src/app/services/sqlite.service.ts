@@ -49,10 +49,6 @@ export class SqliteService {
 
     await this._sqliteConnection.copyFromAssets();
 
-    console.debug(
-      'SQLiteService: init - Initializing SQLite connection with environment:',
-      environment
-    );
     this._db = await this._sqliteConnection.createConnection(
       environment.dbName,
       environment.dbEncrypted,
@@ -62,9 +58,26 @@ export class SqliteService {
     );
 
     await this._db.open();
+    console.debug('SQLiteService: init - Database connection opened.');
+  }
 
-    const result = await this._db.query('SELECT * FROM birds;');
-    console.debug('SQLiteService: init - Query result:', result);
+  /**
+   * Executes a SQL query on the SQLite database.
+   * This method allows executing any SQL query and returns the result.
+   * @param {string} query - The SQL query to execute.
+   * @returns {Promise<any>} A promise that resolves with the query result.
+   */
+  async executeQuery(query: string): Promise<any> {
+    if (!this._db) {
+      throw new Error('SQLiteService: executeQuery - Database is not initialized.');
+    }
+    try {
+      const result = await this._db.query(query);
+      return result;
+    } catch (error) {
+      console.error('SQLiteService: executeQuery - Error executing query:', error);
+      throw error;
+    }
   }
 
   /**
@@ -79,7 +92,6 @@ export class SqliteService {
         throw new Error(`Failed to load database JSON: ${response.statusText}`);
       }
       const json = await response.text();
-      console.debug('SQLiteService: _loadDbJson - Loaded JSON:', json);
       return json;
     } catch (error) {
       console.error('SQLiteService: _loadDbJson - Error loading JSON:', error);
