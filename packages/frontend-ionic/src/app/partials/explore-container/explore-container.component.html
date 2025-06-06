@@ -1,8 +1,8 @@
-<ion-list>
+<ion-list class="pt-2">
   @for (item of items; track item; let index = $index) {
     <ion-item
       class="ion-activatable ripple-parent"
-      [routerLink]="['/tabs/detail', item.type, item.id]"
+      [routerLink]="['/tabs/tab1/detail', item.type, item.id]"
     >
       @if (item.images && item.images.length > 0) {
         <div class="rounded-md">
@@ -21,3 +21,12 @@
     </ion-item>
   }
 </ion-list>
+<ion-searchbar
+  slot="fixed"
+  class="bottom-0"
+  [debounce]="500"
+  (ionInput)="onSearch($event)"
+  placeholder="Search..."
+  show-clear-button="always"
+>
+</ion-searchbar>

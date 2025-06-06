@@ -1,6 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { IonList, IonImg, IonItem, IonLabel, IonIcon } from '@ionic/angular/standalone';
+import {
+  IonList,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonIcon,
+  IonSearchbar,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronForward } from 'ionicons/icons';
 
@@ -14,12 +21,13 @@ import { SpeciesService } from 'app/services/species.service';
   selector: 'app-explore-container',
   templateUrl: './explore-container.component.html',
   styleUrls: ['./explore-container.component.scss'],
-  imports: [IonList, IonImg, IonItem, IonLabel, IonIcon, RouterModule],
+  imports: [IonList, IonImg, IonItem, IonLabel, IonIcon, IonSearchbar, RouterModule],
   standalone: true,
 })
 export class ExploreContainerComponent {
   @Input() name?: string;
   items: Species[] = [];
+  itemsAll: Species[] = [];
 
   constructor(
     private paramsService: ParamsService,
@@ -37,14 +45,29 @@ export class ExploreContainerComponent {
   private async _loadSpecies() {
     switch (this.paramsService.getParams().speciesType) {
       case 'bird':
-        this.items = await this.birdQueriesService.getFull();
+        this.itemsAll = await this.birdQueriesService.getFull();
         break;
       case 'plant':
-        this.items = await this.plantQueriesService.getPlantsFull();
+        this.itemsAll = await this.plantQueriesService.getPlantsFull();
         break;
       default:
         console.warn('Unknown species type, loading birds by default');
-        this.items = await this.birdQueriesService.getFull();
+        this.itemsAll = await this.birdQueriesService.getFull();
     }
+    this.items = [...this.itemsAll];
+  }
+
+  onSearch(event: CustomEvent) {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+    this.items = this.items.filter((item) => {
+      if (
+        item.nameLocal.toLowerCase().includes(searchTerm) ||
+        item.nameScientific.toLowerCase().includes(searchTerm) ||
+        item.nameEn.toLowerCase().includes(searchTerm)
+      ) {
+        return true;
+      }
+      return false;
+    });
   }
 }

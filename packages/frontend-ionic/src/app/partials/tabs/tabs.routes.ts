@@ -8,7 +8,16 @@ export const routes: Routes = [
     children: [
       {
         path: 'tab1',
-        loadComponent: () => import('app/pages/tab1/tab1.page').then((m) => m.Tab1Page),
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('app/pages/tab1/tab1.page').then((m) => m.Tab1Page),
+          },
+          {
+            path: 'detail/:type/:id',
+            loadComponent: () => import('app/pages/detail/detail.page').then((m) => m.DetailPage),
+          },
+        ],
       },
       {
         path: 'tab2',
@@ -17,10 +26,6 @@ export const routes: Routes = [
       {
         path: 'tab3',
         loadComponent: () => import('app/pages/tab3/tab3.page').then((m) => m.Tab3Page),
-      },
-      {
-        path: 'detail/:type/:id',
-        loadComponent: () => import('app/pages/detail/detail.page').then((m) => m.DetailPage),
       },
       {
         path: '',
