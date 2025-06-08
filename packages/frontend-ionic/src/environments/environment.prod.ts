@@ -4,7 +4,7 @@ export const environment = {
   dbVersion: 1,
   dbMode: 'no-encryption',
   dbEncrypted: false,
-  dbReadonly: false,
+  dbReadOnly: false,
   imagePrefix: 'assets/images/',
   mainMenuLabel: 'Crow Birds & Plants',
 };

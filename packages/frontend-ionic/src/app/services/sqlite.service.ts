@@ -49,16 +49,25 @@ export class SqliteService {
 
     await this._sqliteConnection.copyFromAssets();
 
+    await this._createConnectionAndOpenDb();
+  }
+
+  private async _createConnectionAndOpenDb() {
+    if (this._db) {
+      console.warn('SQLiteService: createConnectionAndOpenDb - Database is already initialized.');
+      return;
+    }
+
     this._db = await this._sqliteConnection.createConnection(
       environment.dbName,
       environment.dbEncrypted,
       environment.dbMode,
       environment.dbVersion,
-      environment.dbReadonly
+      environment.dbReadOnly
     );
 
     await this._db.open();
-    console.debug('SQLiteService: init - Database connection opened.');
+    console.debug('SQLiteService: createConnectionAndOpenDb - Database connection opened.');
   }
 
   /**
@@ -68,16 +77,27 @@ export class SqliteService {
    * @returns {Promise<any>} A promise that resolves with the query result.
    */
   async executeQuery(query: string, params?: any[]): Promise<any> {
-    if (!this._db) {
-      throw new Error('SQLiteService: executeQuery - Database is not initialized.');
+    const db = await this.getDb();
+
+    if (!db) {
+      throw new Error('SQLiteService: executeQuery - Database connection is not established.');
     }
+
     try {
-      const result = await this._db.query(query, params ?? []);
+      const result = await db.query(query, params ?? []);
       return result;
     } catch (error) {
       console.error('SQLiteService: executeQuery - Error executing query:', error);
       throw error;
     }
+  }
+
+  async getDb(): Promise<SQLiteDBConnection> {
+    await this.ensureConnection();
+    if (!this._db) {
+      throw new Error('SQLiteService: getDb - Database connection is not established.');
+    }
+    return this._db;
   }
 
   /**
@@ -96,6 +116,25 @@ export class SqliteService {
     } catch (error) {
       console.error('SQLiteService: _loadDbJson - Error loading JSON:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Ensures the SQLite database connection is established.
+   * This method checks if the database is open and reopens it if necessary.
+   * @returns {Promise<void>} A promise that resolves when the connection is ensured.
+   */
+  async ensureConnection(): Promise<void> {
+    const connectionExists = await this._sqliteConnection.isConnection(
+      environment.dbName,
+      environment.dbReadOnly
+    );
+
+    if (!connectionExists) {
+      console.warn(
+        'SQLiteService: ensureConnection - Connection does not exist, creating a new one.'
+      );
+      await this._createConnectionAndOpenDb();
     }
   }
 

@@ -13,6 +13,7 @@ import { SqliteService } from 'app/services/sqlite.service';
 import { routes } from 'app/app.routes';
 import { AppComponent } from 'app/app.component';
 import { register as registerSwiperElements } from 'swiper/element/bundle';
+import { App } from '@capacitor/app';
 
 registerSwiperElements();
 
@@ -33,4 +34,13 @@ const appPromise = bootstrapApplication(AppComponent, {
 appPromise.then(async (appRef) => {
   const sqliteService = appRef.injector.get(SqliteService);
   await sqliteService.init();
+
+  App.addListener('appStateChange', async ({ isActive }) => {
+    // If the app is active, ensure the SQLite connection is established
+    // This is useful for scenarios where the app might go to the background and come back
+    console.log('App state changed:', isActive ? 'Active' : 'Inactive');
+    if (isActive) {
+      await sqliteService.ensureConnection();
+    }
+  });
 });

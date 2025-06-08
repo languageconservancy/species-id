@@ -1,11 +1,18 @@
 <ion-tabs>
   @if (enableSearch) {
-  <ion-searchbar
-    [debounce]="500"
-    placeholder="Search..."
-    (ionInput)="searchChanged($event)"
-    show-clear-button="always"
-  ></ion-searchbar>
+  <div class="flex flow-row flex-nowrap items-center justify-between p-2">
+    <ion-searchbar
+      [debounce]="500"
+      placeholder="Search..."
+      (ionInput)="searchChanged($event)"
+      show-clear-button="always"
+    ></ion-searchbar>
+    <ion-icon
+      name="filter"
+      class="text-gray-500 cursor-pointer pr-2"
+      (click)="openFilters()"
+    ></ion-icon>
+  </div>
   }
   <ion-tab-bar slot="bottom">
     <ion-tab-button (click)="openMenu()">

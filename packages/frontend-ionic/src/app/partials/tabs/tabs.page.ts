@@ -9,10 +9,10 @@ import {
   IonSearchbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { triangle, ellipse, square, search, menu } from 'ionicons/icons';
+import { triangle, ellipse, square, search, menu, filter } from 'ionicons/icons';
 import { SearchService } from 'app/services/search.service';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter as rxjsFilter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tabs',
@@ -30,11 +30,11 @@ export class TabsPage {
     private searchService: SearchService
   ) {
     this._getRouteData();
-    addIcons({ triangle, ellipse, square, search, menu });
+    addIcons({ triangle, ellipse, square, search, menu, filter });
   }
 
   private _getRouteData() {
-    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+    this.router.events.pipe(rxjsFilter((event) => event instanceof NavigationEnd)).subscribe(() => {
       const childRoute = this._getDeepestChild(this.router.routerState.root);
       this.enableSearch = childRoute.snapshot.data['enableSearch'] || false;
     });
@@ -51,6 +51,8 @@ export class TabsPage {
     console.log('Opening main menu');
     this.menuController.open('main-menu');
   }
+
+  openFilters() {}
 
   searchChanged(event: CustomEvent) {
     const searchTerm = event.detail.value;
