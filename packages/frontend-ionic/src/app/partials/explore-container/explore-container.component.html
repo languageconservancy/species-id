@@ -7,10 +7,7 @@
     </ion-item>
   }
   @for (item of items; track item; let index = $index) {
-    <ion-item
-      class="ion-activatable ripple-parent"
-      [routerLink]="['/tabs/tab1/detail', item.type, item.id]"
-    >
+    <ion-item class="ion-activatable ripple-parent" (click)="onItemClick(item)">
       @if (item.images && item.images.length > 0) {
         <div class="rounded-md w-24 aspect-[4/3] overflow-hidden">
           <ion-img

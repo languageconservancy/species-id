@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { IonList, IonImg, IonItem, IonLabel, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronForward } from 'ionicons/icons';
+import { NavController } from '@ionic/angular';
 
 import { Species } from 'app/models/species.model';
 import { ParamsService } from 'app/services/params.service';
@@ -30,7 +31,8 @@ export class ExploreContainerComponent {
     private birdQueriesService: BirdQueriesService,
     private plantQueriesService: PlantQueriesService,
     public speciesService: SpeciesService,
-    public searchService: SearchService
+    public searchService: SearchService,
+    private navController: NavController
   ) {
     addIcons({ chevronForward });
     this.paramsService.setParams({
@@ -83,5 +85,16 @@ export class ExploreContainerComponent {
         this.itemsAll = await this.birdQueriesService.getFull();
     }
     this.items = [...this.itemsAll];
+  }
+
+  onItemClick(item: Species) {
+    this.navController.navigateForward(['/tabs/tab1/detail', item.type, item.id], {
+      animationDirection: 'forward',
+    });
+  }
+
+  searchChanged(event: CustomEvent) {
+    const searchTerm = event.detail.value;
+    this.searchService.setSearch(searchTerm);
   }
 }

@@ -68,7 +68,7 @@ export class BirdQueriesService {
       return mapSpeciesWithImagesAndOrder(result.values)[0];
     } catch (error) {
       console.error('Error executing query:', error);
-      throw error;
+      return null;
     }
   }
 }

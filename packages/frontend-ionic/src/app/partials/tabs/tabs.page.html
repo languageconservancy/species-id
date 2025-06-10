@@ -1,5 +1,5 @@
 <ion-tabs>
-  @if (enableSearch) {
+  <!-- @if (enableSearch) {
   <div class="flex flow-row flex-nowrap items-center justify-between p-2">
     <ion-searchbar
       [debounce]="500"
@@ -8,12 +8,13 @@
       show-clear-button="always"
     ></ion-searchbar>
     <ion-icon
-      name="filter"
+      name="options"
+      size="large"
       class="text-gray-500 cursor-pointer pr-2"
-      (click)="openFilters()"
+      (click)="openFiltersOverlay()"
     ></ion-icon>
   </div>
-  }
+  } -->
   <ion-tab-bar slot="bottom">
     <ion-tab-button (click)="openMenu()">
       <ion-icon aria-hidden="true" name="menu"></ion-icon>

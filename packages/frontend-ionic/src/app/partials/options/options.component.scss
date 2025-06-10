@@ -1,0 +1,12 @@
+// ion-content {
+// --padding-bottom: 64px;
+// }
+
+.custom-footer-debug {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10000;
+  background: red !important;
+}

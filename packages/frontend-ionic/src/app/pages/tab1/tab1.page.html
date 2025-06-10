@@ -7,3 +7,21 @@
 <ion-content [fullscreen]="true">
   <app-explore-container name="Tab 1 page"></app-explore-container>
 </ion-content>
+
+<!-- Search bar, sitting outside ion-content so it doesn't scroll with the content -->
+<div
+  class="position-fixed bottom-[56px] flex flow-row flex-nowrap items-center justify-between p-2"
+>
+  <ion-searchbar
+    [debounce]="500"
+    placeholder="Search..."
+    (ionInput)="searchChanged($event)"
+    show-clear-button="always"
+  ></ion-searchbar>
+  <ion-icon
+    name="options"
+    size="large"
+    class="text-gray-500 cursor-pointer pr-2"
+    (click)="openOptionsModal()"
+  ></ion-icon>
+</div>

@@ -6,11 +6,9 @@ import {
   IonIcon,
   IonLabel,
   MenuController,
-  IonSearchbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { triangle, ellipse, square, search, menu, filter } from 'ionicons/icons';
-import { SearchService } from 'app/services/search.service';
+import { triangle, ellipse, square, search, menu, options } from 'ionicons/icons';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { filter as rxjsFilter } from 'rxjs/operators';
 
@@ -18,19 +16,16 @@ import { filter as rxjsFilter } from 'rxjs/operators';
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
-  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonSearchbar],
+  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
 })
 export class TabsPage {
   public environmentInjector = inject(EnvironmentInjector);
   public enableSearch = false;
   private router = inject(Router);
 
-  constructor(
-    private menuController: MenuController,
-    private searchService: SearchService
-  ) {
+  constructor(private menuController: MenuController) {
     this._getRouteData();
-    addIcons({ triangle, ellipse, square, search, menu, filter });
+    addIcons({ triangle, ellipse, square, search, menu, options });
   }
 
   private _getRouteData() {
@@ -50,12 +45,5 @@ export class TabsPage {
   openMenu() {
     console.log('Opening main menu');
     this.menuController.open('main-menu');
-  }
-
-  openFilters() {}
-
-  searchChanged(event: CustomEvent) {
-    const searchTerm = event.detail.value;
-    this.searchService.setSearch(searchTerm);
   }
 }
