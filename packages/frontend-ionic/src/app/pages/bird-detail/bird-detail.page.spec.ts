@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { DetailPage } from './detail.page';
+import { DetailPage } from './bird-detail.page';
 
 describe('DetailPage', () => {
   let component: DetailPage;

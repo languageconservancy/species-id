@@ -11,16 +11,24 @@ import { SpeciesService } from 'app/services/species.service';
 import { TextAudioQueriesService } from 'app/services/text-audio-queries.service';
 import { volumeHigh } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { ImageCarouselComponent } from 'app/partials/image-carousel/image-carousel.component';
+import { DetailDescriptionComponent } from 'app/partials/detail-description/detail-description.component';
 
 @Component({
-  selector: 'app-detail',
-  templateUrl: './detail.page.html',
-  styleUrls: ['./detail.page.scss'],
+  selector: 'app-bird-detail',
+  templateUrl: './bird-detail.page.html',
+  styleUrls: ['./bird-detail.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule],
+  imports: [
+    IonContent,
+    CommonModule,
+    FormsModule,
+    ImageCarouselComponent,
+    DetailDescriptionComponent,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class DetailPage implements OnInit {
+export class BirdDetailPage implements OnInit {
   species: Species | null = null;
 
   constructor(

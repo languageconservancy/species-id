@@ -19,6 +19,11 @@ export interface BaseSpecies {
   order?: SpeciesOrder;
 }
 
+export interface SpeciesGroup {
+  name: string;
+  items: Species[];
+}
+
 export interface Bird extends BaseSpecies {
   type: SpeciesType.Bird;
 }

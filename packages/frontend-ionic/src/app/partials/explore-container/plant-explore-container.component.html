@@ -1,0 +1,21 @@
+<ion-list class="pt-2">
+  <!-- No items found -->
+  @if (items.length === 0) {
+    <ion-item class="ion-text-center">
+      <ion-label>
+        <p class="text-sm">No plants found. Try a different search.</p>
+      </ion-label>
+    </ion-item>
+  }
+  <!-- Items grouped by user preference -->
+  @for (itemGroup of itemsGrouped; track itemGroup.name) {
+    <ion-item-group>
+      <ion-item-divider sticky>
+        <ion-label>{{ itemGroup.name }}</ion-label>
+      </ion-item-divider>
+      @for (item of itemGroup.items; track item) {
+        <app-plant-list-item [item]="item"></app-plant-list-item>
+      }
+    </ion-item-group>
+  }
+</ion-list>

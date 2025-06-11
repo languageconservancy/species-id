@@ -10,7 +10,6 @@ export class ParamsService {
     speciesType: SpeciesType.Bird, // Default species type
     species: undefined, // Initially no species selected
     sortOrder: 'nameLocal', // Default sort order
-    enableSearch: false, // Search is disabled by default
   };
 
   constructor() {}

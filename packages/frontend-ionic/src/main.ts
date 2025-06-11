@@ -9,7 +9,7 @@ import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalo
 import { enableProdMode } from '@angular/core';
 import { environment } from './environments/environment';
 import { SqliteService } from 'app/services/sqlite.service';
-
+import { Storage } from '@ionic/storage-angular';
 import { routes } from 'app/app.routes';
 import { AppComponent } from 'app/app.component';
 import { register as registerSwiperElements } from 'swiper/element/bundle';
@@ -27,6 +27,7 @@ const appPromise = bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+    { provide: Storage, useClass: Storage },
   ],
 });
 

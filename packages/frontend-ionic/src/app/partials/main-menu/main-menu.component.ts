@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
   IonMenu,
@@ -22,24 +22,25 @@ interface MenuItem {
 }
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss'],
+  selector: 'app-main-menu',
+  templateUrl: './main-menu.component.html',
+  styleUrls: ['./main-menu.component.scss'],
+  standalone: true,
   imports: [IonMenu, IonContent, IonList, IonItem, IonIcon, IonLabel, IonListHeader, RouterModule],
 })
-export class MenuComponent {
+export class MainMenuComponent {
   env = env;
   // Define the menu items
   menuItems: MenuItem[] = [
     {
       label: 'Birds',
       icon: 'bird',
-      link: '/tabs/tab1',
+      link: '/tabs/tab1/bird',
     },
     {
       label: 'Plants',
       icon: 'leaf',
-      link: '/tabs/tab2',
+      link: '/tabs/tab1/plant',
     },
     {
       label: 'About',
@@ -67,6 +68,7 @@ export class MenuComponent {
 
   menuItemClicked(link: string) {
     // Navigate to the selected menu item using Angular Router
+    console.log('menuItemClicked: ', link);
     this.router.navigate([link]);
     // Close the menu after navigation
     this.closeMenu();

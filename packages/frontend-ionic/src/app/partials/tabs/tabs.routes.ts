@@ -10,13 +10,13 @@ export const routes: Routes = [
         path: 'tab1',
         children: [
           {
-            path: '',
+            path: ':domain',
             loadComponent: () => import('app/pages/tab1/tab1.page').then((m) => m.Tab1Page),
-            data: { enableSearch: true },
           },
           {
-            path: 'detail/:type/:id',
-            loadComponent: () => import('app/pages/detail/detail.page').then((m) => m.DetailPage),
+            path: 'bird/:id',
+            loadComponent: () =>
+              import('app/pages/bird-detail/bird-detail.page').then((m) => m.BirdDetailPage),
           },
         ],
       },
@@ -30,16 +30,14 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/tab1/bird',
         pathMatch: 'full',
-        data: { enableSearch: true },
       },
     ],
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/tab1/bird',
     pathMatch: 'full',
-    data: { enableSearch: true },
   },
 ];

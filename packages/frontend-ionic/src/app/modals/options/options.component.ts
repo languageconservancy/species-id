@@ -12,10 +12,6 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonRadioGroup,
-  IonRadio,
-  IonSelectOption,
-  IonSelect,
   IonFooter,
   ModalController,
 } from '@ionic/angular/standalone';
@@ -38,10 +34,6 @@ import { close, checkmarkCircle, refreshCircle } from 'ionicons/icons';
     IonList,
     IonItem,
     IonLabel,
-    IonRadioGroup,
-    IonRadio,
-    IonSelectOption,
-    IonSelect,
     IonFooter,
     FormsModule,
   ],
@@ -51,8 +43,6 @@ export class OptionsComponent implements OnInit {
   sortOptions: string[] = ['alphabetical-local', 'alphabetical-english', 'by-order'];
   selectedFilter: string = 'all';
   filterOptions: string[] = ['all', 'endangered', 'threatened'];
-  selectedLanguage: string = 'local';
-  languageOptions: string[] = ['local', 'english'];
   selectedSortDirection: string = 'ascending';
   sortDirectionOptions: string[] = ['ascending', 'descending'];
 
@@ -67,23 +57,24 @@ export class OptionsComponent implements OnInit {
   }
 
   filterChanged() {
-    console.log('Filter changed');
-  }
-
-  languageChanged() {
-    console.log('Language changed');
+    console.log('Filter changed to', this.selectedFilter);
   }
 
   sortChanged() {
-    console.log('Sort changed');
+    console.log('Sort changed to', this.selectedSort);
   }
 
   sortDirectionChanged() {
-    console.log('Sort direction changed');
+    console.log('Sort direction changed to', this.selectedSortDirection);
   }
 
   applyOptions() {
-    console.log('Applying options');
+    console.log(
+      'Applying options',
+      this.selectedSort,
+      this.selectedFilter,
+      this.selectedSortDirection
+    );
   }
 
   resetOptions() {

@@ -8,7 +8,7 @@ import { SqliteService } from 'app/services/sqlite.service';
 export class PlantQueriesService {
   constructor(private sqliteService: SqliteService) {}
 
-  async getPlantsFull(): Promise<Species[]> {
+  async getFull(): Promise<Species[]> {
     try {
       const result = await this.sqliteService.executeQuery(
         `SELECT

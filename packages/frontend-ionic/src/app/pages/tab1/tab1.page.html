@@ -1,11 +1,15 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Explore Birds </ion-title>
+    <ion-title> Explore {{ domain === speciesType.Bird ? 'Birds' : 'Plants' }} </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  @switch (domain) { @case (speciesType.Bird) {
+  <app-bird-explore-container></app-bird-explore-container>
+  } @case (speciesType.Plant) {
+  <app-plant-explore-container></app-plant-explore-container>
+  } }
 </ion-content>
 
 <!-- Search bar, sitting outside ion-content so it doesn't scroll with the content -->

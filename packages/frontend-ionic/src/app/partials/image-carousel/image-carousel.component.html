@@ -1,0 +1,12 @@
+<!-- Images carousel -->
+<swiper-container class="bg-black" pagination="false" navigation="true">
+  @for (image of species?.images; track species; let index = $index) {
+    <swiper-slide lazy="true">
+      <img class="w-full h-60" [src]="speciesService.getImageUrl(image.fileName)" loading="lazy" />
+      <!-- caption -->
+      <div class="w-full bg-black bg-opacity-25 text-white text-center">
+        <p class="text-sm p1">{{ image.caption }}</p>
+      </div>
+    </swiper-slide>
+  }
+</swiper-container>

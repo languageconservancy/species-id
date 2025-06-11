@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -10,9 +10,12 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { search, options } from 'ionicons/icons';
-import { ExploreContainerComponent } from 'app/partials/explore-container/explore-container.component';
+import { BirdExploreContainerComponent } from 'app/partials/explore-container/bird-explore-container.component';
+import { PlantExploreContainerComponent } from 'app/partials/explore-container/plant-explore-container.component';
 import { SearchService } from 'app/services/search.service';
-import { OptionsComponent } from 'app/partials/options/options.component';
+import { OptionsComponent } from 'app/modals/options/options.component';
+import { ActivatedRoute } from '@angular/router';
+import { SpeciesType } from 'app/models/species.model';
 
 @Component({
   selector: 'app-tab1',
@@ -25,15 +28,30 @@ import { OptionsComponent } from 'app/partials/options/options.component';
     IonIcon,
     IonTitle,
     IonContent,
-    ExploreContainerComponent,
+    BirdExploreContainerComponent,
+    PlantExploreContainerComponent,
   ],
 })
-export class Tab1Page {
+export class Tab1Page implements OnInit {
+  public domain: SpeciesType = SpeciesType.Bird;
+  public speciesType = SpeciesType;
+
   constructor(
     private searchService: SearchService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private route: ActivatedRoute
   ) {
     addIcons({ search, options });
+  }
+
+  async ngOnInit() {
+    console.log('Tab1Page ngOnInit');
+    this._setDomain();
+  }
+
+  private _setDomain() {
+    this.domain = (this.route.snapshot.params['domain'] as SpeciesType) ?? SpeciesType.Bird;
+    console.log('Domain: ', this.domain);
   }
 
   searchChanged(event: CustomEvent) {
@@ -42,7 +60,6 @@ export class Tab1Page {
   }
 
   async openOptionsModal() {
-    console.log('Opening options modal');
     const modal = await this.modalController.create({
       component: OptionsComponent,
       presentingElement: await this.modalController.getTop(),

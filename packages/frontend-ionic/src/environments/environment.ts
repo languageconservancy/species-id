@@ -11,6 +11,7 @@ export const environment = {
   dbReadOnly: false,
   imagePrefix: 'assets/images/',
   mainMenuLabel: 'Crow Birds & Plants',
+  language: 'Apsáalooke',
 };
 
 /*
