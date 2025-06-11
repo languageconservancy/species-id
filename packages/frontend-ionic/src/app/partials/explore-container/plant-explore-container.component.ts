@@ -3,9 +3,9 @@ import { PlantQueriesService } from 'app/services/plant-queries.service';
 import { PlantPreferencesService } from 'app/services/plant-preferences.service';
 import { PlantSortOption } from 'app/constants/plant-options';
 import { BaseExploreContainerComponent } from './base-explore-container.component';
-import { PlantListItemComponent } from '../species-list-item/plant-list-item.component';
 import { Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
+import { PlantListItemComponent } from 'app/partials/plant-list-item/plant-list-item.component';
 import { SearchService } from 'app/services/search.service';
 import {
   IonList,
@@ -39,6 +39,7 @@ export class PlantExploreContainerComponent
     console.log('PlantExploreContainerComponent _loadSpecies');
     this.itemsAll = await this.plantQueriesService.getFull();
     this._setItems([...this.itemsAll]);
+    this.itemsLoading = false;
   }
 
   protected override async _groupItems(items: Species[]): Promise<SpeciesGroup[]> {

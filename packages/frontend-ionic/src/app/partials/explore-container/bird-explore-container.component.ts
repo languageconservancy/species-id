@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BirdQueriesService } from 'app/services/bird-queries.service';
 import { BirdPreferencesService } from 'app/services/bird-preferences.service';
 import { BaseExploreContainerComponent } from './base-explore-container.component';
-import { BirdListItemComponent } from '../species-list-item/bird-list-item.component';
+import { BirdListItemComponent } from '../bird-list-item/bird-list-item.component';
 import { Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { SearchService } from 'app/services/search.service';
@@ -38,6 +38,7 @@ export class BirdExploreContainerComponent extends BaseExploreContainerComponent
     this.itemsAll = await this.birdQueriesService.getFull();
     console.log('Birds: ', this.itemsAll);
     this._setItems([...this.itemsAll]);
+    this.itemsLoading = false;
   }
 
   protected override async _groupItems(items: Species[]): Promise<SpeciesGroup[]> {

@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular/standalone';
 import { ParamsService } from 'app/services/params.service';
 import { Species } from 'app/models/species.model';
-import { BirdQueriesService } from 'app/services/bird-queries.service';
+import { PlantQueriesService } from 'app/services/plant-queries.service';
 import { SpeciesService } from 'app/services/species.service';
 import { TextAudioQueriesService } from 'app/services/text-audio-queries.service';
 import { volumeHigh } from 'ionicons/icons';
@@ -14,9 +14,9 @@ import { ImageCarouselComponent } from 'app/partials/image-carousel/image-carous
 import { DetailDescriptionComponent } from 'app/partials/detail-description/detail-description.component';
 
 @Component({
-  selector: 'app-bird-detail',
-  templateUrl: './bird-detail.page.html',
-  styleUrls: ['./bird-detail.page.scss'],
+  selector: 'app-plant-detail',
+  templateUrl: './plant-detail.page.html',
+  styleUrls: ['./plant-detail.page.scss'],
   standalone: true,
   imports: [
     IonContent,
@@ -27,13 +27,13 @@ import { DetailDescriptionComponent } from 'app/partials/detail-description/deta
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class BirdDetailPage implements OnInit {
+export class PlantDetailPage implements OnInit {
   species: Species | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private paramsService: ParamsService,
-    private birdQueriesService: BirdQueriesService,
+    private plantQueriesService: PlantQueriesService,
     public speciesService: SpeciesService,
     private textAudioService: TextAudioQueriesService
   ) {
@@ -62,8 +62,7 @@ export class BirdDetailPage implements OnInit {
       console.error('Invalid route parameters: { id: ', id, ' }');
       return;
     }
-
-    this.species = await this.birdQueriesService.getById(id);
+    this.species = await this.plantQueriesService.getById(id);
   }
 
   public async playTextAudio(text: string | undefined) {

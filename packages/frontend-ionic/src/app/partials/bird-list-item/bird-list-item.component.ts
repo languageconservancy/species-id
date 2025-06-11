@@ -1,20 +1,20 @@
 import { Component, Input } from '@angular/core';
-import { NavController, IonItem, IonLabel, IonImg, IonIcon } from '@ionic/angular/standalone';
+import { IonIcon, IonImg, IonItem, IonLabel, NavController } from '@ionic/angular/standalone';
 import { Species } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 
 @Component({
-  selector: 'app-species-list-item',
-  templateUrl: './species-list-item.component.html',
+  selector: 'app-bird-list-item',
+  templateUrl: './bird-list-item.component.html',
   standalone: true,
-  imports: [IonItem, IonLabel, IonImg, IonIcon],
+  imports: [IonIcon, IonImg, IonLabel, IonItem],
 })
-export class SpeciesListItemComponent {
+export class BirdListItemComponent {
   @Input() item!: Species;
 
   constructor(
     public speciesService: SpeciesService,
-    private navController: NavController
+    public navController: NavController
   ) {}
 
   onItemClick(item: Species) {

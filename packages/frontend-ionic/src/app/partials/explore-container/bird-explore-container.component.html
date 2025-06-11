@@ -3,7 +3,13 @@
   @if (items.length === 0) {
     <ion-item class="ion-text-center">
       <ion-label>
-        <p class="text-sm">No birds found. Try a different search.</p>
+        @if (itemsLoading) {
+          <p class="text-sm">Loading birds...</p>
+        } @else if (itemsAll.length === 0) {
+          <p class="text-sm">No birds found in the database.</p>
+        } @else {
+          <p class="text-sm">No birds found. Try a different search.</p>
+        }
       </ion-label>
     </ion-item>
   }

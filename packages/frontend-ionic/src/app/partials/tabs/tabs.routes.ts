@@ -18,6 +18,11 @@ export const routes: Routes = [
             loadComponent: () =>
               import('app/pages/bird-detail/bird-detail.page').then((m) => m.BirdDetailPage),
           },
+          {
+            path: 'plant/:id',
+            loadComponent: () =>
+              import('app/pages/plant-detail/plant-detail.page').then((m) => m.PlantDetailPage),
+          },
         ],
       },
       {

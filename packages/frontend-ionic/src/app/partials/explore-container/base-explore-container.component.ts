@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
   standalone: true,
 })
 export class BaseExploreContainerComponent implements OnDestroy, OnInit {
+  itemsLoading = true;
   items: Species[] = [];
   itemsAll: Species[] = [];
   itemsGrouped: SpeciesGroup[] = [];
