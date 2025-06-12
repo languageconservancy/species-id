@@ -86,7 +86,9 @@ export function mapSpeciesWithImagesAndOrder(rows: any[]): Species[] {
   rows.forEach((row) => {
     const speciesId = row.species_id;
     if (!speciesMap[speciesId]) {
-      speciesMap[speciesId] = mapBird(row);
+      // Determine if it's a bird or plant based on the table name in the query
+      const isBird = row.species_name_scientific !== undefined;
+      speciesMap[speciesId] = isBird ? mapBird(row) : mapPlant(row);
       speciesMap[speciesId].images = [];
       speciesMap[speciesId].order = {
         nameScientific: row.order_name_scientific,

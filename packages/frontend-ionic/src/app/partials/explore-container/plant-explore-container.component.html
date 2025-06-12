@@ -1,7 +1,7 @@
 <ion-list class="pt-2">
   <!-- No items found -->
   @if (items.length === 0) {
-    <ion-item class="ion-text-center">
+    <div class="flex items-center justify-center h-full">
       <ion-label>
         @if (itemsLoading) {
           <p class="text-sm">Loading plants...</p>
@@ -11,7 +11,7 @@
           <p class="text-sm">No plants found. Try a different search.</p>
         }
       </ion-label>
-    </ion-item>
+    </div>
   }
   <!-- Items grouped by user preference -->
   @for (itemGroup of itemsGrouped; track itemGroup.name) {

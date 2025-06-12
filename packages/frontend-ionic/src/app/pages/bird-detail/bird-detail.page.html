@@ -1,4 +1,11 @@
 <div class="pt-safe pb-safe">
+  @if (loading) {
+  <ion-content class="ion-padding flex items-center justify-center h-full">
+    <ion-label class="ion-text-center">
+      <p>Loading...</p>
+    </ion-label>
+  </ion-content>
+  } @else {
   <app-image-carousel [species]="species"></app-image-carousel>
 
   <ion-content class="ion-padding">
@@ -17,4 +24,5 @@
 
     <app-detail-description [species]="species"></app-detail-description>
   </ion-content>
+  }
 </div>

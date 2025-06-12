@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular/standalone';
-import { ParamsService } from 'app/services/params.service';
 import { Species } from 'app/models/species.model';
 import { BirdQueriesService } from 'app/services/bird-queries.service';
 import { SpeciesService } from 'app/services/species.service';
@@ -29,10 +28,10 @@ import { DetailDescriptionComponent } from 'app/partials/detail-description/deta
 })
 export class BirdDetailPage implements OnInit {
   species: Species | null = null;
+  loading = true;
 
   constructor(
     private route: ActivatedRoute,
-    private paramsService: ParamsService,
     private birdQueriesService: BirdQueriesService,
     public speciesService: SpeciesService,
     private textAudioService: TextAudioQueriesService
@@ -40,30 +39,26 @@ export class BirdDetailPage implements OnInit {
     addIcons({ volumeHigh });
   }
 
-  ngOnInit() {
-    let ok = this._loadSpeciesFromParams();
-    if (!ok) {
-      this._loadSpeciesFromUrl();
-    }
-  }
-
-  private _loadSpeciesFromParams(): boolean {
-    const paramSpecies: Species | undefined = this.paramsService.getParams().species;
-    if (!paramSpecies) {
-      return false;
-    }
-    this.species = paramSpecies;
-    return true;
+  async ngOnInit() {
+    console.log('BirdDetailPage ngOnInit');
+    await this._loadSpeciesFromUrl();
+    this.loading = false;
   }
 
   private async _loadSpeciesFromUrl() {
     const id: number = +(this.route.snapshot.paramMap.get('id') ?? -1);
+    console.log('Loading species with ID:', id);
     if (isNaN(id) || id < 0) {
       console.error('Invalid route parameters: { id: ', id, ' }');
       return;
     }
 
-    this.species = await this.birdQueriesService.getById(id);
+    try {
+      this.species = await this.birdQueriesService.getById(id);
+      console.log('Loaded species from DB:', this.species);
+    } catch (error) {
+      console.error('Error loading species:', error);
+    }
   }
 
   public async playTextAudio(text: string | undefined) {

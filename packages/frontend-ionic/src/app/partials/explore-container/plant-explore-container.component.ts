@@ -37,9 +37,14 @@ export class PlantExploreContainerComponent
 
   protected override async _loadSpecies() {
     console.log('PlantExploreContainerComponent _loadSpecies');
-    this.itemsAll = await this.plantQueriesService.getFull();
-    this._setItems([...this.itemsAll]);
-    this.itemsLoading = false;
+    try {
+      this.itemsAll = await this.plantQueriesService.getFull();
+      this._setItems([...this.itemsAll]);
+    } catch (error) {
+      console.error('Error loading plants:', error);
+    } finally {
+      this.itemsLoading = false;
+    }
   }
 
   protected override async _groupItems(items: Species[]): Promise<SpeciesGroup[]> {

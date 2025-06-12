@@ -1,5 +1,7 @@
 <!-- Description in local language and English -->
-<ion-label class="px-4 mx-auto max-w-prose text-gray-800">
-  <p class="text-sm leading-6" [innerHTML]="species?.descriptionLocal"></p>
-  <p class="text-sm leading-relaxed" [innerHTML]="species?.descriptionEn"></p>
-</ion-label>
+@if (species?.descriptionLocal || species?.descriptionEn) {
+  <ion-text class="px-4 mx-auto max-w-prose ion-text-dark">
+    <p class="text-sm leading-6" [innerHTML]="species?.descriptionLocal"></p>
+    <p class="text-sm leading-relaxed" [innerHTML]="species?.descriptionEn"></p>
+  </ion-text>
+}
