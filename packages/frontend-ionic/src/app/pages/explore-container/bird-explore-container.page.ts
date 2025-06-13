@@ -6,6 +6,7 @@ import { BirdListItemComponent } from '../../partials/bird-list-item/bird-list-i
 import { Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { SearchService } from 'app/services/search.service';
+import { SpeciesType } from 'app/models/species.model';
 import {
   IonList,
   IonItemGroup,
@@ -42,7 +43,7 @@ export class BirdExploreContainerPage
   implements OnInit, OnDestroy
 {
   private preferencesSubscription?: Subscription;
-
+  public speciesType = SpeciesType;
   constructor(
     private birdQueriesService: BirdQueriesService,
     private birdPreferencesService: BirdPreferencesService,

@@ -7,6 +7,7 @@ import { Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { PlantListItemComponent } from 'app/partials/plant-list-item/plant-list-item.component';
 import { SearchService } from 'app/services/search.service';
+import { SpeciesType } from 'app/models/species.model';
 import {
   IonList,
   IonItemGroup,
@@ -42,7 +43,7 @@ export class PlantExploreContainerPage
   implements OnInit, OnDestroy
 {
   private preferencesSubscription?: Subscription;
-
+  public speciesType = SpeciesType;
   constructor(
     private plantQueriesService: PlantQueriesService,
     private plantPreferencesService: PlantPreferencesService,

@@ -1,9 +1,8 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { OptionsComponent } from 'app/modals/options/options.component';
 import { SearchService } from 'app/services/search.service';
 import { IonSearchbar, IonIcon, ModalController } from '@ionic/angular/standalone';
 import { search, options } from 'ionicons/icons';
-import { ActivatedRoute } from '@angular/router';
 import { SpeciesType } from 'app/models/species.model';
 import { addIcons } from 'ionicons';
 
@@ -15,23 +14,14 @@ import { addIcons } from 'ionicons';
   imports: [IonSearchbar, IonIcon],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class SearchBarComponent implements OnInit {
-  public domain: SpeciesType = SpeciesType.Bird;
+export class SearchBarComponent {
+  @Input() domain!: SpeciesType;
   public speciesType = SpeciesType;
   constructor(
     private searchService: SearchService,
-    private modalController: ModalController,
-    private route: ActivatedRoute
+    private modalController: ModalController
   ) {
     addIcons({ search, options });
-  }
-
-  async ngOnInit() {
-    this._setDomain();
-  }
-
-  private _setDomain() {
-    this.domain = (this.route.snapshot.params['domain'] as SpeciesType) ?? SpeciesType.Bird;
   }
 
   searchChanged(event: CustomEvent) {
