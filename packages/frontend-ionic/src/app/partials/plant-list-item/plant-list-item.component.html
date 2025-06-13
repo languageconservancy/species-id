@@ -12,14 +12,12 @@
     </div>
   }
   <ion-label class="ml-4">
-    <h2 class="font-localNames" style="font-size: var(--ion-font-size-lg)">{{ item.nameLocal }}</h2>
+    <h2 class="font-localNames text-xl">{{ item.nameLocal }}</h2>
     @if (settings.useEnglish) {
-      <p class="font-medium" style="font-size: var(--ion-font-size-base)">{{ item.nameEn }}</p>
+      <p class="font-medium text-base">{{ item.nameEn }}</p>
     }
     @if (settings.showScientificNames) {
-      <p style="font-size: var(--ion-font-size-base)">
-        <i>{{ item.nameScientific }}</i>
-      </p>
+      <div class="text-base italic text-gray-500">{{ item.nameScientific }}</div>
     }
     <!-- Type-specific content will be projected here -->
     <ng-content select="[typeSpecific]"></ng-content>
