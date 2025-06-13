@@ -1,31 +1,48 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { PlantQueriesService } from 'app/services/plant-queries.service';
 import { PlantPreferencesService } from 'app/services/plant-preferences.service';
-import { PlantSortOption } from 'app/constants/plant-options';
-import { BaseExploreContainerComponent } from './base-explore-container.component';
+import { BaseExploreContainerComponent } from './base-explore-container.page';
 import { Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { PlantListItemComponent } from 'app/partials/plant-list-item/plant-list-item.component';
 import { SearchService } from 'app/services/search.service';
 import {
   IonList,
-  IonItem,
-  IonLabel,
   IonItemGroup,
   IonItemDivider,
+  IonLabel,
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
 } from '@ionic/angular/standalone';
+import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component';
 
 @Component({
-  selector: 'app-plant-explore-container',
-  templateUrl: './plant-explore-container.component.html',
+  selector: 'app-plant-explore-container-page',
+  templateUrl: './plant-explore-container.page.html',
   styleUrls: ['./base-explore-container.component.scss'],
   standalone: true,
-  imports: [IonList, IonItem, IonLabel, IonItemGroup, IonItemDivider, PlantListItemComponent],
+  imports: [
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonItemGroup,
+    IonItemDivider,
+    PlantListItemComponent,
+    IonLabel,
+    SearchBarComponent,
+  ],
 })
-export class PlantExploreContainerComponent
+export class PlantExploreContainerPage
   extends BaseExploreContainerComponent
-  implements OnInit
+  implements OnInit, OnDestroy
 {
+  private preferencesSubscription?: Subscription;
+
   constructor(
     private plantQueriesService: PlantQueriesService,
     private plantPreferencesService: PlantPreferencesService,
@@ -35,11 +52,27 @@ export class PlantExploreContainerComponent
     super(speciesService, searchService);
   }
 
+  override ngOnInit() {
+    super.ngOnInit();
+    // Subscribe to preference changes
+    this.preferencesSubscription = this.plantPreferencesService
+      .getPreferences()
+      .subscribe((preferences) => {
+        console.log('Preferences changed:', preferences);
+        this._setItems();
+      });
+  }
+
+  override ngOnDestroy() {
+    this.preferencesSubscription?.unsubscribe();
+    super.ngOnDestroy();
+  }
+
   protected override async _loadSpecies() {
     console.log('PlantExploreContainerComponent _loadSpecies');
     try {
       this.itemsAll = await this.plantQueriesService.getFull();
-      this._setItems([...this.itemsAll]);
+      this._setItems();
     } catch (error) {
       console.error('Error loading plants:', error);
     } finally {
@@ -47,8 +80,9 @@ export class PlantExploreContainerComponent
     }
   }
 
-  protected override async _groupItems(items: Species[]): Promise<SpeciesGroup[]> {
-    const sortType: PlantSortOption = await this.plantPreferencesService.getSort();
+  protected override async _groupAndSortItems(items: Species[]): Promise<SpeciesGroup[]> {
+    const preferences = await this.plantPreferencesService.getSort();
+    const sortType = preferences;
 
     const getGroupKey = (item: Species): string => {
       switch (sortType) {
@@ -57,7 +91,8 @@ export class PlantExploreContainerComponent
         case 'alphabetical-english':
           return item.nameEn.charAt(0).toUpperCase();
         default:
-          return 'Unknown';
+          console.error('Invalid sort type:', sortType);
+          return item.nameLocal.charAt(0).toUpperCase();
       }
     };
 

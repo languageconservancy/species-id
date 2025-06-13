@@ -3,6 +3,8 @@ import { Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { SearchService } from 'app/services/search.service';
 import { Subscription } from 'rxjs';
+import { addIcons } from 'ionicons';
+import { search, options } from 'ionicons/icons';
 
 @Component({
   template: '',
@@ -15,11 +17,14 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
   itemsAll: Species[] = [];
   itemsGrouped: SpeciesGroup[] = [];
   protected subscribers: Subscription = new Subscription();
+  searchTerm: string = '';
 
   constructor(
     protected speciesService: SpeciesService,
     protected searchService: SearchService
-  ) {}
+  ) {
+    addIcons({ search, options });
+  }
 
   ngOnInit() {
     this._loadSpecies();
@@ -33,19 +38,11 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
 
   protected _subscribeAndHandleSearches() {
     const sub = this.searchService.search$.subscribe((searchTerm: string) => {
-      searchTerm = searchTerm.toLowerCase().trim();
-      if (searchTerm) {
-        this._setItems(
-          this.itemsAll.filter((item) => {
-            return (
-              item.nameLocal.toLowerCase().includes(searchTerm) ||
-              item.nameScientific.toLowerCase().includes(searchTerm) ||
-              item.nameEn.toLowerCase().includes(searchTerm)
-            );
-          })
-        );
+      this.searchTerm = searchTerm.toLowerCase().trim();
+      if (this.searchTerm) {
+        this._setItems();
       } else {
-        this._setItems([...this.itemsAll]);
+        this._resetItems();
       }
     });
     this.subscribers.add(sub);
@@ -56,13 +53,36 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
     throw new Error('_loadSpecies must be implemented by child class');
   }
 
-  protected async _setItems(items: Species[]) {
-    this.items = items;
-    this.itemsGrouped = await this._groupItems(items);
+  protected _applySearch(): Species[] {
+    if (!this.searchTerm) {
+      return this.itemsAll;
+    }
+    return this.itemsAll.filter((item: Species) => {
+      return (
+        item.nameLocal.toLowerCase().includes(this.searchTerm) ||
+        item.nameScientific.toLowerCase().includes(this.searchTerm) ||
+        item.nameEn.toLowerCase().includes(this.searchTerm)
+      );
+    });
   }
 
-  protected async _groupItems(items: Species[]): Promise<SpeciesGroup[]> {
+  protected _applyFilters(items: Species[]): Species[] {
+    return items;
+  }
+
+  protected async _resetItems() {
+    this.items = [...this.itemsAll];
+    this.itemsGrouped = await this._groupAndSortItems(this.items);
+  }
+
+  protected async _setItems() {
+    this.items = this._applySearch();
+    this.items = this._applyFilters(this.items);
+    this.itemsGrouped = await this._groupAndSortItems(this.items);
+  }
+
+  protected async _groupAndSortItems(items: Species[]): Promise<SpeciesGroup[]> {
     // To be implemented by child classes
-    throw new Error('_groupItems must be implemented by child class');
+    throw new Error('_groupAndSortItems must be implemented by child class');
   }
 }

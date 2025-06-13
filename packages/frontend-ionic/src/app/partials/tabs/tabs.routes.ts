@@ -10,8 +10,18 @@ export const routes: Routes = [
         path: 'tab1',
         children: [
           {
-            path: ':domain',
-            loadComponent: () => import('app/pages/tab1/tab1.page').then((m) => m.Tab1Page),
+            path: 'birds',
+            loadComponent: () =>
+              import('app/pages/explore-container/bird-explore-container.page').then(
+                (m) => m.BirdExploreContainerPage
+              ),
+          },
+          {
+            path: 'plants',
+            loadComponent: () =>
+              import('app/pages/explore-container/plant-explore-container.page').then(
+                (m) => m.PlantExploreContainerPage
+              ),
           },
           {
             path: 'bird/:id',
@@ -35,14 +45,14 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1/bird',
+        redirectTo: '/tabs/tab1/birds',
         pathMatch: 'full',
       },
     ],
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1/bird',
+    redirectTo: '/tabs/tab1/birds',
     pathMatch: 'full',
   },
 ];

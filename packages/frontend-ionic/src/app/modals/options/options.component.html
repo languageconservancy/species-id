@@ -8,30 +8,44 @@
 <ion-content class="ion-padding" color="light" [fullscreen]="true">
   <ion-label>Sort by</ion-label>
   <ion-list [inset]="true">
-    <ion-item
-      class="cursor-pointer"
-      [class.ion-color]="selectedSort === 'alphabetical-local'"
-      [color]="selectedSort === 'alphabetical-local' ? 'primary' : 'light'"
-      (click)="selectedSort = 'alphabetical-local'"
-    >
-      <ion-label>Alphabetical (Crow)</ion-label>
-    </ion-item>
-    <ion-item
-      class="cursor-pointer"
-      [class.ion-color]="selectedSort === 'alphabetical-english'"
-      [color]="selectedSort === 'alphabetical-english' ? 'primary' : 'light'"
-      (click)="selectedSort = 'alphabetical-english'"
-    >
-      <ion-label>Alphabetical (English)</ion-label>
-    </ion-item>
-    <ion-item
-      class="cursor-pointer"
-      [class.ion-color]="selectedSort === 'by-order'"
-      [color]="selectedSort === 'by-order' ? 'primary' : 'light'"
-      (click)="selectedSort = 'by-order'"
-    >
-      <ion-label>By order</ion-label>
-    </ion-item>
+    @for (option of sortOptions; track option.value) {
+      <ion-item
+        class="cursor-pointer"
+        [class.ion-color]="selectedSort === option.value"
+        [color]="selectedSort === option.value ? 'primary' : 'light'"
+        (click)="selectedSort = option.value"
+      >
+        <ion-label>{{ option.label }}</ion-label>
+      </ion-item>
+    }
+  </ion-list>
+
+  <ion-label class="mt-4">Filter by</ion-label>
+  <ion-list [inset]="true">
+    @for (option of filterOptions; track option.value) {
+      <ion-item
+        class="cursor-pointer"
+        [class.ion-color]="selectedFilter === option.value"
+        [color]="selectedFilter === option.value ? 'primary' : 'light'"
+        (click)="selectedFilter = option.value"
+      >
+        <ion-label>{{ option.label }}</ion-label>
+      </ion-item>
+    }
+  </ion-list>
+
+  <ion-label class="mt-4">Sort Direction</ion-label>
+  <ion-list [inset]="true">
+    @for (option of sortDirectionOptions; track option) {
+      <ion-item
+        class="cursor-pointer"
+        [class.ion-color]="selectedSortDirection === option"
+        [color]="selectedSortDirection === option ? 'primary' : 'light'"
+        (click)="selectedSortDirection = option"
+      >
+        <ion-label>{{ option | titlecase }}</ion-label>
+      </ion-item>
+    }
   </ion-list>
 </ion-content>
 
@@ -45,6 +59,9 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button (click)="resetOptions()">
+        <ion-icon slot="icon-only" name="refresh-circle"></ion-icon>
+      </ion-button>
       <ion-button (click)="applyOptions()">
         <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
         <!-- Apply -->

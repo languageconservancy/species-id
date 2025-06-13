@@ -1,53 +1,31 @@
 import { Injectable } from '@angular/core';
 import { StorageReadyService } from './storage-ready.service';
 import { Storage } from '@ionic/storage-angular';
-
-export enum SortOption {
-  AlphabeticalLocal = 'alphabetical-local',
-  AlphabeticalEnglish = 'alphabetical-english',
-  ByFamily = 'by-family',
-  ByHeight = 'by-height',
-}
+import {
+  BasePreferencesService,
+  SortOption,
+  FilterOption,
+} from 'app/services/base-preferences.service';
+import { PLANT_SORT_OPTIONS, PLANT_FILTER_OPTIONS } from 'app/constants/plant-options';
 
 @Injectable({ providedIn: 'root' })
-export class PlantPreferencesService {
-  private readonly SORT_KEY = 'plantSort';
-  private readonly FILTERS_KEY = 'plantFilters';
+export class PlantPreferencesService extends BasePreferencesService {
+  protected readonly SORT_KEY = 'plantSort';
+  protected readonly FILTERS_KEY = 'plantFilters';
+  protected readonly SORT_DIRECTION_KEY = 'plantSortDirection';
 
   constructor(
-    private storage: Storage,
-    private storageReady: StorageReadyService
+    protected override storage: Storage,
+    protected override storageReady: StorageReadyService
   ) {
-    this.init();
+    super(storage, storageReady);
   }
 
-  async getSort(): Promise<SortOption> {
-    await this.init();
-    return (await this.storage.get(this.SORT_KEY)) ?? SortOption.AlphabeticalLocal;
+  getSortOptions(): SortOption[] {
+    return PLANT_SORT_OPTIONS;
   }
 
-  private async init() {
-    await this.storageReady.ready();
-  }
-
-  async setSort(option: SortOption): Promise<void> {
-    await this.init();
-    await this.storage.set(this.SORT_KEY, option);
-  }
-
-  async getFilters(): Promise<Record<string, any>> {
-    await this.init();
-    return (await this.storage.get(this.FILTERS_KEY)) ?? {};
-  }
-
-  async setFilters(filters: Record<string, any>): Promise<void> {
-    await this.init();
-    await this.storage.set(this.FILTERS_KEY, filters);
-  }
-
-  async clearAll(): Promise<void> {
-    await this.init();
-    await this.storage.remove(this.SORT_KEY);
-    await this.storage.remove(this.FILTERS_KEY);
+  getFilterOptions(): FilterOption[] {
+    return PLANT_FILTER_OPTIONS;
   }
 }
