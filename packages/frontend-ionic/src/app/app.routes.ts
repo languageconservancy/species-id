@@ -9,4 +9,8 @@ export const routes: Routes = [
     path: 'settings',
     loadComponent: () => import('app/pages/settings/settings.page').then((m) => m.SettingsPage),
   },
+  {
+    path: 'about',
+    loadComponent: () => import('app/pages/about/about.page').then((m) => m.AboutPage),
+  },
 ];

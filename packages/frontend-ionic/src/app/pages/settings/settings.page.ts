@@ -50,6 +50,10 @@ export class SettingsPage implements OnInit, OnDestroy {
     useEnglish: true,
     showScientificNames: true,
   };
+  originalSettings: AppSettings = {
+    useEnglish: true,
+    showScientificNames: true,
+  };
   private settingsSubscription?: Subscription;
 
   constructor(
@@ -62,6 +66,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.settingsSubscription = this.settingsService.getSettings().subscribe((settings) => {
       this.settings = settings;
+      this.originalSettings = { ...settings };
     });
   }
 
@@ -69,9 +74,20 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.settingsSubscription?.unsubscribe();
   }
 
-  async toggleSetting(key: keyof BooleanSettings) {
+  toggleSetting(key: keyof BooleanSettings) {
     this.settings[key] = !this.settings[key];
+  }
+
+  async applySettings() {
     await this.settingsService.updateSettings(this.settings);
+    this.originalSettings = { ...this.settings };
+    this.close();
+  }
+
+  async cancel() {
+    this.settings = { ...this.originalSettings };
+    await this.settingsService.updateSettings(this.settings);
+    this.close();
   }
 
   close() {

@@ -4,12 +4,13 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
+<ion-content color="light" class="ion-padding">
+  <ion-list [inset]="true">
     <!-- Language Settings -->
     <ion-item>
       <ion-label>Use English Content</ion-label>
       <ion-toggle
+        slot="end"
         [checked]="settings.useEnglish"
         (ionChange)="toggleSetting('useEnglish')"
       ></ion-toggle>
@@ -19,6 +20,7 @@
     <ion-item>
       <ion-label>Show Scientific Names</ion-label>
       <ion-toggle
+        slot="end"
         [checked]="settings.showScientificNames"
         (ionChange)="toggleSetting('showScientificNames')"
       ></ion-toggle>
@@ -29,12 +31,12 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="close()" class="px-4">
+      <ion-button (click)="cancel()" class="px-4">
         <ion-icon slot="icon-only" name="close" class="text-2xl"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="close()" class="px-4">
+      <ion-button (click)="applySettings()" class="px-4">
         <ion-icon slot="icon-only" name="checkmark-circle" class="text-2xl"></ion-icon>
       </ion-button>
     </ion-buttons>

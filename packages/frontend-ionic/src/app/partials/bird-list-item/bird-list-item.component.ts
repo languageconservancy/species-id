@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { IonIcon, IonImg, IonItem, IonLabel, NavController } from '@ionic/angular/standalone';
+import { IonIcon, IonImg, IonItem, NavController } from '@ionic/angular/standalone';
 import { Species } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { chevronForward } from 'ionicons/icons';
@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-bird-list-item',
   templateUrl: './bird-list-item.component.html',
   standalone: true,
-  imports: [IonIcon, IonImg, IonLabel, IonItem],
+  imports: [IonIcon, IonImg, IonItem],
 })
 export class BirdListItemComponent implements OnInit {
   @Input() item!: Species;
