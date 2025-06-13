@@ -11,6 +11,7 @@ import { volumeHigh } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { ImageCarouselComponent } from 'app/partials/image-carousel/image-carousel.component';
 import { DetailDescriptionComponent } from 'app/partials/detail-description/detail-description.component';
+import { BackButtonComponent } from 'app/partials/back-button/back-button.component';
 
 @Component({
   selector: 'app-plant-detail',
@@ -23,6 +24,7 @@ import { DetailDescriptionComponent } from 'app/partials/detail-description/deta
     FormsModule,
     ImageCarouselComponent,
     DetailDescriptionComponent,
+    BackButtonComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

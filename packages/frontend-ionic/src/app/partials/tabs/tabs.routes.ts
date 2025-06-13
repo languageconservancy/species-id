@@ -12,15 +12,15 @@ export const routes: Routes = [
           {
             path: 'birds',
             loadComponent: () =>
-              import('app/pages/explore-container/bird-explore-container.page').then(
-                (m) => m.BirdExploreContainerPage
+              import('app/pages/explore-container/birds-explore.page').then(
+                (m) => m.BirdsExplorePage
               ),
           },
           {
             path: 'plants',
             loadComponent: () =>
-              import('app/pages/explore-container/plant-explore-container.page').then(
-                (m) => m.PlantExploreContainerPage
+              import('app/pages/explore-container/plants-explore.page').then(
+                (m) => m.PlantsExplorePage
               ),
           },
           {

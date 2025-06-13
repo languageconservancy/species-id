@@ -53,18 +53,16 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="close()">
-        <ion-icon slot="icon-only" name="close"></ion-icon>
-        <!-- Close -->
+      <ion-button (click)="close()" class="px-4">
+        <ion-icon slot="icon-only" name="close" class="text-2xl"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="resetOptions()">
-        <ion-icon slot="icon-only" name="refresh-circle"></ion-icon>
+      <ion-button (click)="resetOptions()" class="px-4">
+        <ion-icon slot="icon-only" name="refresh-circle" class="text-2xl"></ion-icon>
       </ion-button>
-      <ion-button (click)="applyOptions()">
-        <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
-        <!-- Apply -->
+      <ion-button (click)="applyOptions()" class="px-4">
+        <ion-icon slot="icon-only" name="checkmark-circle" class="text-2xl"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

@@ -21,8 +21,8 @@ import { Subscription } from 'rxjs';
 import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component';
 
 @Component({
-  selector: 'app-bird-explore-container-page',
-  templateUrl: './bird-explore-container.page.html',
+  selector: 'app-birds-explore-page',
+  templateUrl: './birds-explore.page.html',
   styleUrls: ['./base-explore-container.component.scss'],
   standalone: true,
   imports: [
@@ -38,10 +38,7 @@ import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component
     SearchBarComponent,
   ],
 })
-export class BirdExploreContainerPage
-  extends BaseExploreContainerComponent
-  implements OnInit, OnDestroy
-{
+export class BirdsExplorePage extends BaseExploreContainerComponent implements OnInit, OnDestroy {
   private preferencesSubscription?: Subscription;
   public speciesType = SpeciesType;
   constructor(

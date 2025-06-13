@@ -21,8 +21,8 @@ import {
 import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component';
 
 @Component({
-  selector: 'app-plant-explore-container-page',
-  templateUrl: './plant-explore-container.page.html',
+  selector: 'app-plants-explore-page',
+  templateUrl: './plants-explore.page.html',
   styleUrls: ['./base-explore-container.component.scss'],
   standalone: true,
   imports: [
@@ -38,10 +38,7 @@ import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component
     SearchBarComponent,
   ],
 })
-export class PlantExploreContainerPage
-  extends BaseExploreContainerComponent
-  implements OnInit, OnDestroy
-{
+export class PlantsExplorePage extends BaseExploreContainerComponent implements OnInit, OnDestroy {
   private preferencesSubscription?: Subscription;
   public speciesType = SpeciesType;
   constructor(

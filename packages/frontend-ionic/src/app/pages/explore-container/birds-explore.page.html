@@ -26,8 +26,8 @@
       <ion-item-divider sticky>
         <ion-label>{{ itemGroup.name }}</ion-label>
       </ion-item-divider>
-      @for (item of itemGroup.items; track item) {
-      <app-bird-list-item [item]="item"></app-bird-list-item>
+      @for (item of itemGroup.items; track item; let last = $last) {
+      <app-bird-list-item [item]="item" [isLastItem]="last"></app-bird-list-item>
       }
     </ion-item-group>
     }

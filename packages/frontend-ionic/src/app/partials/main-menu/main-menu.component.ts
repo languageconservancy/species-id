@@ -50,7 +50,7 @@ export class MainMenuComponent {
     {
       label: 'Settings',
       icon: 'settings',
-      link: '/tabs/tab3',
+      link: 'settings',
     },
   ];
   constructor(private router: Router) {

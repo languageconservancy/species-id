@@ -1,6 +1,10 @@
-<ion-item class="ion-activatable ripple-parent" (click)="onItemClick(item)">
+<ion-item
+  class="ion-activatable ripple-parent"
+  [lines]="isLastItem ? 'none' : 'inset'"
+  (click)="onItemClick(item)"
+>
   @if (item.images && item.images.length > 0) {
-    <div class="rounded-md w-24 aspect-[4/3] overflow-hidden">
+    <div class="rounded-md w-24 aspect-[4/3] overflow-hidden flex-shrink-0 my-2">
       <ion-img
         class="object-cover w-full h-full"
         [src]="speciesService.getImageUrl(item.images[0].fileName)"
@@ -8,11 +12,15 @@
     </div>
   }
   <ion-label class="ml-4">
-    <h2 class="font-localNames text-lg">{{ item.nameLocal }}</h2>
-    <p class="font-medium">{{ item.nameEn }}</p>
-    <p>
-      <i>{{ item.nameScientific }}</i>
-    </p>
+    <h2 class="font-localNames" style="font-size: var(--ion-font-size-lg)">{{ item.nameLocal }}</h2>
+    @if (settings.useEnglish) {
+      <p class="font-medium" style="font-size: var(--ion-font-size-base)">{{ item.nameEn }}</p>
+    }
+    @if (settings.showScientificNames) {
+      <p style="font-size: var(--ion-font-size-base)">
+        <i>{{ item.nameScientific }}</i>
+      </p>
+    }
     <!-- Type-specific content will be projected here -->
     <ng-content select="[typeSpecific]"></ng-content>
   </ion-label>
