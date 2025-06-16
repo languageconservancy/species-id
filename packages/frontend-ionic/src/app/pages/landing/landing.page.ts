@@ -1,14 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import {
-  IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButton,
-  IonIcon,
-} from '@ionic/angular/standalone';
+import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { bird } from '../../../assets/icon/bird';
 import { leaf } from 'ionicons/icons';
@@ -30,6 +23,8 @@ export class LandingPage {
   }
 
   navigateToExplore(type: SpeciesType) {
-    this.router.navigate(['/tabs/tab1', type === SpeciesType.Bird ? 'birds' : 'plants']);
+    this.router.navigateByUrl(`/tabs/tab1/${type === SpeciesType.Bird ? 'birds' : 'plants'}`, {
+      replaceUrl: true,
+    });
   }
 }
