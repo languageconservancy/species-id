@@ -6,8 +6,6 @@ import { addIcons } from 'ionicons';
 import { checkmarkCircle, close, moon, sunny } from 'ionicons/icons';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
   IonToolbar,
   IonList,
   IonItem,
@@ -20,6 +18,7 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+import { HeaderComponent } from 'app/partials/header/header.component';
 
 type BooleanSettings = Pick<AppSettings, 'useEnglish' | 'showScientificNames'>;
 
@@ -31,8 +30,6 @@ type BooleanSettings = Pick<AppSettings, 'useEnglish' | 'showScientificNames'>;
   imports: [
     CommonModule,
     IonContent,
-    IonHeader,
-    IonTitle,
     IonToolbar,
     IonList,
     IonItem,
@@ -43,6 +40,7 @@ type BooleanSettings = Pick<AppSettings, 'useEnglish' | 'showScientificNames'>;
     IonButtons,
     IonButton,
     IonIcon,
+    HeaderComponent,
   ],
 })
 export class SettingsPage implements OnInit, OnDestroy {

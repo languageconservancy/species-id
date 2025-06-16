@@ -2,11 +2,9 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonHeader,
   IonContent,
   IonToolbar,
   IonButtons,
-  IonTitle,
   IonIcon,
   IonButton,
   IonList,
@@ -24,7 +22,7 @@ import {
   SortOption,
   FilterOption,
 } from 'app/services/base-preferences.service';
-import { createAnimation } from '@ionic/angular';
+import { HeaderComponent } from 'app/partials/header/header.component';
 
 @Component({
   selector: 'app-options',
@@ -33,11 +31,9 @@ import { createAnimation } from '@ionic/angular';
   standalone: true,
   imports: [
     CommonModule,
-    IonHeader,
     IonContent,
     IonToolbar,
     IonButtons,
-    IonTitle,
     IonIcon,
     IonButton,
     IonList,
@@ -45,6 +41,7 @@ import { createAnimation } from '@ionic/angular';
     IonLabel,
     IonFooter,
     FormsModule,
+    HeaderComponent,
   ],
 })
 export class OptionsComponent implements OnInit, OnChanges {
