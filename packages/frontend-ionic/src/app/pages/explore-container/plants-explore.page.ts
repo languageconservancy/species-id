@@ -8,17 +8,10 @@ import { SpeciesService } from 'app/services/species.service';
 import { PlantListItemComponent } from 'app/partials/plant-list-item/plant-list-item.component';
 import { SearchService } from 'app/services/search.service';
 import { SpeciesType } from 'app/models/species.model';
-import {
-  IonList,
-  IonItemGroup,
-  IonItemDivider,
-  IonLabel,
-  IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-} from '@ionic/angular/standalone';
+import { IonList, IonItemGroup, IonLabel, IonContent } from '@ionic/angular/standalone';
 import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component';
+import { HeaderComponent } from 'app/partials/header/header.component';
+import { ListDividerComponent } from 'app/partials/list-divider/list-divider.component';
 
 @Component({
   selector: 'app-plants-explore-page',
@@ -26,16 +19,14 @@ import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component
   styleUrls: ['./base-explore-container.component.scss'],
   standalone: true,
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
     IonList,
     IonItemGroup,
-    IonItemDivider,
     PlantListItemComponent,
     IonLabel,
     SearchBarComponent,
+    HeaderComponent,
+    ListDividerComponent,
   ],
 })
 export class PlantsExplorePage extends BaseExploreContainerComponent implements OnInit, OnDestroy {

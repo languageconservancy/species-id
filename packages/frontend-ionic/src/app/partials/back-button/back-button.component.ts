@@ -5,18 +5,7 @@ import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-back-button',
-  template: `
-    <ion-fab
-      vertical="bottom"
-      horizontal="start"
-      slot="fixed"
-      [class.bottom-safe]="addBottomSafePadding"
-    >
-      <ion-fab-button (click)="goBack()" color="primary">
-        <ion-icon name="arrow-back" color="light"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-  `,
+  templateUrl: './back-button.component.html',
   standalone: true,
   imports: [IonFab, IonFabButton, IonIcon],
   styles: [
