@@ -1,4 +1,4 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +12,8 @@ import { addIcons } from 'ionicons';
 import { ImageCarouselComponent } from 'app/partials/image-carousel/image-carousel.component';
 import { DetailDescriptionComponent } from 'app/partials/detail-description/detail-description.component';
 import { BackButtonComponent } from 'app/partials/back-button/back-button.component';
+import { SettingsService, AppSettings } from 'app/services/settings.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-plant-detail',
@@ -28,14 +30,20 @@ import { BackButtonComponent } from 'app/partials/back-button/back-button.compon
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class PlantDetailPage implements OnInit {
+export class PlantDetailPage implements OnInit, OnDestroy {
   species: Species | null = null;
   loading = true;
+  settings: AppSettings = {
+    useEnglish: true,
+    showScientificNames: true,
+  };
+  protected subscribers: Subscription = new Subscription();
   constructor(
     private route: ActivatedRoute,
     private plantQueriesService: PlantQueriesService,
     public speciesService: SpeciesService,
-    private textAudioService: TextAudioQueriesService
+    private textAudioService: TextAudioQueriesService,
+    private settingsService: SettingsService
   ) {
     addIcons({ volumeHigh });
   }
@@ -44,6 +52,11 @@ export class PlantDetailPage implements OnInit {
     console.log('PlantDetailPage ngOnInit');
     await this._loadSpeciesFromUrl();
     this.loading = false;
+    this._subscribeToSettings();
+  }
+
+  ngOnDestroy() {
+    this.subscribers.unsubscribe();
   }
 
   private async _loadSpeciesFromUrl() {
@@ -78,5 +91,12 @@ export class PlantDetailPage implements OnInit {
     } catch (error) {
       console.error('Error playing text audio:', error);
     }
+  }
+
+  private _subscribeToSettings() {
+    const sub = this.settingsService.getSettings().subscribe((settings: AppSettings) => {
+      this.settings = settings;
+    });
+    this.subscribers.add(sub);
   }
 }
