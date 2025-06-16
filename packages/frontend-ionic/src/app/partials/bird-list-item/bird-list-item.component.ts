@@ -45,9 +45,16 @@ export class BirdListItemComponent implements OnInit {
   }
 
   onItemClick(item: Species) {
-    this.navController.navigateForward(['/tabs/tab1', item.type, item.id], {
+    this.navController.navigateForward(['/tabs/tab1', 'birds', item.id], {
       animationDirection: 'forward',
       animated: true,
     });
+  }
+
+  uppercaseEachWord(text: string): string {
+    return text
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 }

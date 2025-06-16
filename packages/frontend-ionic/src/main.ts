@@ -15,6 +15,9 @@ import { AppComponent } from 'app/app.component';
 import { register as registerSwiperElements } from 'swiper/element/bundle';
 import { App } from '@capacitor/app';
 import { createAnimation } from '@ionic/angular';
+import { StatusBar } from '@capacitor/status-bar';
+
+StatusBar.hide();
 
 registerSwiperElements();
 

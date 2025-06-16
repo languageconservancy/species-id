@@ -1,18 +1,18 @@
 <!-- Optional overlay for explore page with filters and sorting options -->
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Options</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title class="text-2xl font-localNames">Options</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding" color="light">
-  <ion-label>Sort by</ion-label>
+  <ion-label class="ion-text-uppercase" color="medium">Sort by</ion-label>
   <ion-list [inset]="true">
     @for (option of sortOptions; track option.value) {
       <ion-item
         class="cursor-pointer"
         [class.ion-color]="selectedSort === option.value"
-        [color]="selectedSort === option.value ? 'primary' : 'light'"
+        [color]="selectedSort === option.value ? 'secondary' : ''"
         (click)="selectedSort = option.value"
       >
         <ion-label>{{ option.label }}</ion-label>
@@ -20,13 +20,13 @@
     }
   </ion-list>
 
-  <ion-label class="mt-4">Filter by</ion-label>
+  <ion-label class="ion-text-uppercase" color="medium">Filter by</ion-label>
   <ion-list [inset]="true">
     @for (option of filterOptions; track option.value) {
       <ion-item
         class="cursor-pointer"
         [class.ion-color]="selectedFilter === option.value"
-        [color]="selectedFilter === option.value ? 'primary' : 'light'"
+        [color]="selectedFilter === option.value ? 'secondary' : ''"
         (click)="selectedFilter = option.value"
       >
         <ion-label>{{ option.label }}</ion-label>
@@ -34,13 +34,13 @@
     }
   </ion-list>
 
-  <ion-label class="mt-4">Sort Direction</ion-label>
+  <h2 class="ion-text-uppercase text-gray-500">Sort Direction</h2>
   <ion-list [inset]="true">
     @for (option of sortDirectionOptions; track option) {
       <ion-item
         class="cursor-pointer"
         [class.ion-color]="selectedSortDirection === option"
-        [color]="selectedSortDirection === option ? 'primary' : 'light'"
+        [color]="selectedSortDirection === option ? 'secondary' : ''"
         (click)="selectedSortDirection = option"
       >
         <ion-label>{{ option | titlecase }}</ion-label>
@@ -51,7 +51,7 @@
 
 <!-- This is the options component for the Ionic application, allowing users to set preferences for sorting, filtering, and language. -->
 <ion-footer>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-button (click)="close()" class="px-4">
         <ion-icon slot="icon-only" name="close" class="text-2xl"></ion-icon>

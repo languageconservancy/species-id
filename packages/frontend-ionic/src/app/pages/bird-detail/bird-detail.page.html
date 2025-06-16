@@ -1,29 +1,33 @@
-<div class="pt-safe pb-safe">
-  @if (loading) {
-  <ion-content class="ion-padding flex items-center justify-center h-full">
-    <ion-label class="ion-text-center">
-      <p>Loading...</p>
-    </ion-label>
-  </ion-content>
-  } @else {
+@if (loading) {
+<ion-content class="ion-padding flex items-center justify-center h-full">
+  <ion-label class="ion-text-center">
+    <p>Loading...</p>
+  </ion-label>
+</ion-content>
+} @else {
+
+<div class="bg-black pt-safe">
   <app-image-carousel [species]="species"></app-image-carousel>
-
-  <ion-content class="ion-padding">
-    <!-- Header section -->
-    <ion-label class="">
-      <span class="inline-flex cursor-pointer group" (click)="playTextAudio(species?.nameLocal)">
-        <h1 class="font-localNames">{{ species?.nameLocal }}</h1>
-        <ion-icon
-          name="volume-high"
-          class="ml-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100"
-        ></ion-icon>
-      </span>
-      <p class="font-medium">{{ species?.nameEn }}</p>
-      <p class="italic">{{ species?.nameScientific }}</p>
-    </ion-label>
-
-    <app-detail-description [species]="species"></app-detail-description>
-  </ion-content>
-  }
-  <app-back-button></app-back-button>
 </div>
+
+<ion-content class="ion-padding mt-0" style="--background: transparent">
+  <!-- Header section -->
+  <ion-label class="">
+    <span class="inline-flex cursor-pointer group" (click)="playTextAudio(species?.nameLocal)">
+      <h1 class="font-localNames">{{ species?.nameLocal }}</h1>
+      <ion-icon
+        name="volume-high"
+        class="ml-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100"
+      ></ion-icon>
+    </span>
+    @if (settings.useEnglish && species?.nameEn) {
+    <p class="font-medium">{{ species?.nameEn }}</p>
+    } @if (settings.showScientificNames && species?.nameScientific) {
+    <p class="italic">{{ species?.nameScientific }}</p>
+    }
+  </ion-label>
+
+  <app-detail-description [species]="species"></app-detail-description>
+</ion-content>
+}
+<app-back-button [addBottomSafePadding]="false"></app-back-button>

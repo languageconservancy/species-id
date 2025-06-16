@@ -1,17 +1,20 @@
 <!-- Search bar, sitting outside ion-content so it doesn't scroll with the content -->
-<div
-  class="position-fixed bottom-[56px] flex flow-row flex-nowrap items-center justify-between p-2"
->
-  <ion-searchbar
-    [debounce]="500"
-    placeholder="Search..."
-    (ionInput)="searchChanged($event)"
-    show-clear-button="always"
-  ></ion-searchbar>
-  <ion-icon
-    name="options"
-    size="large"
-    class="text-gray-500 cursor-pointer pr-2"
-    (click)="openOptionsModal()"
-  ></ion-icon>
-</div>
+
+<ion-footer class="bg-primary border-b-[1px] border-gray-200">
+  <div class="position-fixed bottom-[56px] flex flow-row flex-nowrap items-center justify-between">
+    <ion-searchbar
+      [debounce]="500"
+      placeholder="Search..."
+      (ionInput)="searchChanged($event)"
+      show-clear-button="always"
+      color="light"
+    ></ion-searchbar>
+    <ion-icon
+      name="options"
+      size="large"
+      class="text-gray-500 cursor-pointer pr-2"
+      (click)="openOptionsModal()"
+      color="light"
+    ></ion-icon>
+  </div>
+</ion-footer>

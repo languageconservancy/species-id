@@ -46,7 +46,7 @@ export class PlantListItemComponent implements OnInit {
   }
 
   onItemClick(item: Species) {
-    this.navController.navigateForward(['/tabs/tab1', item.type, item.id], {
+    this.navController.navigateForward(['/tabs/tab1', 'plants', item.id], {
       animationDirection: 'forward',
       animated: true,
     });

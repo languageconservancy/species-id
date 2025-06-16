@@ -12,6 +12,8 @@ import { addIcons } from 'ionicons';
 import { ImageCarouselComponent } from 'app/partials/image-carousel/image-carousel.component';
 import { DetailDescriptionComponent } from 'app/partials/detail-description/detail-description.component';
 import { BackButtonComponent } from 'app/partials/back-button/back-button.component';
+import { SettingsService, AppSettings } from 'app/services/settings.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-bird-detail',
@@ -31,12 +33,18 @@ import { BackButtonComponent } from 'app/partials/back-button/back-button.compon
 export class BirdDetailPage implements OnInit {
   species: Species | null = null;
   loading = true;
+  settings: AppSettings = {
+    useEnglish: true,
+    showScientificNames: true,
+  };
+  protected subscribers: Subscription = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
     private birdQueriesService: BirdQueriesService,
     public speciesService: SpeciesService,
-    private textAudioService: TextAudioQueriesService
+    private textAudioService: TextAudioQueriesService,
+    private settingsService: SettingsService
   ) {
     addIcons({ volumeHigh });
   }
@@ -45,6 +53,18 @@ export class BirdDetailPage implements OnInit {
     console.log('BirdDetailPage ngOnInit');
     await this._loadSpeciesFromUrl();
     this.loading = false;
+    this._subscribeToSettings();
+  }
+
+  ngOnDestroy() {
+    this.subscribers.unsubscribe();
+  }
+
+  private _subscribeToSettings() {
+    const sub = this.settingsService.getSettings().subscribe((settings: AppSettings) => {
+      this.settings = settings;
+    });
+    this.subscribers.add(sub);
   }
 
   private async _loadSpeciesFromUrl() {

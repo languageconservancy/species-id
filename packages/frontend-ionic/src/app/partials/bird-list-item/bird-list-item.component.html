@@ -12,12 +12,21 @@
     </div>
   }
   <div class="ml-4">
-    <div class="font-localNames text-xl">{{ item.nameLocal }}</div>
+    <h2 class="font-localNames text-xl ion-text-capitalize">
+      {{ item.nameLocal }}
+    </h2>
     @if (settings.useEnglish) {
-      <div class="font-medium text-gray-500 text-base">{{ item.nameEn }}</div>
+      <p
+        class="font-medium text-base ion-text-capitalize text-gray-600 dark:text-gray-700"
+        color="medium"
+      >
+        {{ item.nameEn }}
+      </p>
     }
     @if (settings.showScientificNames) {
-      <div class="text-base italic text-gray-500">{{ item.nameScientific }}</div>
+      <p class="text-base italic text-gray-500 dark:text-gray-700" color="medium">
+        {{ item.nameScientific }}
+      </p>
     }
     <!-- Type-specific content will be projected here -->
     <ng-content select="[typeSpecific]"></ng-content>

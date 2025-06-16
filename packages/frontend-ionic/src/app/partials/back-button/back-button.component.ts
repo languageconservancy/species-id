@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { IonFab, IonFabButton, IonIcon, NavController } from '@ionic/angular/standalone';
 import { arrowBack } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
@@ -6,9 +6,14 @@ import { addIcons } from 'ionicons';
 @Component({
   selector: 'app-back-button',
   template: `
-    <ion-fab vertical="bottom" horizontal="start" slot="fixed">
-      <ion-fab-button (click)="goBack()" color="light">
-        <ion-icon name="arrow-back"></ion-icon>
+    <ion-fab
+      vertical="bottom"
+      horizontal="start"
+      slot="fixed"
+      [class.bottom-safe]="addBottomSafePadding"
+    >
+      <ion-fab-button (click)="goBack()" color="primary">
+        <ion-icon name="arrow-back" color="light"></ion-icon>
       </ion-fab-button>
     </ion-fab>
   `,
@@ -27,6 +32,8 @@ import { addIcons } from 'ionicons';
   ],
 })
 export class BackButtonComponent {
+  @Input() addBottomSafePadding = true;
+
   constructor(private navController: NavController) {
     addIcons({ arrowBack });
   }

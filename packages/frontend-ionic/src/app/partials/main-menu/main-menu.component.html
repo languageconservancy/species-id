@@ -1,20 +1,30 @@
-<ion-menu menu-id="main-menu" contentId="main-content" side="start" type="overlay">
-  <ion-content class="ion-padding">
-    <div class="flex flex-col w-full h-full justify-center items-start pb-safe">
-      <ion-list lines="inset">
-        <ion-list-header class="mb-4">
-          <ion-label class="ion-text-center text-wrap">{{ env.mainMenuLabel }}</ion-label>
+<ion-menu menu-id="main-menu" contentId="main-content" side="start" type="overlay" color="primary">
+  <ion-content class="ion-padding" color="primary">
+    <div class="flex flex-col w-full h-full justify-end items-start pb-36">
+      <ion-list lines="inset" color="primary">
+        <ion-list-header class="pb-4" color="primary">
+          <ion-label class="ion-text-center text-wrap font-localNames text-4xl font-bold">{{
+            env.mainMenuLabel
+          }}</ion-label>
         </ion-list-header>
 
         @for (item of menuItems; track item; let index = $index) {
-          <ion-item button (click)="menuItemClicked(item.link)">
+          <ion-item button (click)="menuItemClicked(item.link)" color="primary">
             <ion-icon slot="start" [name]="item.icon"></ion-icon>
-            <ion-label class="text-lg"
-              ><h2>{{ item.label }}</h2></ion-label
-            >
+            <h2 class="font-localNames text-2xl font-bold">{{ item.label }}</h2>
           </ion-item>
         }
+        <ion-item button (click)="openSettingsModal()" color="primary">
+          <ion-icon slot="start" name="settings"></ion-icon>
+          <h2 class="font-localNames text-2xl font-bold">Settings</h2>
+        </ion-item>
       </ion-list>
+      <!-- X close button -->
+      <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="bottom-safe">
+        <ion-fab-button (click)="closeMenu()" color="primary">
+          <ion-icon name="close" color="light"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
     </div>
   </ion-content>
 </ion-menu>

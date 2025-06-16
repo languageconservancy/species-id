@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title> Explore Birds </ion-title>
+  <ion-toolbar color="primary">
+    <ion-title class="text-2xl font-localNames"> Explore Birds </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -23,8 +23,8 @@
     <!-- Items grouped by user preference -->
     @for (itemGroup of itemsGrouped; track itemGroup.name) {
     <ion-item-group>
-      <ion-item-divider sticky>
-        <ion-label>{{ itemGroup.name }}</ion-label>
+      <ion-item-divider sticky color="secondary">
+        <div class="font-light text-sm">{{ itemGroup.name }}</div>
       </ion-item-divider>
       @for (item of itemGroup.items; track item; let last = $last) {
       <app-bird-list-item [item]="item" [isLastItem]="last"></app-bird-list-item>

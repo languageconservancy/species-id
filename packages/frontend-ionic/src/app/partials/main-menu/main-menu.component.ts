@@ -8,10 +8,22 @@ import {
   IonIcon,
   IonLabel,
   IonListHeader,
+  IonFab,
+  IonFabButton,
+  ModalController,
 } from '@ionic/angular/standalone';
+import { SettingsPage } from 'app/pages/settings/settings.page';
 import { addIcons } from 'ionicons';
 import { bird } from '../../../assets/icon/bird';
-import { leaf, search, settings, informationCircle, close, chevronBack } from 'ionicons/icons';
+import {
+  leaf,
+  search,
+  settings,
+  informationCircle,
+  close,
+  chevronBack,
+  home,
+} from 'ionicons/icons';
 import { environment as env } from 'environments/environment';
 import { Router } from '@angular/router';
 
@@ -26,12 +38,32 @@ interface MenuItem {
   templateUrl: './main-menu.component.html',
   styleUrls: ['./main-menu.component.scss'],
   standalone: true,
-  imports: [IonMenu, IonContent, IonList, IonItem, IonIcon, IonLabel, IonListHeader, RouterModule],
+  imports: [
+    IonMenu,
+    IonContent,
+    IonList,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    IonListHeader,
+    RouterModule,
+    IonFab,
+    IonFabButton,
+    IonContent,
+    IonList,
+    IonItem,
+    IonLabel,
+  ],
 })
 export class MainMenuComponent {
   env = env;
   // Define the menu items
   menuItems: MenuItem[] = [
+    {
+      label: 'Home',
+      icon: 'home',
+      link: '/',
+    },
     {
       label: 'Birds',
       icon: 'bird',
@@ -45,15 +77,13 @@ export class MainMenuComponent {
     {
       label: 'About',
       icon: 'information-circle',
-      link: '/about',
-    },
-    {
-      label: 'Settings',
-      icon: 'settings',
-      link: 'settings',
+      link: '/tabs/about',
     },
   ];
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private modalController: ModalController
+  ) {
     // Add icons to the menu
     addIcons({
       leaf,
@@ -63,14 +93,12 @@ export class MainMenuComponent {
       bird,
       close,
       chevronBack,
+      home,
     });
   }
 
   menuItemClicked(link: string) {
-    // Navigate to the selected menu item using Angular Router
-    console.log('menuItemClicked: ', link);
     this.router.navigate([link]);
-    // Close the menu after navigation
     this.closeMenu();
   }
 
@@ -79,5 +107,19 @@ export class MainMenuComponent {
     if (menu) {
       menu.close();
     }
+  }
+
+  onWillDismiss() {
+    this.closeMenu();
+  }
+
+  async openSettingsModal() {
+    const modal = await this.modalController.create({
+      component: SettingsPage,
+      presentingElement: await this.modalController.getTop(),
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
+    });
+    await modal.present();
   }
 }

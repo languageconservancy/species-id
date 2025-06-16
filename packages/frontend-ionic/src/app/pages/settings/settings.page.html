@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Settings</ion-title>
+    <ion-title class="text-2xl font-localNames">Settings</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -8,7 +8,7 @@
   <ion-list [inset]="true">
     <!-- Language Settings -->
     <ion-item>
-      <ion-label>Use English Content</ion-label>
+      <ion-label>Show English Content</ion-label>
       <ion-toggle
         slot="end"
         [checked]="settings.useEnglish"
@@ -21,7 +21,7 @@
       <ion-label>Show Scientific Names</ion-label>
       <ion-toggle
         slot="end"
-        [checked]="settings.showScientificNames"
+        [(ngModel)]="settings.showScientificNames"
         (ionChange)="toggleSetting('showScientificNames')"
       ></ion-toggle>
     </ion-item>

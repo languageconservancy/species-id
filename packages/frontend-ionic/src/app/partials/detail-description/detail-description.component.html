@@ -1,7 +1,9 @@
 <!-- Description in local language and English -->
-@if (species?.descriptionLocal || species?.descriptionEn) {
-  <ion-text class="px-4 mx-auto max-w-prose ion-text-dark">
+<ion-text class="px-4 mx-auto max-w-prose ion-text-dark">
+  @if (species?.descriptionLocal) {
     <p class="text-sm leading-6" [innerHTML]="species?.descriptionLocal"></p>
+  }
+  @if (settings.useEnglish && species?.descriptionEn) {
     <p class="text-sm leading-relaxed" [innerHTML]="species?.descriptionEn"></p>
-  </ion-text>
-}
+  }
+</ion-text>

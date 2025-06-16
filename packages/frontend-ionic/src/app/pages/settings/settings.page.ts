@@ -3,7 +3,7 @@ import { SettingsService, AppSettings } from 'app/services/settings.service';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { addIcons } from 'ionicons';
-import { checkmarkCircle, close } from 'ionicons/icons';
+import { checkmarkCircle, close, moon, sunny } from 'ionicons/icons';
 import {
   IonContent,
   IonHeader,
@@ -17,7 +17,7 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
-  NavController,
+  ModalController,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
@@ -58,9 +58,9 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   constructor(
     private settingsService: SettingsService,
-    private navController: NavController
+    private modalController: ModalController
   ) {
-    addIcons({ checkmarkCircle, close });
+    addIcons({ checkmarkCircle, close, moon, sunny });
   }
 
   ngOnInit() {
@@ -91,6 +91,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   close() {
-    this.navController.back();
+    // close modal
+    this.modalController.dismiss();
   }
 }

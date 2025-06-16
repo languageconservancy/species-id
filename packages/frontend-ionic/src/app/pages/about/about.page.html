@@ -1,6 +1,6 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>About</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title class="text-2xl font-localNames">About</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -8,7 +8,7 @@
   <div class="flex flex-col items-center justify-center h-full">
     <h1 class="text-2xl font-bold mb-4">{{ env.mainMenuLabel }}</h1>
     <p class="text-center mb-4">
-      A comprehensive guide to birds and plants found in the Crow Reservation, in the Crow language.
+      A comprehensive guide to birds and plants found in the Crow Country, in the Crow language.
     </p>
     <p class="text-center mb-4">
       This application helps users identify and learn about local birds and plants, with names and
@@ -16,14 +16,5 @@
     </p>
     <p class="text-center text-sm text-gray-500">Version 1.0.0</p>
   </div>
+  <app-back-button></app-back-button>
 </ion-content>
-
-<ion-footer>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="close()" class="px-4">
-        <ion-icon slot="icon-only" name="close" class="text-2xl"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-footer>
