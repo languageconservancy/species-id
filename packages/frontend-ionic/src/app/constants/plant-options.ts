@@ -1,4 +1,4 @@
-import { environment } from 'environments/environment';
+import { ConfigService } from 'app/services/config.service';
 
 const languageLabel = (language: string) => {
   return language.charAt(0).toUpperCase() + language.slice(1);
@@ -13,15 +13,21 @@ export type PlantFilterOption = 'all' | 'endangered' | 'threatened' | 'native' |
 export type LanguageOption = 'local' | 'english';
 export type SortDirection = 'ascending' | 'descending';
 
-export const PLANT_SORT_OPTIONS: { value: PlantSortOption; label: string }[] = [
-  {
-    value: 'alphabetical-local',
-    label: `Alphabetical (${languageLabel(environment.language ?? 'Local')})`,
-  },
-  { value: 'alphabetical-english', label: 'Alphabetical (English)' },
-  { value: 'by-family', label: 'By Family' },
-  { value: 'by-height', label: 'By Height' },
-];
+export function getPlantSortOptions(
+  configService: ConfigService
+): { value: PlantSortOption; label: string }[] {
+  const languageName = languageLabel(configService.get<string>('language') ?? 'Local');
+
+  return [
+    {
+      value: 'alphabetical-local',
+      label: `Alphabetical (${languageName})`,
+    },
+    { value: 'alphabetical-english', label: 'Alphabetical (English)' },
+    { value: 'by-family', label: 'By Family' },
+    { value: 'by-height', label: 'By Height' },
+  ];
+}
 
 export const PLANT_FILTER_OPTIONS: { value: PlantFilterOption; label: string }[] = [
   { value: 'all', label: 'All' },

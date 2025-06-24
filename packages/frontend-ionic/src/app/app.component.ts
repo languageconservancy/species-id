@@ -3,6 +3,8 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { SqliteService } from './services/sqlite.service';
 import { MainMenuComponent } from './partials/main-menu/main-menu.component';
 import { StorageReadyService } from './services/storage-ready.service';
+import { CloudStorageSyncService } from './services/cloud-storage-sync.service';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 @Component({
   selector: 'app-root',
@@ -12,13 +14,28 @@ import { StorageReadyService } from './services/storage-ready.service';
 export class AppComponent {
   constructor(
     private sqliteService: SqliteService,
-    private storageReady: StorageReadyService
+    private storageReady: StorageReadyService,
+    private cloudStorageSyncService: CloudStorageSyncService
   ) {
     this.init();
   }
 
   private async init() {
     await this.storageReady.ready();
+    await this.syncCloudStorage();
+  }
+
+  private async syncCloudStorage() {
+    const initialSyncComplete = await this.cloudStorageSyncService.checkIsInitialSyncComplete();
+    if (!initialSyncComplete) {
+      console.log('Initial sync not complete, running initial sync');
+      // Need to get database and assets from the cloud storage.
+      await this.cloudStorageSyncService.runInitialSync();
+    } else {
+      console.log('Initial sync is complete, checking for updates');
+      // Initial sync is complete, but we need to check if the database and assets are up to date.
+      await this.cloudStorageSyncService.checkForUpdates();
+    }
   }
 
   async ngOnDestroy() {

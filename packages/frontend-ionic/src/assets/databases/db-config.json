@@ -1,7 +1,0 @@
-{
-  "database": "species-id",
-  "encrypted": false,
-  "mode": "no-encryption",
-  "version": "1",
-  "readonly": true
-}

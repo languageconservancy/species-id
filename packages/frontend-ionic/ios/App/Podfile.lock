@@ -8,12 +8,16 @@ PODS:
     - SQLCipher
     - ZIPFoundation
   - CapacitorCordova (7.2.0)
+  - CapacitorFilesystem (7.1.1):
+    - Capacitor
+    - IONFilesystemLib (~> 1.0)
   - CapacitorHaptics (7.0.1):
     - Capacitor
   - CapacitorKeyboard (7.0.1):
     - Capacitor
   - CapacitorStatusBar (7.0.1):
     - Capacitor
+  - IONFilesystemLib (1.0.0)
   - SQLCipher (4.9.0):
     - SQLCipher/standard (= 4.9.0)
   - SQLCipher/common (4.9.0)
@@ -26,12 +30,14 @@ DEPENDENCIES:
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
   - "CapacitorCommunitySqlite (from `../../node_modules/@capacitor-community/sqlite`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
 
 SPEC REPOS:
   trunk:
+    - IONFilesystemLib
     - SQLCipher
     - ZIPFoundation
 
@@ -44,6 +50,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor-community/sqlite"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
+  CapacitorFilesystem:
+    :path: "../../node_modules/@capacitor/filesystem"
   CapacitorHaptics:
     :path: "../../node_modules/@capacitor/haptics"
   CapacitorKeyboard:
@@ -56,12 +64,14 @@ SPEC CHECKSUMS:
   CapacitorApp: d63334c052278caf5d81585d80b21905c6f93f39
   CapacitorCommunitySqlite: 6501e7349acf998346acf24ef757861bb3f6fc2b
   CapacitorCordova: 5967b9ba03915ef1d585469d6e31f31dc49be96f
+  CapacitorFilesystem: 3acaa1d2b909a9dd904581a86f21782886e6bb38
   CapacitorHaptics: 70e47470fa1a6bd6338cd102552e3846b7f9a1b3
   CapacitorKeyboard: 969647d0ca2e5c737d7300088e2517aa832434e2
   CapacitorStatusBar: 275cbf2f4dfc00388f519ef80c7ec22edda342c9
+  IONFilesystemLib: ceacae793975039530458eabab0c495c70515a0d
   SQLCipher: 31878d8ebd27e5c96db0b7cb695c96e9f8ad77da
   ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
-PODFILE CHECKSUM: ff59d12b7ff6d06f47da870e6d4b73d9a2f73582
+PODFILE CHECKSUM: 16cc9fa0f17216e9f203e22bbc85c3497b1f1d59
 
 COCOAPODS: 1.15.2

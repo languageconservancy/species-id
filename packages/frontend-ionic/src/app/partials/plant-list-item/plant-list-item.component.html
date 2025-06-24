@@ -4,24 +4,30 @@
   (click)="onItemClick(item)"
 >
   @if (item.images && item.images.length > 0) {
-    <div class="rounded-md w-24 aspect-[4/3] overflow-hidden flex-shrink-0 my-2">
-      <ion-img
-        class="object-cover w-full h-full"
-        [src]="speciesService.getImageUrl(item.images[0].fileName)"
-      ></ion-img>
+    <div class="rounded-md w-24 aspect-[4/3] overflow-hidden flex-shrink-0 my-3">
+      <ion-img class="object-cover w-full h-full" [src]="imageUrl"></ion-img>
     </div>
   }
-  <ion-label class="ml-4">
-    <h2 class="font-localNames text-xl">{{ item.nameLocal }}</h2>
+  <div class="ml-4">
+    <h2 class="font-localNames text-xl ion-text-capitalize">
+      {{ item.nameLocal }}
+    </h2>
     @if (settings.useEnglish) {
-      <p class="font-medium text-base">{{ item.nameEn }}</p>
+      <p
+        class="font-medium text-base ion-text-capitalize text-gray-600 dark:text-gray-700"
+        color="medium"
+      >
+        {{ item.nameEn }}
+      </p>
     }
     @if (settings.showScientificNames) {
-      <div class="text-base italic text-gray-500">{{ item.nameScientific }}</div>
+      <p class="text-base italic text-gray-500 dark:text-gray-700" color="medium">
+        {{ item.nameScientific }}
+      </p>
     }
     <!-- Type-specific content will be projected here -->
     <ng-content select="[typeSpecific]"></ng-content>
-  </ion-label>
+  </div>
   <!-- Type-specific actions will be projected here -->
   <ng-content select="[typeActions]"></ng-content>
   <ion-icon slot="end" name="chevron-forward"></ion-icon>

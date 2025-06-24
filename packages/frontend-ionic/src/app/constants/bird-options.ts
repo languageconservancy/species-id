@@ -2,7 +2,7 @@
  * This file contains the constants for the bird options.
  */
 
-import { environment } from 'environments/environment';
+import { ConfigService } from 'app/services/config.service';
 
 const languageLabel = (language: string) => {
   return language.charAt(0).toUpperCase() + language.slice(1);
@@ -13,14 +13,20 @@ export type BirdFilterOption = 'all' | 'endangered' | 'threatened' | 'migratory'
 export type LanguageOption = 'local' | 'english';
 export type SortDirection = 'ascending' | 'descending';
 
-export const BIRD_SORT_OPTIONS: { value: BirdSortOption; label: string }[] = [
-  {
-    value: 'alphabetical-local',
-    label: `Alphabetical (${languageLabel(environment.language ?? 'Local')})`,
-  },
-  { value: 'alphabetical-english', label: 'Alphabetical (English)' },
-  { value: 'by-order', label: 'By Order' },
-];
+export function getBirdSortOptions(
+  configService: ConfigService
+): { value: BirdSortOption; label: string }[] {
+  const languageName = languageLabel(configService.get<string>('language') ?? 'Local');
+
+  return [
+    {
+      value: 'alphabetical-local',
+      label: `Alphabetical (${languageName})`,
+    },
+    { value: 'alphabetical-english', label: 'Alphabetical (English)' },
+    { value: 'by-order', label: 'By Order' },
+  ];
+}
 
 export const BIRD_FILTER_OPTIONS: { value: BirdFilterOption; label: string }[] = [
   { value: 'all', label: 'All' },

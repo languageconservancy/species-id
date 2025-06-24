@@ -23,11 +23,15 @@ export class BirdQueriesService {
           bird_images.file_name AS image_file_name,
           bird_images.caption AS image_caption,
           bird_images.sort_order AS image_sort_order,
+          bird_audios.file_name AS audio_file_name,
+          bird_audios.caption AS audio_caption,
+          bird_audios.sort_order AS audio_sort_order,
           bird_orders.name_scientific AS order_name_scientific,
           bird_orders.description_local AS order_description_local,
           bird_orders.description_en AS order_description_en
         FROM birds
         LEFT JOIN bird_images ON birds.id = bird_images.bird_id
+        LEFT JOIN bird_audios ON birds.id = bird_audios.bird_id
         LEFT JOIN bird_orders ON birds.order_id = bird_orders.id
       ;`
       );
@@ -53,11 +57,15 @@ export class BirdQueriesService {
           bird_images.file_name AS image_file_name,
           bird_images.caption AS image_caption,
           bird_images.sort_order AS image_sort_order,
+          bird_audios.file_name AS audio_file_name,
+          bird_audios.caption AS audio_caption,
+          bird_audios.sort_order AS audio_sort_order,
           bird_orders.name_scientific AS order_name_scientific,
           bird_orders.description_local AS order_description_local,
           bird_orders.description_en AS order_description_en
         FROM birds
         LEFT JOIN bird_images ON birds.id = bird_images.bird_id
+        LEFT JOIN bird_audios ON birds.id = bird_audios.bird_id
         LEFT JOIN bird_orders ON birds.order_id = bird_orders.id
         WHERE birds.id = ?;`,
         [id]

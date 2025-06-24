@@ -25,7 +25,7 @@ export class TextAudioQueriesService {
     try {
       // Use parameterized queries to prevent SQL injection
       const result = await this.sqliteService.executeQuery(
-        `SELECT * FROM text_audio WHERE text = ?;`,
+        `SELECT * FROM text_audios WHERE text = ?;`,
         [text]
       );
       if (result.values.length === 0) {

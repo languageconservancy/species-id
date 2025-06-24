@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { defineCustomElements as jeepSqlite } from 'jeep-sqlite/loader';
-import { environment } from 'environments/environment';
+import { ConfigService } from 'app/services/config.service';
+import { CloudStorageSyncService } from 'app/services/cloud-storage-sync.service';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +12,21 @@ import { environment } from 'environments/environment';
 export class SqliteService {
   private _sqliteConnection!: SQLiteConnection;
   private _db: SQLiteDBConnection | undefined;
+  private readonly dbName: string = '';
+  private readonly dbVersion: number = 0;
+  private readonly dbMode: string = '';
+  private readonly dbEncrypted: boolean = false;
+  private readonly dbReadOnly: boolean = false;
 
-  constructor() {
+  constructor(
+    private configService: ConfigService,
+    private cloudStorageSyncService: CloudStorageSyncService
+  ) {
+    this.dbName = this.configService.get('dbName') ?? 'db-prod';
+    this.dbVersion = this.configService.get('dbVersion') ?? 1;
+    this.dbMode = this.configService.get('dbMode') ?? 'no-encryption';
+    this.dbEncrypted = this.configService.get('dbEncrypted') ?? false;
+    this.dbReadOnly = this.configService.get('dbReadOnly') ?? false;
     this._sqliteConnection = new SQLiteConnection(CapacitorSQLite);
   }
 
@@ -21,6 +36,9 @@ export class SqliteService {
    * @returns {Promise<void>} A promise that resolves when the database is initialized.
    */
   async init(): Promise<void> {
+    await this.cloudStorageSyncService.waitUntilDbIsReady();
+    console.log('db is ready');
+
     if (Capacitor.getPlatform() === 'web') {
       // Define custom elements for Jeep SQLite
       jeepSqlite(window);
@@ -47,7 +65,10 @@ export class SqliteService {
       console.log('SQLiteService: init - DB imported:', res);
     }
 
-    await this._sqliteConnection.copyFromAssets();
+    // Database files are now in Library/NoCloud, no need to copy from assets
+    console.log(
+      'SQLiteService: init - Database files are in Library/NoCloud, skipping copyFromAssets'
+    );
 
     await this._createConnectionAndOpenDb();
   }
@@ -58,16 +79,26 @@ export class SqliteService {
       return;
     }
 
-    this._db = await this._sqliteConnection.createConnection(
-      environment.dbName,
-      environment.dbEncrypted,
-      environment.dbMode,
-      environment.dbVersion,
-      environment.dbReadOnly
-    );
+    try {
+      this._db = await this._sqliteConnection.createConnection(
+        this.dbName,
+        this.dbEncrypted,
+        this.dbMode,
+        this.dbVersion,
+        this.dbReadOnly
+      );
+    } catch (error) {
+      console.error('SQLiteService: createConnectionAndOpenDb - Error creating connection:', error);
+      throw error;
+    }
 
-    await this._db.open();
-    console.debug('SQLiteService: createConnectionAndOpenDb - Database connection opened.');
+    try {
+      await this._db.open();
+      console.debug('SQLiteService: createConnectionAndOpenDb - Database connection opened.');
+    } catch (error) {
+      console.error('SQLiteService: createConnectionAndOpenDb - Error opening database:', error);
+      throw error;
+    }
   }
 
   /**
@@ -101,21 +132,27 @@ export class SqliteService {
   }
 
   /**
-   * Loads the database JSON file.
-   * This method fetches the JSON file containing the database schema and data.
+   * Loads the database JSON file from Library/NoCloud.
+   * This method reads the JSON file containing the database schema and data.
    * @returns {Promise<string>} A promise that resolves with the JSON string of the database.
    */
   private async _loadDbJson(): Promise<string> {
     try {
-      const response = await fetch(`assets/databases/db-config.json`);
-      if (!response.ok) {
-        throw new Error(`Failed to load database JSON: ${response.statusText}`);
+      console.log('SQLiteService: _loadDbJson - Loading database config from Library/NoCloud');
+      const { data } = await Filesystem.readFile({
+        path: 'databases/db-config.json',
+        directory: Directory.LibraryNoCloud,
+      });
+
+      if (typeof data !== 'string') {
+        throw new Error('Database config data is not a string');
       }
-      const json = await response.text();
-      return json;
+
+      console.log('SQLiteService: _loadDbJson - Successfully loaded database config');
+      return data;
     } catch (error) {
       console.error('SQLiteService: _loadDbJson - Error loading JSON:', error);
-      throw error;
+      throw new Error(`Failed to load database config from Library/NoCloud: ${error}`);
     }
   }
 
@@ -126,8 +163,8 @@ export class SqliteService {
    */
   async ensureConnection(): Promise<void> {
     const connectionExists = await this._sqliteConnection.isConnection(
-      environment.dbName,
-      environment.dbReadOnly
+      this.dbName,
+      this.dbReadOnly
     );
 
     if (!connectionExists) {
@@ -145,7 +182,7 @@ export class SqliteService {
    */
   async close(): Promise<void> {
     if (this._db) {
-      await this._sqliteConnection.closeConnection(environment.dbName, false);
+      await this._sqliteConnection.closeConnection(this.dbName, false);
       this._db = undefined;
     }
   }

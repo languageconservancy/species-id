@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { IonContent, NavController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { close } from 'ionicons/icons';
-import { environment as env } from 'environments/environment';
 import { BackButtonComponent } from 'app/partials/back-button/back-button.component';
 import { HeaderComponent } from 'app/partials/header/header.component';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-about',
@@ -14,10 +14,14 @@ import { HeaderComponent } from 'app/partials/header/header.component';
   imports: [CommonModule, IonContent, BackButtonComponent, HeaderComponent],
 })
 export class AboutPage {
-  env = env;
+  mainMenuLabel: string = '';
 
-  constructor(private navController: NavController) {
+  constructor(
+    private navController: NavController,
+    private configService: ConfigService
+  ) {
     addIcons({ close });
+    this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Birds & Plants';
   }
 
   close() {

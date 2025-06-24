@@ -24,8 +24,8 @@ import {
   chevronBack,
   home,
 } from 'ionicons/icons';
-import { environment as env } from 'environments/environment';
 import { Router } from '@angular/router';
+import { ConfigService } from 'app/services/config.service';
 
 interface MenuItem {
   label: string;
@@ -56,7 +56,7 @@ interface MenuItem {
   ],
 })
 export class MainMenuComponent {
-  env = env;
+  mainMenuLabel: string = '';
   // Define the menu items
   menuItems: MenuItem[] = [
     {
@@ -82,8 +82,10 @@ export class MainMenuComponent {
   ];
   constructor(
     private router: Router,
-    private modalController: ModalController
+    private modalController: ModalController,
+    public configService: ConfigService
   ) {
+    this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Birds & Plants';
     // Add icons to the menu
     addIcons({
       leaf,

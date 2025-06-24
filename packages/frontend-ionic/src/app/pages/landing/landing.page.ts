@@ -5,8 +5,8 @@ import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { bird } from '../../../assets/icon/bird';
 import { leaf } from 'ionicons/icons';
-import { environment as env } from 'environments/environment';
 import { SpeciesType } from 'app/models/species.model';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-landing',
@@ -15,11 +15,15 @@ import { SpeciesType } from 'app/models/species.model';
   imports: [CommonModule, IonContent, IonButton, IonIcon],
 })
 export class LandingPage {
-  env = env;
   SpeciesType = SpeciesType;
+  mainMenuLabel: string = '';
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private configService: ConfigService
+  ) {
     addIcons({ bird, leaf });
+    this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Birds & Plants';
   }
 
   navigateToExplore(type: SpeciesType) {

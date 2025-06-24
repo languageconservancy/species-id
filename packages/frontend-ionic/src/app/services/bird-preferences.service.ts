@@ -7,7 +7,8 @@ import {
   SortOption,
   FilterOption,
 } from 'app/services/base-preferences.service';
-import { BIRD_SORT_OPTIONS, BIRD_FILTER_OPTIONS } from 'app/constants/bird-options';
+import { getBirdSortOptions, BIRD_FILTER_OPTIONS } from 'app/constants/bird-options';
+import { ConfigService } from 'app/services/config.service';
 
 @Injectable({ providedIn: 'root' })
 export class BirdPreferencesService extends BasePreferencesService {
@@ -17,13 +18,14 @@ export class BirdPreferencesService extends BasePreferencesService {
 
   constructor(
     protected override storage: Storage,
-    protected override storageReady: StorageReadyService
+    protected override storageReady: StorageReadyService,
+    protected configService: ConfigService
   ) {
     super(storage, storageReady);
   }
 
   getSortOptions(): SortOption[] {
-    return BIRD_SORT_OPTIONS;
+    return getBirdSortOptions(this.configService);
   }
 
   getFilterOptions(): FilterOption[] {

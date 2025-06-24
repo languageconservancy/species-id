@@ -3,7 +3,15 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
   appName: 'frontend-ionic',
-  webDir: 'www'
+  webDir: 'www',
+  plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
+    CapacitorSQLite: {
+      iosDatabaseLocation: 'Library/NoCloud/databases',
+    },
+  },
 };
 
 export default config;

@@ -16,6 +16,7 @@ import { register as registerSwiperElements } from 'swiper/element/bundle';
 import { App } from '@capacitor/app';
 import { createAnimation } from '@ionic/angular';
 import { StatusBar } from '@capacitor/status-bar';
+import { ConfigService } from 'app/services/config.service';
 
 StatusBar.hide();
 
@@ -25,59 +26,66 @@ if (environment.production) {
   enableProdMode();
 }
 
-const appPromise = bootstrapApplication(AppComponent, {
-  providers: [
-    SqliteService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular({
-      mode: 'ios',
-      animated: true,
-      navAnimation: (baseEl: any, opts?: any) => {
-        const enteringEl = opts.enteringEl;
-        const leavingEl = opts.leavingEl;
-        const direction = opts.direction;
+const configService = new ConfigService();
 
-        const enteringAnimation = createAnimation()
-          .addElement(enteringEl)
-          .duration(300)
-          .easing('ease-in-out')
-          .fromTo(
-            'transform',
-            direction === 'forward' ? 'translateX(100%)' : 'translateX(-100%)',
-            'translateX(0)'
-          )
-          .fromTo('opacity', 0, 1);
+// Load the config service before bootstrapping the app, so all the components can use it.
+configService
+  .load()
+  .then(() => {
+    return bootstrapApplication(AppComponent, {
+      providers: [
+        SqliteService,
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        provideIonicAngular({
+          mode: 'ios',
+          animated: true,
+          navAnimation: (baseEl: any, opts?: any) => {
+            const enteringEl = opts.enteringEl;
+            const leavingEl = opts.leavingEl;
+            const direction = opts.direction;
 
-        const leavingAnimation = createAnimation()
-          .addElement(leavingEl)
-          .duration(300)
-          .easing('ease-in-out')
-          .fromTo(
-            'transform',
-            'translateX(0)',
-            direction === 'forward' ? 'translateX(-100%)' : 'translateX(100%)'
-          )
-          .fromTo('opacity', 1, 0);
+            const enteringAnimation = createAnimation()
+              .addElement(enteringEl)
+              .duration(300)
+              .easing('ease-in-out')
+              .fromTo(
+                'transform',
+                direction === 'forward' ? 'translateX(100%)' : 'translateX(-100%)',
+                'translateX(0)'
+              )
+              .fromTo('opacity', 0, 1);
 
-        return createAnimation().addAnimation([enteringAnimation, leavingAnimation]);
-      },
-    }),
-    provideRouter(routes, withPreloading(PreloadAllModules)),
-    { provide: Storage, useClass: Storage },
-  ],
-});
+            const leavingAnimation = createAnimation()
+              .addElement(leavingEl)
+              .duration(300)
+              .easing('ease-in-out')
+              .fromTo(
+                'transform',
+                'translateX(0)',
+                direction === 'forward' ? 'translateX(-100%)' : 'translateX(100%)'
+              )
+              .fromTo('opacity', 1, 0);
 
-// Once app bootstraps, initialize the SQLite service
-appPromise.then(async (appRef) => {
-  const sqliteService = appRef.injector.get(SqliteService);
-  await sqliteService.init();
+            return createAnimation().addAnimation([enteringAnimation, leavingAnimation]);
+          },
+        }),
+        provideRouter(routes, withPreloading(PreloadAllModules)),
+        { provide: Storage, useClass: Storage },
+        // We need to provide the config service here, so that the config service loaded here is available
+        { provide: ConfigService, useValue: configService },
+      ],
+    });
+  })
+  .then(async (appRef) => {
+    const sqliteService = appRef.injector.get(SqliteService);
+    await sqliteService.init();
 
-  App.addListener('appStateChange', async ({ isActive }) => {
-    // If the app is active, ensure the SQLite connection is established
-    // This is useful for scenarios where the app might go to the background and come back
-    console.log('App state changed:', isActive ? 'Active' : 'Inactive');
-    if (isActive) {
-      await sqliteService.ensureConnection();
-    }
+    App.addListener('appStateChange', async ({ isActive }) => {
+      // If the app is active, ensure the SQLite connection is established
+      // This is useful for scenarios where the app might go to the background and come back
+      console.log('App state changed:', isActive ? 'Active' : 'Inactive');
+      if (isActive) {
+        await sqliteService.ensureConnection();
+      }
+    });
   });
-});

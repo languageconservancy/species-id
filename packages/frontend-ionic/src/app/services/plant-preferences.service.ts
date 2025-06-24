@@ -6,7 +6,8 @@ import {
   SortOption,
   FilterOption,
 } from 'app/services/base-preferences.service';
-import { PLANT_SORT_OPTIONS, PLANT_FILTER_OPTIONS } from 'app/constants/plant-options';
+import { getPlantSortOptions, PLANT_FILTER_OPTIONS } from 'app/constants/plant-options';
+import { ConfigService } from 'app/services/config.service';
 
 @Injectable({ providedIn: 'root' })
 export class PlantPreferencesService extends BasePreferencesService {
@@ -16,13 +17,14 @@ export class PlantPreferencesService extends BasePreferencesService {
 
   constructor(
     protected override storage: Storage,
-    protected override storageReady: StorageReadyService
+    protected override storageReady: StorageReadyService,
+    protected configService: ConfigService
   ) {
     super(storage, storageReady);
   }
 
   getSortOptions(): SortOption[] {
-    return PLANT_SORT_OPTIONS;
+    return getPlantSortOptions(this.configService);
   }
 
   getFilterOptions(): FilterOption[] {

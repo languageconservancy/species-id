@@ -21,6 +21,8 @@ export class BirdListItemComponent implements OnInit {
     useEnglish: true,
     showScientificNames: true,
   };
+  imageUrl: string = '';
+
   constructor(
     public speciesService: SpeciesService,
     public navController: NavController,
@@ -31,6 +33,7 @@ export class BirdListItemComponent implements OnInit {
 
   ngOnInit() {
     this._subscribeToSettings();
+    this._loadImageUrl();
   }
 
   ngOnDestroy() {
@@ -42,6 +45,20 @@ export class BirdListItemComponent implements OnInit {
       this.settings = settings;
     });
     this.subscribers.add(sub);
+  }
+
+  private async _loadImageUrl() {
+    if (this.item?.images && this.item.images.length > 0) {
+      try {
+        this.imageUrl = await this.speciesService.getImageUrl(
+          this.item.images[0].fileName,
+          this.item.type
+        );
+      } catch (error) {
+        console.error('Error loading image URL:', error);
+        this.imageUrl = '';
+      }
+    }
   }
 
   onItemClick(item: Species) {

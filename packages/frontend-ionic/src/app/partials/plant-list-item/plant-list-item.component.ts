@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { IonIcon, IonImg, IonItem, IonLabel, NavController } from '@ionic/angular/standalone';
+import { IonIcon, IonImg, IonItem, NavController } from '@ionic/angular/standalone';
 import { Species } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { chevronForward } from 'ionicons/icons';
@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-plant-list-item',
   templateUrl: './plant-list-item.component.html',
   standalone: true,
-  imports: [IonIcon, IonLabel, IonItem, IonImg],
+  imports: [IonIcon, IonItem, IonImg],
 })
 export class PlantListItemComponent implements OnInit {
   @Input() item!: Species;
@@ -21,6 +21,7 @@ export class PlantListItemComponent implements OnInit {
     useEnglish: true,
     showScientificNames: true,
   };
+  imageUrl: string = '';
 
   constructor(
     public speciesService: SpeciesService,
@@ -32,6 +33,7 @@ export class PlantListItemComponent implements OnInit {
 
   ngOnInit() {
     this._subscribeToSettings();
+    this._loadImageUrl();
   }
 
   ngOnDestroy() {
@@ -43,6 +45,20 @@ export class PlantListItemComponent implements OnInit {
       this.settings = settings;
     });
     this.subscribers.add(sub);
+  }
+
+  private async _loadImageUrl() {
+    if (this.item?.images && this.item.images.length > 0) {
+      try {
+        this.imageUrl = await this.speciesService.getImageUrl(
+          this.item.images[0].fileName,
+          this.item.type
+        );
+      } catch (error) {
+        console.error('Error loading image URL:', error);
+        this.imageUrl = '';
+      }
+    }
   }
 
   onItemClick(item: Species) {
