@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { SqliteService } from 'app/services/sqlite.service';
+import { SqljsService } from 'app/services/sqljs.service';
 import { TextAudio, mapTextAudio } from 'app/models/text-audio.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TextAudioQueriesService {
-  constructor(private sqliteService: SqliteService) {}
+  constructor(private sqljsService: SqljsService) {}
 
   /**
    * @param {string} text - The text to search for in the database.
@@ -24,14 +24,23 @@ export class TextAudioQueriesService {
 
     try {
       // Use parameterized queries to prevent SQL injection
-      const result = await this.sqliteService.executeQuery(
+      const result = await this.sqljsService.executeQuery(
         `SELECT * FROM text_audios WHERE text = ?;`,
         [text]
       );
+
       if (result.values.length === 0) {
         return null;
       }
-      return mapTextAudio(result.values[0]);
+
+      // Convert array of values to object using column names
+      const rowValues = result.values[0];
+      const row: any = {};
+      result.columns.forEach((column: string, index: number) => {
+        row[column] = rowValues[index];
+      });
+
+      return mapTextAudio(row);
     } catch (error) {
       console.error('Error executing query:', error);
       throw error;

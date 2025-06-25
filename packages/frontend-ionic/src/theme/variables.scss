@@ -7,8 +7,16 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Gabriela';
+  src: url('../assets/fonts/Gabriela-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
-  --ion-font-family-local-names: 'Architects Daughter', cursive;
+  --ion-font-family-local-names: 'Gabriela', serif;
+  --ion-font-family-english-titles: 'Architects Daughter', cursive;
 
   // Light mode colors
   --ion-color-primary: #6fa2c7;

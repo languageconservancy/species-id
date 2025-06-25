@@ -4,6 +4,7 @@ export const theme = {
   extend: {
     fontFamily: {
       localNames: ['var(--ion-font-family-local-names)'],
+      englishTitles: ['var(--ion-font-family-english-titles)'],
     },
   },
 };
