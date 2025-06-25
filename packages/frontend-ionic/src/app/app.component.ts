@@ -4,7 +4,7 @@ import { SqliteService } from './services/sqlite.service';
 import { MainMenuComponent } from './partials/main-menu/main-menu.component';
 import { StorageReadyService } from './services/storage-ready.service';
 import { CloudStorageSyncService } from './services/cloud-storage-sync.service';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { SqljsService } from './services/sqljs.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,7 @@ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 })
 export class AppComponent {
   constructor(
-    private sqliteService: SqliteService,
+    private sqljsService: SqljsService,
     private storageReady: StorageReadyService,
     private cloudStorageSyncService: CloudStorageSyncService
   ) {
@@ -26,7 +26,7 @@ export class AppComponent {
   }
 
   private async syncCloudStorage() {
-    const initialSyncComplete = await this.cloudStorageSyncService.checkIsInitialSyncComplete();
+    const initialSyncComplete = await this.cloudStorageSyncService.isInitialSyncComplete();
     if (!initialSyncComplete) {
       console.log('Initial sync not complete, running initial sync');
       // Need to get database and assets from the cloud storage.
@@ -41,6 +41,6 @@ export class AppComponent {
   async ngOnDestroy() {
     // Close the SQLite database connection when the app component is destroyed
     // Initialization is handled in main.ts, so we just need to ensure cleanup here
-    await this.sqliteService.close();
+    await this.sqljsService.close();
   }
 }

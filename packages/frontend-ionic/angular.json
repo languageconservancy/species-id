@@ -31,10 +31,15 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "assets"
+              },
+              {
+                "glob": "sql-wasm.wasm",
+                "input": "node_modules/sql.js/dist",
+                "output": "assets/"
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss", "src/tailwind.css"],
-            "scripts": [],
+            "scripts": ["node_modules/sql.js/dist/sql-wasm.js"],
             "browser": "src/main.ts"
           },
           "configurations": {
@@ -104,7 +109,7 @@
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": []
+            "scripts": ["node_modules/sql.js/dist/sql-wasm.js"]
           },
           "configurations": {
             "ci": {

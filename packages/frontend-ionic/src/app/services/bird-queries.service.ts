@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { SqliteService } from 'app/services/sqlite.service';
+import { SqljsService } from 'app/services/sqljs.service';
 import { Species, mapSpeciesWithImagesAndOrder } from 'app/models/species.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BirdQueriesService {
-  constructor(private sqliteService: SqliteService) {}
+  constructor(private sqljsService: SqljsService) {}
 
   async getFull(): Promise<Species[]> {
     try {
-      const result = await this.sqliteService.executeQuery(
+      const result = await this.sqljsService.executeQuery(
         `SELECT
           birds.id AS species_id,
           birds.name_scientific AS species_name_scientific,
@@ -35,7 +35,7 @@ export class BirdQueriesService {
         LEFT JOIN bird_orders ON birds.order_id = bird_orders.id
       ;`
       );
-      return mapSpeciesWithImagesAndOrder(result.values);
+      return mapSpeciesWithImagesAndOrder(result);
     } catch (error) {
       console.error('Error executing query:', error);
       throw error;
@@ -44,7 +44,7 @@ export class BirdQueriesService {
 
   async getById(id: number): Promise<Species | null> {
     try {
-      const result = await this.sqliteService.executeQuery(
+      const result = await this.sqljsService.executeQuery(
         `SELECT
           birds.id AS species_id,
           birds.name_scientific AS species_name_scientific,
@@ -73,7 +73,7 @@ export class BirdQueriesService {
       if (result.values.length === 0) {
         return null;
       }
-      return mapSpeciesWithImagesAndOrder(result.values)[0];
+      return mapSpeciesWithImagesAndOrder(result)[0];
     } catch (error) {
       console.error('Error executing query:', error);
       return null;

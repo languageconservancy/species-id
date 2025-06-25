@@ -1,4 +1,11 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  Input,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { Species } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 
@@ -9,14 +16,21 @@ import { SpeciesService } from 'app/services/species.service';
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ImageCarouselComponent implements OnInit {
+export class ImageCarouselComponent implements OnInit, OnChanges {
   @Input() species: Species | null = null;
   imageUrls: string[] = [];
 
   constructor(public speciesService: SpeciesService) {}
 
   ngOnInit() {
-    this._loadImageUrls();
+    // Initial load will be handled by ngOnChanges
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Watch for changes to the species property
+    if (changes['species'] && changes['species'].currentValue) {
+      this._loadImageUrls();
+    }
   }
 
   private async _loadImageUrls() {

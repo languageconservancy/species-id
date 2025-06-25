@@ -19,7 +19,7 @@ export class CloudStorageSyncService {
   private dbIsReady: boolean = false;
   private dbIsReadyPromise: Promise<void> | null = null;
   private dbIsReadyResolve: ((value: void | PromiseLike<void>) => void) | null = null;
-  private indexOfCloudStorage: any;
+  private cloudStorageIndexJson: any;
 
   constructor(
     private configService: ConfigService,
@@ -42,7 +42,7 @@ export class CloudStorageSyncService {
    * meaning media files have been downloaded and saved in persistent storage.
    * @returns {Promise<boolean>} - True if the initial sync is complete, false otherwise.
    */
-  async checkIsInitialSyncComplete(): Promise<boolean> {
+  async isInitialSyncComplete(): Promise<boolean> {
     await this.storageReady.ready();
     const isInitialSyncComplete = await this.storage.get(this.INITIAL_SYNC_COMPLETE_KEY);
     return isInitialSyncComplete ?? false;
@@ -80,7 +80,7 @@ export class CloudStorageSyncService {
 
     // Download and save the remote index.json
     console.log('[runInitialSync] Downloading index.json from S3');
-    const remoteIndex: string = await this.downloadRemoteIndexJson();
+    const remoteIndex: string = await this.downloadIndexJsonFromCloudStorage();
     await this.ensureDirectoryExists('');
     await this.writeFile('index.json', remoteIndex, Encoding.UTF8);
 
@@ -93,14 +93,25 @@ export class CloudStorageSyncService {
     // Mark initial sync as complete
     await this.storage.set(this.INITIAL_SYNC_COMPLETE_KEY, true);
 
+    const contents = await this.getContentsOfLibraryNoCloud();
+    console.log('[runInitialSync] Contents of Library/NoCloud:', contents);
+
     this.setDbIsReady();
+  }
+
+  private async getContentsOfLibraryNoCloud(): Promise<string[]> {
+    const contents = await Filesystem.readdir({
+      path: 'databases',
+      directory: Directory.LibraryNoCloud,
+    });
+    return contents.files.map((file) => file.name);
   }
 
   /**
    * Gets the index.json from the S3 index URL, which describes the contents in S3.
    */
-  private async downloadRemoteIndexJson(): Promise<string> {
-    console.log('[downloadRemoteIndexJson]');
+  private async downloadIndexJsonFromCloudStorage(): Promise<string> {
+    console.log('[downloadIndexJsonFromCloudStorage]');
     try {
       const response = await CapacitorHttp.get({
         url: this.indexUrl,
@@ -110,10 +121,10 @@ export class CloudStorageSyncService {
       }
       const remoteIndex = await response.data;
       if (typeof remoteIndex === 'string') {
-        this.indexOfCloudStorage = JSON.parse(remoteIndex);
+        this.cloudStorageIndexJson = JSON.parse(remoteIndex);
         return remoteIndex;
       } else {
-        this.indexOfCloudStorage = remoteIndex;
+        this.cloudStorageIndexJson = remoteIndex;
         return JSON.stringify(remoteIndex);
       }
     } catch (error) {
@@ -127,29 +138,41 @@ export class CloudStorageSyncService {
    * Downloads database files that don't exist locally or have different hashes.
    */
   async syncDatabaseFiles(): Promise<void> {
-    console.log('[syncDatabaseFiles]');
+    console.log('[syncDatabaseFiles] Starting database sync');
 
-    if (!this.indexOfCloudStorage || !this.indexOfCloudStorage.databases) {
+    if (!this.cloudStorageIndexJson || !this.cloudStorageIndexJson.databases) {
       console.log('[syncDatabaseFiles] No database files to sync');
       return;
     }
 
-    for (const { path, hash } of this.indexOfCloudStorage.databases) {
+    console.log(
+      `[syncDatabaseFiles] Found ${this.cloudStorageIndexJson.databases.length} database files to check`
+    );
+
+    for (const { path, hash } of this.cloudStorageIndexJson.databases) {
+      console.log(`[syncDatabaseFiles] Checking database file: ${path} with hash: ${hash}`);
+
       const exists = await this.checkAndCompareHash(path, hash);
+      console.log(`[syncDatabaseFiles] File ${path} exists with correct hash: ${exists}`);
+
       if (!exists) {
         console.log(`[syncDatabaseFiles] Downloading database file: ${path}`);
 
         // Determine file type and use appropriate download method
         const fileExtension = this.getFileExtension(path).toLowerCase();
         if (fileExtension === 'json') {
+          console.log(`[syncDatabaseFiles] Downloading as JSON file: ${path}`);
           await this.downloadJsonFile(path);
         } else {
-          await this.downloadBinaryFile(path);
+          console.log(`[syncDatabaseFiles] Downloading as database file: ${path}`);
+          await this.downloadDatabaseFile(path);
         }
       } else {
         console.debug(`[syncDatabaseFiles] Database file already exists: ${path}`);
       }
     }
+
+    console.log('[syncDatabaseFiles] Database sync completed');
   }
 
   /**
@@ -159,13 +182,13 @@ export class CloudStorageSyncService {
   async syncAllFiles(): Promise<void> {
     console.log('[syncAllFiles]');
 
-    if (!this.indexOfCloudStorage) {
+    if (!this.cloudStorageIndexJson) {
       console.log('[syncAllFiles] No index data available');
       return;
     }
 
     // Recursively process all directories except 'databases'
-    await this.syncDirectoryRecursive(this.indexOfCloudStorage, '');
+    await this.syncDirectoryRecursive(this.cloudStorageIndexJson, '');
   }
 
   /**
@@ -225,20 +248,20 @@ export class CloudStorageSyncService {
       throw new Error('Internet connection required to download files for offline mode');
     }
 
-    if (!this.indexOfCloudStorage) {
+    if (!this.cloudStorageIndexJson) {
       console.log('[downloadAllFilesForOffline] No index data available');
       return;
     }
 
     // Count total files first
-    const totalFiles = this.countFilesRecursive(this.indexOfCloudStorage, 'databases');
+    const totalFiles = this.countFilesRecursive(this.cloudStorageIndexJson, 'databases');
     let downloadedCount = 0;
 
     console.log(`[downloadAllFilesForOffline] Found ${totalFiles} files to download`);
 
     // Download all files recursively
     await this.downloadDirectoryRecursive(
-      this.indexOfCloudStorage,
+      this.cloudStorageIndexJson,
       '',
       totalFiles,
       downloadedCount
@@ -322,6 +345,8 @@ export class CloudStorageSyncService {
   async checkForUpdates(): Promise<boolean> {
     console.log('[checkForUpdates]');
     this.setDbIsReady();
+    const contents = await this.getContentsOfLibraryNoCloud();
+    console.log('[checkForUpdates] Contents of Library/NoCloud:', contents);
 
     if (!navigator.onLine) {
       console.warn('[checkForUpdates] No internet connection, skipping update check');
@@ -330,7 +355,7 @@ export class CloudStorageSyncService {
 
     // Re-fetch the remote index to get latest hashes
     try {
-      const remoteIndex: string = await this.downloadRemoteIndexJson();
+      const remoteIndex: string = await this.downloadIndexJsonFromCloudStorage();
       const latestIndex = JSON.parse(remoteIndex);
 
       let updatesAvailable = false;
@@ -453,19 +478,112 @@ export class CloudStorageSyncService {
   }
 
   /**
+   * Downloads and saves a database file from S3 to the LibraryNoCloud/databases/ directory.
+   */
+  private async downloadDatabaseFile(remotePath: string): Promise<void> {
+    const remoteUrl = this.joinUrl(
+      this.configService.get<string>('assetBaseUrl') ?? '',
+      remotePath
+    );
+
+    console.log(`[downloadDatabaseFile] Starting download from: ${remoteUrl}`);
+
+    try {
+      const response = await CapacitorHttp.get({
+        url: remoteUrl,
+        responseType: 'blob',
+      });
+
+      console.log(`[downloadDatabaseFile] Response received, status: ${response.status}`);
+
+      if (!response.data) {
+        throw new Error(`Failed to download database file: ${remoteUrl}`);
+      }
+
+      console.log(`[downloadDatabaseFile] Response data type: ${typeof response.data}`);
+
+      // Convert response data to base64 using robust conversion
+      let base64Data: string;
+      try {
+        base64Data = await this.convertResponseDataToBase64(response.data);
+        console.log(`[downloadDatabaseFile] Converted to base64, length: ${base64Data.length}`);
+      } catch (error) {
+        console.error(`⚠️ Error converting response data to base64: ${remoteUrl}`, error);
+        throw error;
+      }
+
+      // Extract just the filename from the path
+      const pathParts = remotePath.split('/');
+      const filename = pathParts[pathParts.length - 1];
+
+      console.log(`[downloadDatabaseFile] Writing file: ${filename} to LibraryNoCloud/databases/`);
+
+      // Ensure the databases directory exists in LibraryNoCloud
+      await this.ensureDirectoryExists('databases');
+
+      // Write database file to LibraryNoCloud/databases/ directory
+      await Filesystem.writeFile({
+        path: `databases/${filename}`,
+        data: base64Data,
+        directory: Directory.LibraryNoCloud,
+      });
+
+      console.log(
+        `✅ Downloaded and saved database file: ${filename} to LibraryNoCloud/databases/`
+      );
+
+      // Verify the file was written
+      try {
+        const statResult = await Filesystem.stat({
+          path: `databases/${filename}`,
+          directory: Directory.LibraryNoCloud,
+        });
+        console.log(`[downloadDatabaseFile] File verification - size: ${statResult.size}`);
+      } catch (verifyError) {
+        console.error(`[downloadDatabaseFile] File verification failed:`, verifyError);
+      }
+    } catch (error) {
+      console.error(`⚠️ Error downloading database file ${remotePath}:`, error);
+      throw error;
+    }
+  }
+
+  /**
    * Checks if the file exists and the hash matches.
    */
   private async checkAndCompareHash(path: string, expectedHash: string): Promise<boolean> {
     console.log('[checkAndCompareHash]', path, expectedHash);
+
+    // Determine if this is a database file
+    const fileExtension = this.getFileExtension(path).toLowerCase();
+    const isDatabaseFile = fileExtension === 'db';
+
+    // Use LibraryNoCloud for all files (including databases)
+    const directory = Directory.LibraryNoCloud;
+    console.debug(`[checkAndCompareHash] directory: ${directory}`);
+
+    // For database files, use the databases subfolder path
+    const filePath = isDatabaseFile ? `databases/${path.split('/').pop()}` : path;
+    console.debug(`[checkAndCompareHash] checking file path: ${filePath}`);
+
     try {
-      const { data } = await Filesystem.readFile({ path, directory: Directory.LibraryNoCloud });
+      const { data } = await Filesystem.readFile({ path: filePath, directory });
+      console.debug(`[checkAndCompareHash] File exists, data type: ${typeof data}`);
+
       if (typeof data !== 'string') {
+        console.debug(`[checkAndCompareHash] Data is not a string, type: ${typeof data}`);
         // If data is not a string, we cannot compute the hash
         return false;
       }
+
+      console.debug(`[checkAndCompareHash] File exists, data length: ${data.length}`);
       const localHash = await this.sha256FromBase64(data);
+      console.debug(
+        `[checkAndCompareHash] Local hash: ${localHash}, Expected hash: ${expectedHash}`
+      );
       return localHash === expectedHash;
-    } catch {
+    } catch (error) {
+      console.debug(`[checkAndCompareHash] File does not exist or error reading: ${error}`);
       return false; // File doesn't exist or error reading file
     }
   }

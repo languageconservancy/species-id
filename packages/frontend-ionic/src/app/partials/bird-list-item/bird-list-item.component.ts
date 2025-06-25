@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { IonIcon, IonImg, IonItem, NavController } from '@ionic/angular/standalone';
 import { Species } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [IonIcon, IonImg, IonItem],
 })
-export class BirdListItemComponent implements OnInit {
+export class BirdListItemComponent implements OnInit, OnChanges {
   @Input() item!: Species;
   @Input() isLastItem!: boolean;
   protected subscribers: Subscription = new Subscription();
@@ -32,8 +32,16 @@ export class BirdListItemComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('BirdListItemComponent ngOnInit');
     this._subscribeToSettings();
-    this._loadImageUrl();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Watch for changes to the item property
+    if (changes['item'] && changes['item'].currentValue) {
+      console.log('BirdListItemComponent ngOnChanges', changes['item'].currentValue);
+      this._loadImageUrl();
+    }
   }
 
   ngOnDestroy() {
@@ -54,6 +62,7 @@ export class BirdListItemComponent implements OnInit {
           this.item.images[0].fileName,
           this.item.type
         );
+        console.log('BirdListItemComponent _loadImageUrl done', this.imageUrl);
       } catch (error) {
         console.error('Error loading image URL:', error);
         this.imageUrl = '';

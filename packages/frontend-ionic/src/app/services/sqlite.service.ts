@@ -65,10 +65,8 @@ export class SqliteService {
       console.log('SQLiteService: init - DB imported:', res);
     }
 
-    // Database files are now in Library/NoCloud, no need to copy from assets
-    console.log(
-      'SQLiteService: init - Database files are in Library/NoCloud, skipping copyFromAssets'
-    );
+    // Database files are now in Data directory, no need to copy
+    console.log('SQLiteService: init - Database files are in Data directory, ready for use');
 
     await this._createConnectionAndOpenDb();
   }
@@ -79,6 +77,18 @@ export class SqliteService {
       return;
     }
 
+    console.log('SQLiteService: Creating connection for database:', this.dbName);
+    console.log(
+      'SQLiteService: Database config:',
+      JSON.stringify({
+        name: this.dbName,
+        version: this.dbVersion,
+        mode: this.dbMode,
+        encrypted: this.dbEncrypted,
+        readOnly: this.dbReadOnly,
+      })
+    );
+
     try {
       this._db = await this._sqliteConnection.createConnection(
         this.dbName,
@@ -87,6 +97,7 @@ export class SqliteService {
         this.dbVersion,
         this.dbReadOnly
       );
+      console.log('SQLiteService: Database connection created successfully');
     } catch (error) {
       console.error('SQLiteService: createConnectionAndOpenDb - Error creating connection:', error);
       throw error;
@@ -94,7 +105,17 @@ export class SqliteService {
 
     try {
       await this._db.open();
-      console.debug('SQLiteService: createConnectionAndOpenDb - Database connection opened.');
+      console.log('SQLiteService: Database opened successfully');
+
+      // Debug: Check what tables exist
+      try {
+        const tablesResult = await this._db.query(
+          'SELECT name FROM sqlite_master WHERE type="table"'
+        );
+        console.log('SQLiteService: Available tables:', tablesResult.values);
+      } catch (tableError) {
+        console.warn('SQLiteService: Could not query tables:', tableError);
+      }
     } catch (error) {
       console.error('SQLiteService: createConnectionAndOpenDb - Error opening database:', error);
       throw error;

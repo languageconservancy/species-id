@@ -8,7 +8,7 @@ import {
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { enableProdMode } from '@angular/core';
 import { environment } from './environments/environment';
-import { SqliteService } from 'app/services/sqlite.service';
+import { SqljsService } from 'app/services/sqljs.service';
 import { Storage } from '@ionic/storage-angular';
 import { routes } from 'app/app.routes';
 import { AppComponent } from 'app/app.component';
@@ -34,7 +34,7 @@ configService
   .then(() => {
     return bootstrapApplication(AppComponent, {
       providers: [
-        SqliteService,
+        SqljsService,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         provideIonicAngular({
           mode: 'ios',
@@ -77,15 +77,15 @@ configService
     });
   })
   .then(async (appRef) => {
-    const sqliteService = appRef.injector.get(SqliteService);
-    await sqliteService.init();
+    const sqljsService = appRef.injector.get(SqljsService);
+    await sqljsService.init();
 
     App.addListener('appStateChange', async ({ isActive }) => {
       // If the app is active, ensure the SQLite connection is established
       // This is useful for scenarios where the app might go to the background and come back
       console.log('App state changed:', isActive ? 'Active' : 'Inactive');
       if (isActive) {
-        await sqliteService.ensureConnection();
+        await sqljsService.ensureConnection();
       }
     });
   });

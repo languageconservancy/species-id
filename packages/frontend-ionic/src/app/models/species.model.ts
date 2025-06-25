@@ -80,10 +80,27 @@ export function mapPlant(row: any): Plant {
   };
 }
 
-export function mapSpeciesWithImagesAndOrder(rows: any[]): Species[] {
+export function mapSpeciesWithImagesAndOrder(result: any): Species[] {
+  // SQL.js returns { values: any[][], columns: string[] }
+  // We need to convert the array of arrays to array of objects
+  const { values, columns } = result;
+
+  if (!values || values.length === 0) {
+    return [];
+  }
+
+  // Convert array of arrays to array of objects
+  const rows = values.map((row: any[]) => {
+    const obj: any = {};
+    columns.forEach((column: string, index: number) => {
+      obj[column] = row[index];
+    });
+    return obj;
+  });
+
   const speciesMap: Record<number, Species> = {};
 
-  rows.forEach((row) => {
+  rows.forEach((row: any) => {
     const speciesId = row.species_id;
     if (!speciesMap[speciesId]) {
       // Determine if it's a bird or plant based on the table name in the query
