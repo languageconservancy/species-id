@@ -1,0 +1,21 @@
+.progress-info {
+  margin: 1rem 0;
+
+  p {
+    margin: 0.5rem 0;
+  }
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-gray-600 {
+  color: var(--ion-color-medium);
+}

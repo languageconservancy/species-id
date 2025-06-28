@@ -12,6 +12,7 @@ import { IonList, IonItemGroup, IonLabel, IonContent } from '@ionic/angular/stan
 import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component';
 import { HeaderComponent } from 'app/partials/header/header.component';
 import { ListDividerComponent } from 'app/partials/list-divider/list-divider.component';
+import { AnalyticsService } from 'app/services/analytics.service';
 
 @Component({
   selector: 'app-plants-explore-page',
@@ -36,9 +37,10 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     private plantQueriesService: PlantQueriesService,
     private plantPreferencesService: PlantPreferencesService,
     protected override speciesService: SpeciesService,
-    protected override searchService: SearchService
+    protected override searchService: SearchService,
+    protected override analyticsService: AnalyticsService
   ) {
-    super(speciesService, searchService);
+    super(speciesService, searchService, analyticsService);
   }
 
   override ngOnInit() {

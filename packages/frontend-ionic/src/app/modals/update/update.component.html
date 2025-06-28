@@ -1,0 +1,86 @@
+<ion-content class="ion-padding">
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" fill="clear">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <div class="ion-text-center ion-padding">
+    <ion-icon name="information-circle" size="large" color="primary"></ion-icon>
+    <h2>Update Available</h2>
+    <p>
+      New content is available for download. This will update your offline files with the latest
+      data.
+    </p>
+  </div>
+
+  <!-- Update Progress Section -->
+  @if (isUpdating) {
+    <div class="ion-padding">
+      <div class="ion-text-center">
+        <ion-icon name="download" size="large" color="primary"></ion-icon>
+        <h3>Downloading Updates...</h3>
+      </div>
+
+      @if (updateProgress) {
+        <div class="progress-info">
+          <p class="ion-text-center">
+            {{ updateProgress.current }} of {{ updateProgress.total }} files
+          </p>
+          <p class="ion-text-center text-sm text-gray-600">{{ updateProgress.currentFile }}</p>
+        </div>
+
+        <ion-progress-bar
+          [value]="progressPercentage / 100"
+          color="primary"
+          class="ion-margin-top"
+        ></ion-progress-bar>
+      }
+    </div>
+  }
+
+  <!-- Update Complete Section -->
+  @if (updateComplete) {
+    <div class="ion-padding ion-text-center">
+      <ion-icon name="checkmark-circle" size="large" color="success"></ion-icon>
+      <h3>Update Complete!</h3>
+      <p>All files have been successfully updated.</p>
+    </div>
+  }
+
+  <!-- Error Section -->
+  @if (updateError) {
+    <div class="ion-padding ion-text-center">
+      <ion-icon name="alert-circle" size="large" color="danger"></ion-icon>
+      <h3>Update Failed</h3>
+      <p>{{ updateError }}</p>
+    </div>
+  }
+
+  <!-- Action Buttons -->
+  <ion-footer class="ion-padding">
+    @if (!isUpdating && !updateComplete) {
+      <div class="button-group">
+        <ion-button
+          expand="block"
+          color="primary"
+          (click)="startUpdate()"
+          class="ion-margin-bottom"
+        >
+          <ion-icon name="download" slot="start"></ion-icon>
+          Download Updates
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" color="medium" (click)="skipUpdate()">
+          Skip for Now
+        </ion-button>
+      </div>
+    }
+
+    @if (updateComplete || updateError) {
+      <ion-button expand="block" color="primary" (click)="close()"> Close </ion-button>
+    }
+  </ion-footer>
+</ion-content>

@@ -5,6 +5,7 @@ import { SearchService } from 'app/services/search.service';
 import { Subscription } from 'rxjs';
 import { addIcons } from 'ionicons';
 import { search, options } from 'ionicons/icons';
+import { AnalyticsService } from 'app/services/analytics.service';
 
 @Component({
   template: '',
@@ -21,7 +22,8 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
 
   constructor(
     protected speciesService: SpeciesService,
-    protected searchService: SearchService
+    protected searchService: SearchService,
+    protected analyticsService: AnalyticsService
   ) {
     addIcons({ search, options });
   }
@@ -40,6 +42,7 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
     const sub = this.searchService.search$.subscribe((searchTerm: string) => {
       this.searchTerm = searchTerm.toLowerCase().trim();
       if (this.searchTerm) {
+        this.analyticsService.track('search', { searchTerm: this.searchTerm });
         this._setItems();
       } else {
         this._resetItems();

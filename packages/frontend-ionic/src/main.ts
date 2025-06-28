@@ -17,6 +17,8 @@ import { App } from '@capacitor/app';
 import { createAnimation } from '@ionic/angular';
 import { StatusBar } from '@capacitor/status-bar';
 import { ConfigService } from 'app/services/config.service';
+import { AnalyticsService } from 'app/services/analytics.service';
+import { Capacitor } from '@capacitor/core';
 
 StatusBar.hide();
 
@@ -79,6 +81,25 @@ configService
   .then(async (appRef) => {
     const sqljsService = appRef.injector.get(SqljsService);
     await sqljsService.init();
+
+    const analyticsService = appRef.injector.get(AnalyticsService);
+    await analyticsService.init();
+
+    // Debug analytics after initialization
+    setTimeout(async () => {
+      console.log('=== Testing Analytics ===');
+      // await analyticsService.debugAnalytics();
+      // await analyticsService.testNetworkConnectivity();
+      // await analyticsService.testPostHogConnectivity();
+      // await analyticsService.testPostHogAPI();
+      await analyticsService.track('app_started', {
+        timestamp: Date.now(),
+        platform: Capacitor.getPlatform(),
+        version: await App.getInfo()
+          .then((info) => info.version)
+          .catch(() => 'unknown'),
+      });
+    }, 2000);
 
     App.addListener('appStateChange', async ({ isActive }) => {
       // If the app is active, ensure the SQLite connection is established

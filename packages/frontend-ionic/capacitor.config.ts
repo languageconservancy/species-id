@@ -12,6 +12,9 @@ const config: CapacitorConfig = {
       iosDatabaseLocation: 'Library/NoCloud/databases',
     },
   },
+  server: {
+    allowNavigation: ['us.i.posthog.com', '*.posthog.com'],
+  },
 };
 
 export default config;

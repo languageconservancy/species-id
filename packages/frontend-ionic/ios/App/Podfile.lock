@@ -15,9 +15,17 @@ PODS:
     - Capacitor
   - CapacitorKeyboard (7.0.1):
     - Capacitor
+  - CapacitorNetwork (7.0.1):
+    - Capacitor
+  - CapacitorPreferences (7.0.1):
+    - Capacitor
   - CapacitorStatusBar (7.0.1):
     - Capacitor
+  - CapawesomeCapacitorPosthog (7.1.0):
+    - Capacitor
+    - PostHog (~> 3.19.1)
   - IONFilesystemLib (1.0.0)
+  - PostHog (3.19.9)
   - SQLCipher (4.9.0):
     - SQLCipher/standard (= 4.9.0)
   - SQLCipher/common (4.9.0)
@@ -33,11 +41,15 @@ DEPENDENCIES:
   - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
+  - "CapacitorNetwork (from `../../node_modules/@capacitor/network`)"
+  - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - "CapawesomeCapacitorPosthog (from `../../node_modules/@capawesome/capacitor-posthog`)"
 
 SPEC REPOS:
   trunk:
     - IONFilesystemLib
+    - PostHog
     - SQLCipher
     - ZIPFoundation
 
@@ -56,8 +68,14 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/haptics"
   CapacitorKeyboard:
     :path: "../../node_modules/@capacitor/keyboard"
+  CapacitorNetwork:
+    :path: "../../node_modules/@capacitor/network"
+  CapacitorPreferences:
+    :path: "../../node_modules/@capacitor/preferences"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
+  CapawesomeCapacitorPosthog:
+    :path: "../../node_modules/@capawesome/capacitor-posthog"
 
 SPEC CHECKSUMS:
   Capacitor: 106e7a4205f4618d582b886a975657c61179138d
@@ -67,11 +85,15 @@ SPEC CHECKSUMS:
   CapacitorFilesystem: 3acaa1d2b909a9dd904581a86f21782886e6bb38
   CapacitorHaptics: 70e47470fa1a6bd6338cd102552e3846b7f9a1b3
   CapacitorKeyboard: 969647d0ca2e5c737d7300088e2517aa832434e2
+  CapacitorNetwork: 07ec4c69c1bb696f41c23e00d31bda1bbb221bba
+  CapacitorPreferences: cbf154e5e5519b7f5ab33817a334dda1e98387f9
   CapacitorStatusBar: 275cbf2f4dfc00388f519ef80c7ec22edda342c9
+  CapawesomeCapacitorPosthog: 0b45d854823d7e6ab024baeb32349e59a7cf4797
   IONFilesystemLib: ceacae793975039530458eabab0c495c70515a0d
+  PostHog: 49247855f4cfdc1d2750b4247e6f6c0ff921e142
   SQLCipher: 31878d8ebd27e5c96db0b7cb695c96e9f8ad77da
   ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
-PODFILE CHECKSUM: 16cc9fa0f17216e9f203e22bbc85c3497b1f1d59
+PODFILE CHECKSUM: cfbba4a04c391a66aaded4541baa5acf3ecbf5b3
 
 COCOAPODS: 1.15.2
