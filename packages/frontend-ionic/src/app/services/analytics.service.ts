@@ -5,6 +5,8 @@ import { Network } from '@capacitor/network';
 import { ConfigService } from './config.service';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { CapacitorHttp } from '@capacitor/core';
+import posthog from 'posthog-js';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
@@ -40,21 +42,17 @@ export class AnalyticsService {
     }
 
     try {
-      // Initialize Posthog using Capacitor plugin
-      await Posthog.setup({
+      // Initialize Posthog. This will be used to track events and user properties.
+      // Autocapture is turned off because we don't want to track events automatically, because
+      // it will track too many events automatically.
+      Posthog.setup({
         apiKey: posthogApiKey,
         host: posthogHost,
       });
 
-      // Register app version as a user property
-      const appVersion = await this.getAppVersion();
-      await Posthog.register({
-        version: appVersion,
-      });
-
       this.initialized = true;
 
-      console.log('[AnalyticsService] Analytics initialized with Capacitor PostHog');
+      console.log('[AnalyticsService] Analytics initialized');
 
       // Flush queue when network is available
       Network.addListener('networkStatusChange', (status) => {
@@ -90,7 +88,10 @@ export class AnalyticsService {
 
         while (retryCount < maxRetries) {
           try {
-            await Posthog.capture(eventName, props);
+            Posthog.capture({
+              event: eventName,
+              properties: props,
+            });
             console.log('[AnalyticsService] Event sent to PostHog:', eventName, props);
             break; // Success, exit retry loop
           } catch (captureError) {
@@ -131,7 +132,10 @@ export class AnalyticsService {
     const remaining = [];
     for (const event of queue) {
       try {
-        await Posthog.capture(event.eventName, event.props);
+        Posthog.capture({
+          event: event.eventName,
+          properties: event.props,
+        });
       } catch {
         remaining.push(event);
       }
@@ -144,191 +148,217 @@ export class AnalyticsService {
    * Debug method to check PostHog status and configuration
    * Call this method to get detailed information about the analytics setup
    */
-  async debugAnalytics(): Promise<void> {
-    console.log('=== PostHog Analytics Debug Info ===');
-    console.log('Initialized:', this.initialized);
+  // async debugAnalytics(): Promise<void> {
+  //   console.log('=== PostHog Analytics Debug Info ===');
+  //   console.log('Initialized:', this.initialized);
 
-    if (this.initialized) {
-      try {
-        // Check network status
-        const networkStatus = await Network.getStatus();
-        console.log('Network status:', networkStatus);
+  //   if (this.initialized) {
+  //     try {
+  //       // Check if PostHog is available globally
+  //       console.log('PostHog available:', typeof posthog !== 'undefined');
 
-        // Check queued events
-        const raw = await Preferences.get({ key: this.queueKey });
-        const queue = raw.value ? JSON.parse(raw.value) : [];
-        console.log('Queued events:', queue.length);
+  //       // Get PostHog configuration
+  //       const config = (posthog as any).__loaded ? (posthog as any).config : 'Not loaded';
+  //       console.log('PostHog config:', config);
 
-        // Test a simple event
-        console.log('Testing simple event...');
-        await Posthog.capture('debug_test', { timestamp: Date.now() });
-        console.log('Test event sent');
-      } catch (error) {
-        console.error('Error in debug:', error);
-      }
-    } else {
-      console.log('Analytics not initialized');
-    }
-    console.log('=== End Debug Info ===');
-  }
+  //       // Check if PostHog has a token
+  //       const token = (posthog as any).token;
+  //       console.log('PostHog token:', token ? '***' + token.slice(-4) : 'No token');
 
-  /**
-   * Test PostHog connectivity by making a direct API call
-   * This helps verify if the PostHog instance is properly configured
-   */
-  async testPostHogConnectivity(): Promise<void> {
-    console.log('=== Testing PostHog Connectivity ===');
+  //       // Check network status
+  //       const networkStatus = await Network.getStatus();
+  //       console.log('Network status:', networkStatus);
 
-    if (!this.initialized) {
-      console.log('Analytics not initialized, cannot test connectivity');
-      return;
-    }
+  //       // Check queued events
+  //       const raw = await Preferences.get({ key: this.queueKey });
+  //       const queue = raw.value ? JSON.parse(raw.value) : [];
+  //       console.log('Queued events:', queue.length);
 
-    try {
-      // Test 1: Check if PostHog is working
-      console.log('Testing PostHog capture...');
-      await Posthog.capture('connectivity_test', {
-        timestamp: Date.now(),
-        platform: Capacitor.getPlatform(),
-      });
-      console.log('✅ PostHog capture successful');
+  //       // Test a simple event
+  //       console.log('Testing simple event...');
+  //       posthog.capture('debug_test', { timestamp: Date.now() });
+  //       console.log('Test event sent');
+  //     } catch (error) {
+  //       console.error('Error in debug:', error);
+  //     }
+  //   } else {
+  //     console.log('Analytics not initialized');
+  //   }
+  //   console.log('=== End Debug Info ===');
+  // }
 
-      // Test 2: Check network status
-      const networkStatus = await Network.getStatus();
-      console.log('Network status:', networkStatus);
+  // /**
+  //  * Test PostHog connectivity by making a direct API call
+  //  * This helps verify if the PostHog instance is properly configured
+  //  */
+  // async testPostHogConnectivity(): Promise<void> {
+  //   console.log('=== Testing PostHog Connectivity ===');
 
-      // Test 3: Check queued events
-      const raw = await Preferences.get({ key: this.queueKey });
-      const queue = raw.value ? JSON.parse(raw.value) : [];
-      console.log('Queued events count:', queue.length);
-    } catch (error) {
-      console.error('❌ PostHog connectivity test failed:', error);
-    }
+  //   if (!this.initialized) {
+  //     console.log('Analytics not initialized, cannot test connectivity');
+  //     return;
+  //   }
 
-    console.log('=== End Connectivity Test ===');
-  }
+  //   try {
+  //     // Test 1: Check if PostHog is loaded
+  //     console.log('PostHog loaded:', (posthog as any).__loaded);
 
-  /**
-   * Test direct API connectivity to PostHog
-   * This bypasses the PostHog library and tests direct HTTP connectivity
-   */
-  async testPostHogAPI(): Promise<void> {
-    console.log('=== Testing PostHog API Directly ===');
+  //     // Test 2: Check PostHog configuration
+  //     const apiKey = this.configService.get('posthogApiKey');
+  //     const host = this.configService.get('posthogHost');
+  //     console.log('API Key configured:', !!apiKey);
+  //     console.log('Host configured:', host);
 
-    try {
-      const apiKey = this.configService.get('posthogApiKey');
-      const host = this.configService.get('posthogHost');
+  //     // Test 3: Check if PostHog has the correct token
+  //     const token = (posthog as any).token;
+  //     console.log('PostHog token matches config:', token === apiKey);
 
-      if (!apiKey || !host) {
-        console.log('API key or host not configured');
-        return;
-      }
+  //     // Test 4: Check network connectivity
+  //     const networkStatus = await Network.getStatus();
+  //     console.log('Network connected:', networkStatus.connected);
+  //     console.log('Connection type:', networkStatus.connectionType);
 
-      console.log('Testing direct API call to PostHog...');
+  //     // Test 5: Try to capture a test event
+  //     console.log('Sending test event...');
+  //     posthog.capture('connectivity_test', {
+  //       timestamp: Date.now(),
+  //       platform: Capacitor.getPlatform(),
+  //       networkType: networkStatus.connectionType,
+  //       test: true,
+  //     });
+  //     console.log('Test event sent successfully');
 
-      const event = {
-        api_key: apiKey,
-        event: 'api_test',
-        properties: {
-          timestamp: Date.now(),
-          platform: Capacitor.getPlatform(),
-          test: true,
-        },
-        distinct_id: 'test_user_' + Date.now(),
-      };
+  //     // Test 6: Check if PostHog has any pending events
+  //     const pendingEvents = (posthog as any).__loaded ? (posthog as any).pending_events : 'Unknown';
+  //     console.log('Pending events:', pendingEvents);
+  //   } catch (error) {
+  //     console.error('Error testing PostHog connectivity:', error);
+  //   }
 
-      const response = await fetch(`${host}/capture/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'Capacitor-App/1.0',
-        },
-        body: JSON.stringify(event),
-      });
+  //   console.log('=== End Connectivity Test ===');
+  // }
 
-      console.log('API response status:', response.status);
+  // /**
+  //  * Test PostHog API directly to verify project configuration
+  //  * This makes a direct HTTP request to the PostHog API
+  //  */
+  // async testPostHogAPI(): Promise<void> {
+  //   console.log('=== Testing PostHog API Directly ===');
 
-      if (response.ok) {
-        console.log('✅ Direct API call successful');
-      } else {
-        console.log('❌ Direct API call failed:', response.status);
-        const errorText = await response.text();
-        console.log('Error response:', errorText);
-      }
-    } catch (error) {
-      console.error('❌ Direct API test failed:', error);
-    }
+  //   try {
+  //     const apiKey = this.configService.get('posthogApiKey');
+  //     const host = this.configService.get('posthogHost');
 
-    console.log('=== End API Test ===');
-  }
+  //     if (!apiKey || !host) {
+  //       console.log('API key or host not configured');
+  //       return;
+  //     }
 
-  /**
-   * Test network connectivity using Capacitor Network
-   * This helps verify if the device has internet connectivity
-   */
-  async testNetworkConnectivity(): Promise<void> {
-    console.log('=== Testing Network Connectivity ===');
+  //     // Test the PostHog API directly
+  //     const testEvent = {
+  //       api_key: apiKey,
+  //       event: 'api_test',
+  //       properties: {
+  //         timestamp: Date.now(),
+  //         platform: Capacitor.getPlatform(),
+  //         test: true,
+  //         distinct_id: 'test_user_' + Date.now(),
+  //       },
+  //       distinct_id: 'test_user_' + Date.now(),
+  //     };
 
-    try {
-      // Test 1: Check network status
-      const status = await Network.getStatus();
-      console.log('Network status:', status);
+  //     console.log('Sending test event to PostHog API...');
 
-      // Test 2: Test basic internet connectivity
-      console.log('Testing basic internet connectivity...');
-      try {
-        const response = await fetch('https://httpbin.org/get', {
-          method: 'GET',
-          headers: {
-            'User-Agent': 'Capacitor-App/1.0',
-          },
-        });
-        console.log('Basic connectivity test status:', response.status);
-        if (response.ok) {
-          console.log('✅ Basic internet connectivity working');
-        } else {
-          console.log('❌ Basic connectivity failed:', response.status);
-        }
-      } catch (error) {
-        console.log('❌ Basic connectivity test failed:', error);
-      }
+  //     const response = await fetch(`${host}/capture/`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(testEvent),
+  //     });
 
-      // Test 3: Test PostHog host connectivity
-      const posthogHost = this.configService.get('posthogHost');
-      if (posthogHost) {
-        console.log('Testing PostHog host connectivity...');
-        try {
-          const hostUrl = new URL(posthogHost);
-          const response = await fetch(`${hostUrl.origin}/`, {
-            method: 'GET',
-            headers: {
-              'User-Agent': 'Capacitor-App/1.0',
-            },
-          });
-          console.log('PostHog host test status:', response.status);
-          if (response.ok) {
-            console.log('✅ PostHog host reachable');
-          } else {
-            console.log('❌ PostHog host test failed:', response.status);
-          }
-        } catch (error) {
-          console.log('❌ PostHog host test failed:', error);
-        }
-      }
-    } catch (error) {
-      console.error('Error testing network connectivity:', error);
-    }
+  //     console.log('API Response status:', response.status);
+  //     console.log('API Response ok:', response.ok);
 
-    console.log('=== End Network Connectivity Test ===');
-  }
+  //     if (response.ok) {
+  //       const responseText = await response.text();
+  //       console.log('API Response body:', responseText);
+  //       console.log('✅ PostHog API test successful');
+  //     } else {
+  //       console.log('❌ PostHog API test failed');
+  //       const errorText = await response.text();
+  //       console.log('Error response:', errorText);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error testing PostHog API:', error);
+  //   }
 
-  private async getAppVersion(): Promise<string> {
-    try {
-      const info = await App.getInfo();
-      return info.version;
-    } catch (error) {
-      console.warn('Could not get app version:', error);
-      return 'unknown';
-    }
-  }
+  //   console.log('=== End API Test ===');
+  // }
+
+  // /**
+  //  * Test network connectivity to PostHog servers
+  //  * This helps identify if the issue is with network connectivity
+  //  */
+  // async testNetworkConnectivity(): Promise<void> {
+  //   console.log('=== Testing Network Connectivity ===');
+
+  //   try {
+  //     const host = this.configService.get('posthogHost');
+
+  //     if (!host) {
+  //       console.log('PostHog host not configured');
+  //       return;
+  //     }
+
+  //     // Test 1: Basic connectivity to PostHog domain
+  //     console.log('Testing basic connectivity to PostHog...');
+  //     const testUrl = `${host}/capture/`;
+
+  //     try {
+  //       const response = await fetch(testUrl, {
+  //         method: 'HEAD', // Just test connectivity, don't send data
+  //         headers: {
+  //           'User-Agent': 'Capacitor/Test',
+  //         },
+  //       });
+  //       console.log('✅ Basic connectivity test passed:', response.status);
+  //     } catch (error) {
+  //       console.log('❌ Basic connectivity test failed:', error);
+  //     }
+
+  //     // Test 2: Check if we can reach the domain
+  //     console.log('Testing domain reachability...');
+  //     try {
+  //       const response = await fetch(`${host}/`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'User-Agent': 'Capacitor/Test',
+  //         },
+  //       });
+  //       console.log('✅ Domain reachability test passed:', response.status);
+  //     } catch (error) {
+  //       console.log('❌ Domain reachability test failed:', error);
+  //     }
+
+  //     // Test 3: Check network status
+  //     const networkStatus = await Network.getStatus();
+  //     console.log('Network status:', networkStatus);
+
+  //     // Test 4: Check if we're on a restricted network
+  //     console.log('Testing if we can make external requests...');
+  //     try {
+  //       const response = await fetch('https://httpbin.org/get', {
+  //         method: 'GET',
+  //       });
+  //       console.log('✅ External request test passed:', response.status);
+  //     } catch (error) {
+  //       console.log('❌ External request test failed:', error);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error testing network connectivity:', error);
+  //   }
+
+  //   console.log('=== End Network Connectivity Test ===');
+  // }
 }

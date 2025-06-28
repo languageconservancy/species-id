@@ -11,6 +11,9 @@ const config: CapacitorConfig = {
     CapacitorSQLite: {
       iosDatabaseLocation: 'Library/NoCloud/databases',
     },
+    VoiceRecorder: {
+      enabled: true,
+    },
   },
   server: {
     allowNavigation: ['us.i.posthog.com', '*.posthog.com'],

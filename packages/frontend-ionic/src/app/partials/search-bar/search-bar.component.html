@@ -3,6 +3,7 @@
 <ion-footer class="bg-primary border-b-[1px] border-gray-200">
   <div class="position-fixed bottom-[56px] flex flow-row flex-nowrap items-center justify-between">
     <ion-searchbar
+      #searchBar
       [debounce]="500"
       placeholder="Search..."
       (ionInput)="searchChanged($event)"
@@ -10,9 +11,16 @@
       color="light"
     ></ion-searchbar>
     <ion-icon
+      [name]="isRecording ? 'stop' : 'mic'"
+      size="large"
+      color="light"
+      class="cursor-pointer pr-2"
+      (click)="toggleRecording()"
+    ></ion-icon>
+    <ion-icon
       name="options"
       size="large"
-      class="text-gray-500 cursor-pointer pr-2"
+      class="cursor-pointer pr-2"
       (click)="openOptionsModal()"
       color="light"
     ></ion-icon>

@@ -21,6 +21,8 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (7.0.1):
     - Capacitor
+  - CapacitorVoiceRecorder (7.0.6):
+    - Capacitor
   - CapawesomeCapacitorPosthog (7.1.0):
     - Capacitor
     - PostHog (~> 3.19.1)
@@ -44,6 +46,7 @@ DEPENDENCIES:
   - "CapacitorNetwork (from `../../node_modules/@capacitor/network`)"
   - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - CapacitorVoiceRecorder (from `../../node_modules/capacitor-voice-recorder`)
   - "CapawesomeCapacitorPosthog (from `../../node_modules/@capawesome/capacitor-posthog`)"
 
 SPEC REPOS:
@@ -74,6 +77,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/preferences"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
+  CapacitorVoiceRecorder:
+    :path: "../../node_modules/capacitor-voice-recorder"
   CapawesomeCapacitorPosthog:
     :path: "../../node_modules/@capawesome/capacitor-posthog"
 
@@ -88,12 +93,13 @@ SPEC CHECKSUMS:
   CapacitorNetwork: 07ec4c69c1bb696f41c23e00d31bda1bbb221bba
   CapacitorPreferences: cbf154e5e5519b7f5ab33817a334dda1e98387f9
   CapacitorStatusBar: 275cbf2f4dfc00388f519ef80c7ec22edda342c9
+  CapacitorVoiceRecorder: b136a5989c9a306d57f0c9fc530be79a06ccf7b2
   CapawesomeCapacitorPosthog: 0b45d854823d7e6ab024baeb32349e59a7cf4797
   IONFilesystemLib: ceacae793975039530458eabab0c495c70515a0d
   PostHog: 49247855f4cfdc1d2750b4247e6f6c0ff921e142
   SQLCipher: 31878d8ebd27e5c96db0b7cb695c96e9f8ad77da
   ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
-PODFILE CHECKSUM: cfbba4a04c391a66aaded4541baa5acf3ecbf5b3
+PODFILE CHECKSUM: 50a4a6791b058b916b6911fa8e492c9a54cf0bc7
 
 COCOAPODS: 1.15.2
