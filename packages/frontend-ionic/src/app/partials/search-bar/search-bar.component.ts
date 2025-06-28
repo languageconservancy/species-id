@@ -8,27 +8,28 @@ import {
 } from '@angular/core';
 import { OptionsComponent } from 'app/modals/options/options.component';
 import { SearchService } from 'app/services/search.service';
-import { IonSearchbar, IonIcon, ModalController } from '@ionic/angular/standalone';
+import { IonSearchbar, IonIcon, ModalController, IonSpinner } from '@ionic/angular/standalone';
 import { search, options, mic, stop } from 'ionicons/icons';
 import { SpeciesType } from 'app/models/species.model';
 import { addIcons } from 'ionicons';
 import { Subscription } from 'rxjs';
+import { RecordingState } from 'app/services/search.service';
 
 @Component({
   selector: 'app-search-bar',
   templateUrl: './search-bar.component.html',
   styleUrls: ['./search-bar.component.scss'],
   standalone: true,
-  imports: [IonSearchbar, IonIcon],
+  imports: [IonSearchbar, IonIcon, IonSpinner],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
-  @Input() domain!: SpeciesType;
+  @Input() domain: SpeciesType = SpeciesType.Bird;
   @ViewChild('searchBar') searchBar!: IonSearchbar;
 
-  public speciesType = SpeciesType;
-  public isRecording: boolean = false;
-  private subscription = new Subscription();
+  public RecordingStateEnum = RecordingState;
+  public recordingState: RecordingState = RecordingState.NotRecording;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     public searchService: SearchService,
@@ -40,8 +41,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Subscribe to the isRecording observable
     this.subscription.add(
-      this.searchService.isRecording$.subscribe((isRecording) => {
-        this.isRecording = isRecording;
+      this.searchService.recordingState$.subscribe((recordingState) => {
+        this.recordingState = recordingState;
       })
     );
 
@@ -92,7 +93,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   // Helper methods for template
   async toggleRecording() {
-    if (this.isRecording) {
+    if (this.recordingState === RecordingState.Recording) {
       await this.searchService.stopRecording();
     } else {
       await this.searchService.startRecording();

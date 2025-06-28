@@ -10,19 +10,30 @@
       show-clear-button="always"
       color="light"
     ></ion-searchbar>
-    <ion-icon
-      [name]="isRecording ? 'stop' : 'mic'"
-      size="large"
-      color="light"
-      class="cursor-pointer pr-2"
-      (click)="toggleRecording()"
-    ></ion-icon>
-    <ion-icon
-      name="options"
-      size="large"
-      class="cursor-pointer pr-2"
-      (click)="openOptionsModal()"
-      color="light"
-    ></ion-icon>
+
+    <div class="flex items-center gap-2 pr-2">
+      @if (
+        searchService.recordingState === RecordingStateEnum.Recording ||
+        searchService.recordingState === RecordingStateEnum.NotRecording
+      ) {
+        <ion-icon
+          [name]="searchService.recordingState === RecordingStateEnum.Recording ? 'stop' : 'mic'"
+          size="large"
+          color="light"
+          class="cursor-pointer"
+          (click)="toggleRecording()"
+        ></ion-icon>
+      } @else if (searchService.recordingState === RecordingStateEnum.Converting) {
+        <ion-spinner name="dots" color="light" class="w-8"></ion-spinner>
+      }
+
+      <ion-icon
+        name="options"
+        size="large"
+        class="cursor-pointer"
+        (click)="openOptionsModal()"
+        color="light"
+      ></ion-icon>
+    </div>
   </div>
 </ion-footer>
