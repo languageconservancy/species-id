@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
-import { defineCustomElements as jeepSqlite } from 'jeep-sqlite/loader';
 import { ConfigService } from 'app/services/config.service';
-import { CloudStorageSyncService } from 'app/services/cloud-storage-sync.service';
-import { Filesystem, Directory } from '@capacitor/filesystem';
+import { defineCustomElements as jeepSqlite } from 'jeep-sqlite/loader';
 
 @Injectable({
   providedIn: 'root',
@@ -18,10 +16,7 @@ export class SqliteService {
   private readonly dbEncrypted: boolean = false;
   private readonly dbReadOnly: boolean = false;
 
-  constructor(
-    private configService: ConfigService,
-    private cloudStorageSyncService: CloudStorageSyncService
-  ) {
+  constructor(private configService: ConfigService) {
     this.dbName = this.configService.get('dbName') ?? 'db-prod';
     this.dbVersion = this.configService.get('dbVersion') ?? 1;
     this.dbMode = this.configService.get('dbMode') ?? 'no-encryption';
@@ -36,7 +31,6 @@ export class SqliteService {
    * @returns {Promise<void>} A promise that resolves when the database is initialized.
    */
   async init(): Promise<void> {
-    await this.cloudStorageSyncService.waitUntilDbIsReady();
     console.log('db is ready');
 
     if (Capacitor.getPlatform() === 'web') {
@@ -65,8 +59,8 @@ export class SqliteService {
       console.log('SQLiteService: init - DB imported:', res);
     }
 
-    // Database files are now in Data directory, no need to copy
-    console.log('SQLiteService: init - Database files are in Data directory, ready for use');
+    // Database files are now in bundled assets, no need to copy
+    console.log('SQLiteService: init - Database files are in bundled assets, ready for use');
 
     await this._createConnectionAndOpenDb();
   }
@@ -153,27 +147,26 @@ export class SqliteService {
   }
 
   /**
-   * Loads the database JSON file from Library/NoCloud.
+   * Loads the database JSON file from bundled assets.
    * This method reads the JSON file containing the database schema and data.
    * @returns {Promise<string>} A promise that resolves with the JSON string of the database.
    */
   private async _loadDbJson(): Promise<string> {
     try {
-      console.log('SQLiteService: _loadDbJson - Loading database config from Library/NoCloud');
-      const { data } = await Filesystem.readFile({
-        path: 'databases/db-config.json',
-        directory: Directory.LibraryNoCloud,
-      });
-
-      if (typeof data !== 'string') {
-        throw new Error('Database config data is not a string');
+      console.log('SQLiteService: _loadDbJson - Loading database config from bundled assets');
+      const response = await fetch('assets/databases/db-config.json');
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch database config: ${response.status} ${response.statusText}`
+        );
       }
 
+      const data = await response.text();
       console.log('SQLiteService: _loadDbJson - Successfully loaded database config');
       return data;
     } catch (error) {
       console.error('SQLiteService: _loadDbJson - Error loading JSON:', error);
-      throw new Error(`Failed to load database config from Library/NoCloud: ${error}`);
+      throw new Error(`Failed to load database config from bundled assets: ${error}`);
     }
   }
 

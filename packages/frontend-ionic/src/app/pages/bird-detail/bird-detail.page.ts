@@ -33,6 +33,7 @@ import { Subscription } from 'rxjs';
 export class BirdDetailPage implements OnInit {
   species: Species | null = null;
   loading = true;
+  private readonly baseUrl = 'assets/audios/texts';
   settings: AppSettings = {
     useEnglish: true,
     showScientificNames: true,
@@ -92,7 +93,7 @@ export class BirdDetailPage implements OnInit {
     try {
       const textAudio = await this.textAudioService.getByText(text);
       if (textAudio) {
-        const audio = new Audio(`assets/audio/${textAudio.fileName}`);
+        const audio = new Audio(`${this.baseUrl}/${textAudio.fileName}`);
         audio.play().catch((error) => console.error('Error playing audio:', error));
       } else {
         console.warn(`No audio found for text: ${text}`);

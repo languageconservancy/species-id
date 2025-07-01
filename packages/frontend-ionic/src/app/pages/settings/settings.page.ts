@@ -19,8 +19,6 @@ import {
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from 'app/partials/header/header.component';
-import { CloudStorageSyncService } from 'app/services/cloud-storage-sync.service';
-import { UpdateComponent } from 'app/modals/update/update.component';
 
 type BooleanSettings = Pick<AppSettings, 'useEnglish' | 'showScientificNames'>;
 
@@ -58,8 +56,7 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   constructor(
     private settingsService: SettingsService,
-    private modalController: ModalController,
-    private cloudStorageSyncService: CloudStorageSyncService
+    private modalController: ModalController
   ) {
     addIcons({ checkmarkCircle, close, moon, sunny, refresh });
   }
@@ -89,35 +86,6 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.settings = { ...this.originalSettings };
     await this.settingsService.updateSettings(this.settings);
     this.close();
-  }
-
-  async checkForUpdates() {
-    try {
-      const updatesAvailable = await this.cloudStorageSyncService.checkForUpdates();
-
-      if (updatesAvailable) {
-        // Show update popup
-        const modal = await this.modalController.create({
-          component: UpdateComponent,
-          componentProps: {},
-          presentingElement: await this.modalController.getTop(),
-          breakpoints: [0, 1],
-          initialBreakpoint: 1,
-          backdropDismiss: false,
-        });
-
-        await modal.present();
-
-        const { data } = await modal.onWillDismiss();
-        console.log('Update modal dismissed with action:', data?.action);
-      } else {
-        // Show "no updates available" message
-        // You could add a toast or alert here
-        console.log('No updates available');
-      }
-    } catch (error) {
-      console.error('Error checking for updates:', error);
-    }
   }
 
   close() {

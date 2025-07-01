@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
-import { Filesystem, Directory } from '@capacitor/filesystem';
 import { ConfigService } from 'app/services/config.service';
-import { CloudStorageSyncService } from 'app/services/cloud-storage-sync.service';
+import { Capacitor } from '@capacitor/core';
 
 // SQL.js types
 interface SQLiteDatabase {
@@ -28,11 +26,10 @@ export class SqljsService {
   private sqliteModule: SqlJsStatic | null = null;
   private database: SQLiteDatabase | null = null;
   private readonly dbName: string = '';
+  private readonly assetsPath: string = 'assets';
+  private readonly dbPath: string = 'assets/databases';
 
-  constructor(
-    private configService: ConfigService,
-    private cloudStorageSyncService: CloudStorageSyncService
-  ) {
+  constructor(private configService: ConfigService) {
     this.dbName = this.configService.get('dbName') ?? 'production';
   }
 
@@ -42,7 +39,6 @@ export class SqljsService {
    * @returns {Promise<void>} A promise that resolves when the database is initialized.
    */
   async init(): Promise<void> {
-    await this.cloudStorageSyncService.waitUntilDbIsReady();
     console.log('SQL.js: database file is ready to be loaded');
 
     // Load SQL.js WebAssembly module
@@ -66,13 +62,9 @@ export class SqljsService {
         locateFile: (file: string) => {
           console.log(`SQL.js: Requesting file: ${file}`);
 
-          // Handle both web and mobile paths
+          // Return path to the sql-wasm.wasm file in the assets folder
           let path = '';
-          if (Capacitor.getPlatform() === 'web') {
-            path = `/assets/${file}`;
-          } else {
-            path = `assets/${file}`;
-          }
+          path = `${this.assetsPath}/${file}`;
 
           console.log(`SQL.js: path: ${path}`);
           return path;
@@ -87,25 +79,21 @@ export class SqljsService {
   }
 
   /**
-   * Loads the database file from LibraryNoCloud/databases/<dbName>.db.
+   * Loads the database file from bundled assets.
    * <dbName> is defined in the config.json file.
    */
   private async loadDatabase(): Promise<void> {
     try {
-      console.log(`SQL.js: Loading database file from LibraryNoCloud/databases/${this.dbName}.db`);
+      console.log(`SQL.js: Loading database file from bundled assets: databases/${this.dbName}.db`);
 
-      // Read the database file
-      const { data } = await Filesystem.readFile({
-        path: `databases/${this.dbName}.db`,
-        directory: Directory.LibraryNoCloud,
-      });
-
-      if (typeof data !== 'string') {
-        throw new Error('Database data is not a string. The file cannot be loaded.');
+      // Fetch the database file from bundled assets
+      const response = await fetch(`${this.dbPath}/${this.dbName}.db`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`);
       }
 
-      // Convert base64 to Uint8Array
-      const binaryData = this.base64ToUint8Array(data);
+      const arrayBuffer = await response.arrayBuffer();
+      const binaryData = new Uint8Array(arrayBuffer);
 
       // Create SQLite database from binary data
       this.database = new this.sqliteModule!.Database(binaryData) as SQLiteDatabase;
@@ -118,18 +106,6 @@ export class SqljsService {
       console.error('SQL.js: Error loading database:', error);
       throw error;
     }
-  }
-
-  /**
-   * Converts base64 string to Uint8Array.
-   */
-  private base64ToUint8Array(base64: string): Uint8Array {
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
   }
 
   /**
