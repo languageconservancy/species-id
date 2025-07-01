@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { VoiceRecorder } from 'capacitor-voice-recorder';
 import { Directory } from '@capacitor/filesystem';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 export enum RecordingState {
   NotRecording,
@@ -46,7 +47,11 @@ export class SearchService {
       const result = await VoiceRecorder.requestAudioRecordingPermission();
       this.gotUserPermissionToRecordAudio = result.value;
     } catch (error) {
-      console.error('Error requesting user permission to record audio:', error);
+      console.error(
+        ASSET_PATHS.ERROR_EMOJI,
+        'Error requesting user permission to record audio:',
+        error
+      );
     }
   }
 
@@ -68,7 +73,7 @@ export class SearchService {
       // Update the observable when recording starts
       this.recordingStateSubject.next(RecordingState.Recording);
     } catch (error) {
-      console.error('Error starting recording:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error starting recording:', error);
     }
   }
 
@@ -82,7 +87,7 @@ export class SearchService {
       this.recordingStateSubject.next(RecordingState.Converting);
       this.convertRecordingToText();
     } catch (error) {
-      console.error('Error stopping recording:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error stopping recording:', error);
       // Still update the observable even if there's an error
       this.recordingStateSubject.next(RecordingState.NotRecording);
     }

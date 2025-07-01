@@ -72,3 +72,4 @@ Thumbs.db
 external-assets/
 config.json
 scripts/*.sql
+src/assets/species-data/

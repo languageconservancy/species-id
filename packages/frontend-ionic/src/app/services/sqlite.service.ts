@@ -3,6 +3,7 @@ import { Capacitor } from '@capacitor/core';
 import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { ConfigService } from 'app/services/config.service';
 import { defineCustomElements as jeepSqlite } from 'jeep-sqlite/loader';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Injectable({
   providedIn: 'root',
@@ -93,7 +94,11 @@ export class SqliteService {
       );
       console.log('SQLiteService: Database connection created successfully');
     } catch (error) {
-      console.error('SQLiteService: createConnectionAndOpenDb - Error creating connection:', error);
+      console.error(
+        ASSET_PATHS.ERROR_EMOJI,
+        'SQLiteService: createConnectionAndOpenDb - Error creating connection:',
+        error
+      );
       throw error;
     }
 
@@ -111,7 +116,11 @@ export class SqliteService {
         console.warn('SQLiteService: Could not query tables:', tableError);
       }
     } catch (error) {
-      console.error('SQLiteService: createConnectionAndOpenDb - Error opening database:', error);
+      console.error(
+        ASSET_PATHS.ERROR_EMOJI,
+        'SQLiteService: createConnectionAndOpenDb - Error opening database:',
+        error
+      );
       throw error;
     }
   }
@@ -133,7 +142,11 @@ export class SqliteService {
       const result = await db.query(query, params ?? []);
       return result;
     } catch (error) {
-      console.error('SQLiteService: executeQuery - Error executing query:', error);
+      console.error(
+        ASSET_PATHS.ERROR_EMOJI,
+        'SQLiteService: executeQuery - Error executing query:',
+        error
+      );
       throw error;
     }
   }
@@ -154,7 +167,7 @@ export class SqliteService {
   private async _loadDbJson(): Promise<string> {
     try {
       console.log('SQLiteService: _loadDbJson - Loading database config from bundled assets');
-      const response = await fetch('assets/databases/db-config.json');
+      const response = await fetch(`${ASSET_PATHS.SPECIES_DATABASES}/db-config.json`);
       if (!response.ok) {
         throw new Error(
           `Failed to fetch database config: ${response.status} ${response.statusText}`
@@ -165,7 +178,11 @@ export class SqliteService {
       console.log('SQLiteService: _loadDbJson - Successfully loaded database config');
       return data;
     } catch (error) {
-      console.error('SQLiteService: _loadDbJson - Error loading JSON:', error);
+      console.error(
+        ASSET_PATHS.ERROR_EMOJI,
+        'SQLiteService: _loadDbJson - Error loading JSON:',
+        error
+      );
       throw new Error(`Failed to load database config from bundled assets: ${error}`);
     }
   }
@@ -183,6 +200,7 @@ export class SqliteService {
 
     if (!connectionExists) {
       console.warn(
+        ASSET_PATHS.WARNING_EMOJI,
         'SQLiteService: ensureConnection - Connection does not exist, creating a new one.'
       );
       await this._createConnectionAndOpenDb();

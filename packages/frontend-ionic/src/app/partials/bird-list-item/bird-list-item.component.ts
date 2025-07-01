@@ -6,6 +6,7 @@ import { chevronForward } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { SettingsService, AppSettings } from 'app/services/settings.service';
 import { Subscription } from 'rxjs';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-bird-list-item',
@@ -64,7 +65,7 @@ export class BirdListItemComponent implements OnInit, OnChanges {
         );
         console.log('BirdListItemComponent _loadImageUrl done', this.imageUrl);
       } catch (error) {
-        console.error('Error loading image URL:', error);
+        console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading image URL:', error);
         this.imageUrl = '';
       }
     }

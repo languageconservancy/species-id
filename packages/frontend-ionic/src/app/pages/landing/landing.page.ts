@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { bird } from '../../../assets/icon/bird';
+import { bird } from '../../../assets/core/icon/bird';
 import { leaf } from 'ionicons/icons';
 import { SpeciesType } from 'app/models/species.model';
 import { ConfigService } from 'app/services/config.service';

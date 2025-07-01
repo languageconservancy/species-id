@@ -9,7 +9,7 @@ import {
   MenuController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { bird } from '../../../assets/icon/bird';
+import { bird } from '../../../assets/core/icon/bird';
 import { triangle, ellipse, square, search, menu, options, leaf } from 'ionicons/icons';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter as rxjsFilter } from 'rxjs/operators';

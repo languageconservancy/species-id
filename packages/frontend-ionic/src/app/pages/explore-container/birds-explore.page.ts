@@ -13,6 +13,7 @@ import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component
 import { HeaderComponent } from 'app/partials/header/header.component';
 import { ListDividerComponent } from 'app/partials/list-divider/list-divider.component';
 import { AnalyticsService } from 'app/services/analytics.service';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-birds-explore-page',
@@ -64,7 +65,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
       this.itemsAll = result;
       this._setItems();
     } catch (error) {
-      console.error('Error loading species:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading species:', error);
     }
     this.itemsLoading = false;
   }
@@ -82,7 +83,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
         case 'by-order':
           return `${item.order?.nameScientific} (${item.order?.descriptionEn})` || 'Unknown';
         default:
-          console.error('Invalid sort type:', sortType);
+          console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid sort type:', sortType);
           return item.nameLocal.charAt(0).toUpperCase();
       }
     };

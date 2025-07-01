@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 export interface AppConfig {
   assetBaseUrl: string;
@@ -17,7 +18,7 @@ export interface AppConfig {
 })
 export class ConfigService {
   private config: AppConfig | null = null;
-  private readonly configPath = 'assets/config/config.json';
+  private readonly configPath = ASSET_PATHS.SPECIES_CONFIG;
 
   /**
    * Loads the config file from the assets/config/config.json file.

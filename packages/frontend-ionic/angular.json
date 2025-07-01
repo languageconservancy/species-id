@@ -34,8 +34,8 @@
               },
               {
                 "glob": "sql-wasm.wasm",
-                "input": "node_modules/sql.js/dist",
-                "output": "assets/"
+                "input": "node_modules/sql.js/dist/",
+                "output": "assets/core/"
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss", "src/tailwind.css"],

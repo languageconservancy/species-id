@@ -7,6 +7,7 @@
 
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Injectable({ providedIn: 'root' })
 export class StorageReadyService {
@@ -20,7 +21,7 @@ export class StorageReadyService {
         await this.storage.create();
         this.isReady = true;
       } catch (error) {
-        console.error('Error creating storage', error);
+        console.error(ASSET_PATHS.ERROR_EMOJI, 'Error creating storage', error);
       }
     }
   }

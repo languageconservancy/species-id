@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from 'app/services/config.service';
-import { Capacitor } from '@capacitor/core';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 // SQL.js types
 interface SQLiteDatabase {
@@ -26,8 +26,6 @@ export class SqljsService {
   private sqliteModule: SqlJsStatic | null = null;
   private database: SQLiteDatabase | null = null;
   private readonly dbName: string = '';
-  private readonly assetsPath: string = 'assets';
-  private readonly dbPath: string = 'assets/databases';
 
   constructor(private configService: ConfigService) {
     this.dbName = this.configService.get('dbName') ?? 'production';
@@ -64,7 +62,7 @@ export class SqljsService {
 
           // Return path to the sql-wasm.wasm file in the assets folder
           let path = '';
-          path = `${this.assetsPath}/${file}`;
+          path = `${ASSET_PATHS.CORE}/${file}`;
 
           console.log(`SQL.js: path: ${path}`);
           return path;
@@ -73,7 +71,7 @@ export class SqljsService {
 
       console.log('SQL.js: WebAssembly module loaded successfully');
     } catch (error) {
-      console.error('SQL.js: Error loading WebAssembly module:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'SQL.js: Error loading WebAssembly module:', error);
       throw error;
     }
   }
@@ -87,7 +85,7 @@ export class SqljsService {
       console.log(`SQL.js: Loading database file from bundled assets: databases/${this.dbName}.db`);
 
       // Fetch the database file from bundled assets
-      const response = await fetch(`${this.dbPath}/${this.dbName}.db`);
+      const response = await fetch(ASSET_PATHS.DATABASE(this.dbName));
       if (!response.ok) {
         throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`);
       }
@@ -103,7 +101,7 @@ export class SqljsService {
       // Debug: Check what tables exist
       await this.debugTables();
     } catch (error) {
-      console.error('SQL.js: Error loading database:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'SQL.js: Error loading database:', error);
       throw error;
     }
   }
@@ -116,7 +114,7 @@ export class SqljsService {
       const result = await this.executeQuery('SELECT name FROM sqlite_master WHERE type="table"');
       console.log('SQL.js: Available tables:', result);
     } catch (error) {
-      console.warn('SQL.js: Could not query tables:', error);
+      console.warn(ASSET_PATHS.WARNING_EMOJI, 'SQL.js: Could not query tables:', error);
     }
   }
 
@@ -155,7 +153,7 @@ export class SqljsService {
         };
       }
     } catch (error) {
-      console.error('SQL.js: Error executing query:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'SQL.js: Error executing query:', error);
       throw error;
     }
   }
@@ -177,7 +175,7 @@ export class SqljsService {
    */
   async ensureConnection(): Promise<void> {
     if (!this.database) {
-      console.warn('SQL.js: Database not initialized, reinitializing');
+      console.warn(ASSET_PATHS.WARNING_EMOJI, 'SQL.js: Database not initialized, reinitializing');
       await this.init();
     }
   }

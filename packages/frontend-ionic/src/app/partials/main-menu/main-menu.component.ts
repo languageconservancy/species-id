@@ -14,7 +14,7 @@ import {
 } from '@ionic/angular/standalone';
 import { SettingsPage } from 'app/pages/settings/settings.page';
 import { addIcons } from 'ionicons';
-import { bird } from '../../../assets/icon/bird';
+import { bird } from '../../../assets/core/icon/bird';
 import {
   leaf,
   search,

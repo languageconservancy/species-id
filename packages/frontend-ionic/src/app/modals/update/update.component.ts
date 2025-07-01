@@ -13,6 +13,7 @@ import {
 import { addIcons } from 'ionicons';
 import { close, download, checkmarkCircle, informationCircle } from 'ionicons/icons';
 import { CloudStorageSyncService, UpdateProgress } from 'app/services/cloud-storage-sync.service';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-update',
@@ -65,7 +66,7 @@ export class UpdateComponent implements OnInit {
       // Start the update process
       await this.cloudStorageSyncService.runUpdateWithProgress();
     } catch (error) {
-      console.error('Update failed:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Update failed:', error);
       this.updateError = error instanceof Error ? error.message : 'Update failed';
       this.isUpdating = false;
     }

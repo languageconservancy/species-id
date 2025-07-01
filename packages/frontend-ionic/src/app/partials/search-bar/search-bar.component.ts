@@ -14,6 +14,7 @@ import { SpeciesType } from 'app/models/species.model';
 import { addIcons } from 'ionicons';
 import { Subscription } from 'rxjs';
 import { RecordingState } from 'app/services/search.service';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-search-bar',
@@ -74,7 +75,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       }
       this.searchService.setSearch(searchTerm);
     } catch (error) {
-      console.error('Error setting search input:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error setting search input:', error);
     }
   }
 

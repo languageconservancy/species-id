@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { Species } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-image-carousel',
@@ -45,7 +46,7 @@ export class ImageCarouselComponent implements OnInit, OnChanges {
         const url = await this.speciesService.getImageUrl(image.fileName, this.species.type);
         this.imageUrls.push(url);
       } catch (error) {
-        console.error('Error loading image URL:', error);
+        console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading image URL:', error);
         this.imageUrls.push('');
       }
     }

@@ -13,6 +13,7 @@ import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component
 import { HeaderComponent } from 'app/partials/header/header.component';
 import { ListDividerComponent } from 'app/partials/list-divider/list-divider.component';
 import { AnalyticsService } from 'app/services/analytics.service';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-plants-explore-page',
@@ -65,7 +66,7 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
       this.itemsAll = await this.plantQueriesService.getFull();
       this._setItems();
     } catch (error) {
-      console.error('Error loading plants:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading plants:', error);
     } finally {
       this.itemsLoading = false;
     }
@@ -82,7 +83,7 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
         case 'alphabetical-english':
           return item.nameEn.charAt(0).toUpperCase();
         default:
-          console.error('Invalid sort type:', sortType);
+          console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid sort type:', sortType);
           return item.nameLocal.charAt(0).toUpperCase();
       }
     };

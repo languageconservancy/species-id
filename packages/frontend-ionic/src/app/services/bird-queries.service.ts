@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SqljsService } from 'app/services/sqljs.service';
 import { Species, mapSpeciesWithImagesAndOrder } from 'app/models/species.model';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +38,7 @@ export class BirdQueriesService {
       );
       return mapSpeciesWithImagesAndOrder(result);
     } catch (error) {
-      console.error('Error executing query:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error executing query:', error);
       throw error;
     }
   }
@@ -75,7 +76,7 @@ export class BirdQueriesService {
       }
       return mapSpeciesWithImagesAndOrder(result)[0];
     } catch (error) {
-      console.error('Error executing query:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error executing query:', error);
       return null;
     }
   }

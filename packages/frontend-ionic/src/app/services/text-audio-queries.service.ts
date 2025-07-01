@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SqljsService } from 'app/services/sqljs.service';
 import { TextAudio, mapTextAudio } from 'app/models/text-audio.model';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class TextAudioQueriesService {
    */
   async getByText(text: string): Promise<TextAudio | null> {
     if (!text) {
-      console.warn('TextAudioService.getByText called with empty text');
+      console.warn(ASSET_PATHS.WARNING_EMOJI, 'TextAudioService.getByText called with empty text');
       return null;
     }
 
@@ -42,7 +43,7 @@ export class TextAudioQueriesService {
 
       return mapTextAudio(row);
     } catch (error) {
-      console.error('Error executing query:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error executing query:', error);
       throw error;
     }
   }

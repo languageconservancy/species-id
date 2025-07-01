@@ -14,6 +14,7 @@ import { DetailDescriptionComponent } from 'app/partials/detail-description/deta
 import { BackButtonComponent } from 'app/partials/back-button/back-button.component';
 import { SettingsService, AppSettings } from 'app/services/settings.service';
 import { Subscription } from 'rxjs';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-plant-detail',
@@ -63,33 +64,35 @@ export class PlantDetailPage implements OnInit, OnDestroy {
     const id: number = +(this.route.snapshot.paramMap.get('id') ?? -1);
     console.log('Loading species with ID:', id);
     if (isNaN(id) || id < 0) {
-      console.error('Invalid route parameters: { id: ', id, ' }');
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid route parameters: { id: ', id, ' }');
       return;
     }
     try {
       this.species = await this.plantQueriesService.getById(id);
       console.log('Loaded species from DB:', this.species);
     } catch (error) {
-      console.error('Error loading species:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading species:', error);
     }
   }
 
   public async playTextAudio(text: string | undefined) {
     if (!text) {
-      console.warn('No text provided for audio playback');
+      console.warn(ASSET_PATHS.WARNING_EMOJI, 'No text provided for audio playback');
       return;
     }
 
     try {
       const textAudio = await this.textAudioService.getByText(text);
       if (textAudio) {
-        const audio = new Audio(`assets/audio/${textAudio.fileName}`);
-        audio.play().catch((error) => console.error('Error playing audio:', error));
+        const audio = new Audio(`${ASSET_PATHS.SPECIES_AUDIOS}/texts/${textAudio.fileName}`);
+        audio
+          .play()
+          .catch((error) => console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing audio:', error));
       } else {
-        console.warn(`No audio found for text: ${text}`);
+        console.warn(ASSET_PATHS.WARNING_EMOJI, `No audio found for text: ${text}`);
       }
     } catch (error) {
-      console.error('Error playing text audio:', error);
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing text audio:', error);
     }
   }
 

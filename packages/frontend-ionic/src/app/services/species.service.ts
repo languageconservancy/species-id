@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { SpeciesType } from 'app/models/species.model';
+import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SpeciesService {
-  private readonly baseUrl = 'assets/images';
-
   constructor() {
     // No initialization needed for bundled assets
   }
@@ -22,12 +21,12 @@ export class SpeciesService {
         imagePath = `plants/${imageFileName}`;
         break;
       default:
-        console.error(`Invalid species type: ${speciesType}`);
+        console.error(ASSET_PATHS.ERROR_EMOJI, `Invalid species type: ${speciesType}`);
         return '';
     }
 
     // Return the bundled asset path
-    const assetUrl = `${this.baseUrl}/${imagePath}`;
+    const assetUrl = `${ASSET_PATHS.SPECIES_IMAGES}/${imagePath}`;
     console.log(`SpeciesService: Using bundled asset URL: ${assetUrl}`);
     return assetUrl;
   }
