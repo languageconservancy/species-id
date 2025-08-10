@@ -31,6 +31,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public RecordingStateEnum = RecordingState;
   public recordingState: RecordingState = RecordingState.NotRecording;
   private subscription: Subscription = new Subscription();
+  public showRecordingMaxDurationToast = false;
 
   constructor(
     public searchService: SearchService,
@@ -44,6 +45,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.searchService.recordingState$.subscribe((recordingState) => {
         this.recordingState = recordingState;
+        if (recordingState === RecordingState.ConvertingBecauseMaxDurationReached) {
+          this.showRecordingMaxDurationToast = true;
+        }
       })
     );
 
@@ -95,7 +99,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   // Helper methods for template
   async toggleRecording() {
     if (this.recordingState === RecordingState.Recording) {
-      await this.searchService.stopRecording();
+      await this.searchService.stopRecording(true);
     } else {
       await this.searchService.startRecording();
     }

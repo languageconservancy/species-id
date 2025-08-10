@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { VoiceRecorder } from 'capacitor-voice-recorder';
-import { Directory } from '@capacitor/filesystem';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
-import { ASSET_PATHS } from 'app/constants/app-consts';
+import { ASSET_PATHS, RECORDING_MAX_DURATION_MS } from 'app/constants/app-consts';
 
 export enum RecordingState {
   NotRecording,
   Recording,
   Converting,
+  ConvertingBecauseMaxDurationReached,
 }
 
 @Injectable({
@@ -32,6 +33,7 @@ export class SearchService {
   }
 
   private gotUserPermissionToRecordAudio: boolean = false;
+  private recordingTimeout: number = 0;
 
   constructor() {}
 
@@ -72,20 +74,33 @@ export class SearchService {
       }
       // Update the observable when recording starts
       this.recordingStateSubject.next(RecordingState.Recording);
+      this.stopRecordingAfterMaxDuration();
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error starting recording:', error);
     }
   }
+  private stopRecordingAfterMaxDuration(): void {
+    this.recordingTimeout = window.setTimeout(() => {
+      this.stopRecording(false);
+    }, RECORDING_MAX_DURATION_MS);
+  }
 
-  async stopRecording(): Promise<void> {
+  async stopRecording(userTriggered: boolean = true): Promise<void> {
     try {
+      if (this.recordingTimeout && !userTriggered) {
+        clearTimeout(this.recordingTimeout);
+      }
       const result = await VoiceRecorder.stopRecording();
       if (!result.value) {
         throw new Error('Recording failed');
       }
       // Update the observable when recording stops
-      this.recordingStateSubject.next(RecordingState.Converting);
-      this.convertRecordingToText();
+      this.recordingStateSubject.next(
+        userTriggered
+          ? RecordingState.Converting
+          : RecordingState.ConvertingBecauseMaxDurationReached
+      );
+      this.convertRecordingToText(result.value);
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error stopping recording:', error);
       // Still update the observable even if there's an error
@@ -93,11 +108,33 @@ export class SearchService {
     }
   }
 
-  async convertRecordingToText(): Promise<void> {
+  async convertRecordingToText({
+    recordDataBase64,
+    msDuration,
+    mimeType,
+    path,
+  }: {
+    recordDataBase64?: string;
+    msDuration: number;
+    mimeType: string;
+    path?: string;
+  }): Promise<void> {
     const result = 'baa';
     // Emit the text so the component can update the searchbar input
     await new Promise((resolve) => setTimeout(resolve, 1000));
     this.recordingStateSubject.next(RecordingState.NotRecording);
     this.recordingTextSubject.next(result);
+    await this.deleteRecording(path);
+  }
+
+  async deleteRecording(path?: string): Promise<void> {
+    try {
+      await Filesystem.deleteFile({
+        path: path || 'recordings/*',
+        directory: Directory.Data,
+      });
+    } catch (error) {
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error deleting recording:', error);
+    }
   }
 }

@@ -22,3 +22,5 @@ export const ASSET_PATHS = {
   ERROR_EMOJI: '❌',
   QUESTION_EMOJI: '❓',
 } as const;
+
+export const RECORDING_MAX_DURATION_MS = 5000;

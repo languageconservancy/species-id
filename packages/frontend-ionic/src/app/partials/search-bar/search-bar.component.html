@@ -23,7 +23,10 @@
           class="cursor-pointer"
           (click)="toggleRecording()"
         ></ion-icon>
-      } @else if (searchService.recordingState === RecordingStateEnum.Converting) {
+      } @else if (
+        searchService.recordingState === RecordingStateEnum.Converting ||
+        searchService.recordingState === RecordingStateEnum.ConvertingBecauseMaxDurationReached
+      ) {
         <ion-spinner name="dots" color="light" class="w-8"></ion-spinner>
       }
 
@@ -37,3 +40,12 @@
     </div>
   </div>
 </ion-footer>
+<ion-toast
+  [isOpen]="showRecordingMaxDurationToast"
+  trigger="open-toast"
+  message="Max recording duration reached"
+  swipeGesture="vertical"
+  position="bottom"
+  [duration]="2000"
+  (didDismiss)="showRecordingMaxDurationToast = false"
+></ion-toast>
