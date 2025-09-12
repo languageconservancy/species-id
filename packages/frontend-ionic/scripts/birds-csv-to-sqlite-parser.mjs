@@ -299,10 +299,59 @@ class BirdDataParser {
   }
 
   /**
+   * Generate CREATE TABLE statements
+   */
+  generateCreateTableSql() {
+    return `-- Create tables for bird species data
+CREATE TABLE IF NOT EXISTS bird_orders (
+    id INTEGER PRIMARY KEY,
+    name_scientific TEXT NOT NULL,
+    description_en TEXT,
+    description_local TEXT
+);
+
+CREATE TABLE IF NOT EXISTS birds (
+    id INTEGER PRIMARY KEY,
+    name_local TEXT,
+    name_en TEXT,
+    alternate_names_local TEXT,
+    alternate_names_en TEXT,
+    name_scientific TEXT NOT NULL,
+    name_meaning_en TEXT,
+    description_local TEXT,
+    description_en TEXT,
+    size TEXT,
+    order_id INTEGER,
+    FOREIGN KEY (order_id) REFERENCES bird_orders(id)
+);
+
+CREATE TABLE IF NOT EXISTS bird_images (
+    id INTEGER PRIMARY KEY,
+    file_name TEXT NOT NULL,
+    bird_id INTEGER NOT NULL,
+    caption TEXT,
+    sort_order INTEGER,
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
+);
+
+CREATE TABLE IF NOT EXISTS bird_audios (
+    id INTEGER PRIMARY KEY,
+    file_name TEXT NOT NULL,
+    bird_id INTEGER NOT NULL,
+    caption TEXT,
+    sort_order INTEGER,
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
+);`;
+  }
+
+  /**
    * Generate SQL statements
    */
   generateSql(data) {
     const sqlStatements = [];
+
+    // Add CREATE TABLE statements first
+    sqlStatements.push(this.generateCreateTableSql());
 
     // Insert bird orders
     if (data.birdOrders.length > 0) {
