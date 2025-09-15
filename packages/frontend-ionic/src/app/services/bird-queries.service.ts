@@ -29,7 +29,8 @@ export class BirdQueriesService {
           bird_audios.sort_order AS audio_sort_order,
           bird_orders.name_scientific AS order_name_scientific,
           bird_orders.description_local AS order_description_local,
-          bird_orders.description_en AS order_description_en
+          bird_orders.description_en AS order_description_en,
+          'bird' as species_type
         FROM birds
         LEFT JOIN bird_images ON birds.id = bird_images.bird_id
         LEFT JOIN bird_audios ON birds.id = bird_audios.bird_id
@@ -63,7 +64,8 @@ export class BirdQueriesService {
           bird_audios.sort_order AS audio_sort_order,
           bird_orders.name_scientific AS order_name_scientific,
           bird_orders.description_local AS order_description_local,
-          bird_orders.description_en AS order_description_en
+          bird_orders.description_en AS order_description_en,
+          'bird' as species_type
         FROM birds
         LEFT JOIN bird_images ON birds.id = bird_images.bird_id
         LEFT JOIN bird_audios ON birds.id = bird_audios.bird_id

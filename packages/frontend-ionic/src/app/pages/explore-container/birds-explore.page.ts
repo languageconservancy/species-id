@@ -3,7 +3,7 @@ import { BirdQueriesService } from 'app/services/bird-queries.service';
 import { BirdPreferencesService } from 'app/services/bird-preferences.service';
 import { BaseExploreContainerComponent } from './base-explore-container.page';
 import { BirdListItemComponent } from '../../partials/bird-list-item/bird-list-item.component';
-import { Species, SpeciesGroup } from 'app/models/species.model';
+import { Bird, Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { SearchService } from 'app/services/search.service';
 import { SpeciesType } from 'app/models/species.model';
@@ -80,8 +80,13 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
           return item.nameLocal.charAt(0).toUpperCase();
         case 'alphabetical-english':
           return item.nameEn.charAt(0).toUpperCase();
+        case 'alphabetical-scientific':
+          return item.nameScientific.charAt(0).toUpperCase();
         case 'by-order':
-          return `${item.order?.nameScientific} (${item.order?.descriptionEn})` || 'Unknown';
+          return (
+            `${(item as Bird).order?.nameScientific} (${(item as Bird).order?.descriptionEn})` ||
+            'Unknown'
+          );
         default:
           console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid sort type:', sortType);
           return item.nameLocal.charAt(0).toUpperCase();

@@ -8,8 +8,11 @@ const languageLabel = (language: string) => {
   return language.charAt(0).toUpperCase() + language.slice(1);
 };
 
-export type BirdSortOption = 'alphabetical-local' | 'alphabetical-english' | 'by-order';
-export type BirdFilterOption = 'all' | 'endangered' | 'threatened' | 'migratory';
+export type BirdSortOption =
+  | 'alphabetical-local'
+  | 'alphabetical-english'
+  | 'alphabetical-scientific'
+  | 'by-order';
 export type LanguageOption = 'local' | 'english';
 export type SortDirection = 'ascending' | 'descending';
 
@@ -24,18 +27,16 @@ export function getBirdSortOptions(
       label: `Alphabetical (${languageName})`,
     },
     { value: 'alphabetical-english', label: 'Alphabetical (English)' },
+    { value: 'alphabetical-scientific', label: 'Alphabetical (Scientific)' },
     { value: 'by-order', label: 'By Order' },
   ];
 }
 
-export const BIRD_FILTER_OPTIONS: { value: BirdFilterOption; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'endangered', label: 'Endangered' },
-  { value: 'threatened', label: 'Threatened' },
-  { value: 'migratory', label: 'Migratory' },
-];
-
 export const SORT_DIRECTION_OPTIONS: { value: SortDirection; label: string }[] = [
   { value: 'ascending', label: 'Ascending' },
   { value: 'descending', label: 'Descending' },
+];
+
+export const BIRD_FILTER_OPTIONS: { value: string; label: string }[] = [
+  { value: 'all', label: 'All' },
 ];

@@ -7,9 +7,8 @@ const languageLabel = (language: string) => {
 export type PlantSortOption =
   | 'alphabetical-local'
   | 'alphabetical-english'
-  | 'by-family'
-  | 'by-height';
-export type PlantFilterOption = 'all' | 'endangered' | 'threatened' | 'native' | 'invasive';
+  | 'alphabetical-scientific'
+  | 'by-category';
 export type LanguageOption = 'local' | 'english';
 export type SortDirection = 'ascending' | 'descending';
 
@@ -24,20 +23,16 @@ export function getPlantSortOptions(
       label: `Alphabetical (${languageName})`,
     },
     { value: 'alphabetical-english', label: 'Alphabetical (English)' },
-    { value: 'by-family', label: 'By Family' },
-    { value: 'by-height', label: 'By Height' },
+    { value: 'alphabetical-scientific', label: 'Alphabetical (Scientific)' },
+    { value: 'by-category', label: 'By Category' },
   ];
 }
-
-export const PLANT_FILTER_OPTIONS: { value: PlantFilterOption; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'endangered', label: 'Endangered' },
-  { value: 'threatened', label: 'Threatened' },
-  { value: 'native', label: 'Native' },
-  { value: 'invasive', label: 'Invasive' },
-];
 
 export const SORT_DIRECTION_OPTIONS: { value: SortDirection; label: string }[] = [
   { value: 'ascending', label: 'Ascending' },
   { value: 'descending', label: 'Descending' },
+];
+
+export const PLANT_FILTER_OPTIONS: { value: string; label: string }[] = [
+  { value: 'all', label: 'All' },
 ];

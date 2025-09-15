@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { PlantQueriesService } from 'app/services/plant-queries.service';
 import { PlantPreferencesService } from 'app/services/plant-preferences.service';
 import { BaseExploreContainerComponent } from './base-explore-container.page';
-import { Species, SpeciesGroup } from 'app/models/species.model';
+import { Plant, Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { PlantListItemComponent } from 'app/partials/plant-list-item/plant-list-item.component';
 import { SearchService } from 'app/services/search.service';
@@ -77,11 +77,16 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     const sortType = preferences;
 
     const getGroupKey = (item: Species): string => {
+      console.log('item', item);
       switch (sortType) {
         case 'alphabetical-local':
           return item.nameLocal.charAt(0).toUpperCase();
         case 'alphabetical-english':
           return item.nameEn.charAt(0).toUpperCase();
+        case 'alphabetical-scientific':
+          return item.nameScientific.charAt(0).toUpperCase();
+        case 'by-category':
+          return (item as Plant).category?.name || 'Unknown';
         default:
           console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid sort type:', sortType);
           return item.nameLocal.charAt(0).toUpperCase();

@@ -15,8 +15,6 @@ export interface BaseSpecies {
   descriptionEn: string;
   images?: SpeciesImage[];
   type: SpeciesType;
-  orderId: number;
-  order?: SpeciesOrder;
 }
 
 export interface SpeciesGroup {
@@ -26,10 +24,14 @@ export interface SpeciesGroup {
 
 export interface Bird extends BaseSpecies {
   type: SpeciesType.Bird;
+  orderId: number;
+  order?: SpeciesOrder;
 }
 
 export interface Plant extends BaseSpecies {
   type: SpeciesType.Plant;
+  categoryId: number;
+  category?: SpeciesCategory;
 }
 
 export interface SpeciesImage {
@@ -40,6 +42,12 @@ export interface SpeciesImage {
 
 export interface SpeciesOrder {
   nameScientific: string;
+  descriptionEn: string;
+  descriptionLocal: string;
+}
+
+export interface SpeciesCategory {
+  name: string;
   descriptionEn: string;
   descriptionLocal: string;
 }
@@ -76,7 +84,7 @@ export function mapPlant(row: any): Plant {
     nameMeaningEn: row.species_name_meaning_en,
     descriptionLocal: row.species_description_local,
     descriptionEn: row.species_description_en,
-    orderId: row.order_id,
+    categoryId: row.category_id,
   };
 }
 
@@ -103,15 +111,28 @@ export function mapSpeciesWithImagesAndOrder(result: any): Species[] {
   rows.forEach((row: any) => {
     const speciesId = row.species_id;
     if (!speciesMap[speciesId]) {
-      // Determine if it's a bird or plant based on the table name in the query
-      const isBird = row.species_name_scientific !== undefined;
-      speciesMap[speciesId] = isBird ? mapBird(row) : mapPlant(row);
-      speciesMap[speciesId].images = [];
-      speciesMap[speciesId].order = {
-        nameScientific: row.order_name_scientific,
-        descriptionEn: row.order_description_en,
-        descriptionLocal: row.order_description_local,
-      };
+      switch (row.species_type) {
+        case SpeciesType.Bird:
+          speciesMap[speciesId] = mapBird(row);
+          speciesMap[speciesId].images = [];
+          (speciesMap[speciesId] as any).orderId = row.order_id;
+          (speciesMap[speciesId] as any).order = {
+            nameScientific: row.order_name_scientific,
+            descriptionEn: row.order_description_en,
+            descriptionLocal: row.order_description_local,
+          };
+          break;
+        case SpeciesType.Plant:
+          speciesMap[speciesId] = mapPlant(row);
+          speciesMap[speciesId].images = [];
+          (speciesMap[speciesId] as any).categoryId = row.category_id;
+          (speciesMap[speciesId] as any).category = {
+            name: row.category_name,
+            descriptionEn: row.category_description_en,
+            descriptionLocal: row.category_description_local,
+          };
+          break;
+      }
     }
     if (row.image_file_name) {
       speciesMap[speciesId].images?.push({

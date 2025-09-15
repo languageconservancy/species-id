@@ -9,4 +9,11 @@
       </div>
     </swiper-slide>
   }
+  @if (!species?.images?.length) {
+    <swiper-slide>
+      <div class="w-full h-60 bg-slate-900 bg-opacity-25 text-gray-200 text-center">
+        <p class="text-sm p1">No images available</p>
+      </div>
+    </swiper-slide>
+  }
 </swiper-container>

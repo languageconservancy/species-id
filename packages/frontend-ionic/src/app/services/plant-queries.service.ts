@@ -17,19 +17,14 @@ export class PlantQueriesService {
           plants.name_scientific AS species_name_scientific,
           plants.name_local AS species_name_local,
           plants.name_en AS species_name_en,
-          plants.order_id AS order_id,
+          plants.category_id AS category_id,
           plants.name_meaning_en AS species_name_meaning_en,
-          plants.description_local AS species_description_local,
-          plants.description_en AS species_description_en,
-          plant_images.file_name AS image_file_name,
-          plant_images.caption AS image_caption,
-          plant_images.sort_order AS image_sort_order,
-          plant_orders.name_scientific AS order_name_scientific,
-          plant_orders.description_local AS order_description_local,
-          plant_orders.description_en AS order_description_en
+          plant_categories.name AS category_name,
+          plant_categories.description_local AS category_description_local,
+          plant_categories.description_en AS category_description_en,
+          'plant' as species_type
         FROM plants
-        LEFT JOIN plant_images ON plants.id = plant_images.plant_id
-        LEFT JOIN plant_orders ON plants.order_id = plant_orders.id
+        LEFT JOIN plant_categories ON plants.category_id = plant_categories.id
       ;`
       );
       return mapSpeciesWithImagesAndOrder(result);
@@ -47,19 +42,14 @@ export class PlantQueriesService {
           plants.name_scientific AS species_name_scientific,
           plants.name_local AS species_name_local,
           plants.name_en AS species_name_en,
-          plants.order_id AS order_id,
+          plants.category_id AS category_id,
           plants.name_meaning_en AS species_name_meaning_en,
-          plants.description_local AS species_description_local,
-          plants.description_en AS species_description_en,
-          plant_images.file_name AS image_file_name,
-          plant_images.caption AS image_caption,
-          plant_images.sort_order AS image_sort_order,
-          plant_orders.name_scientific AS order_name_scientific,
-          plant_orders.description_local AS order_description_local,
-          plant_orders.description_en AS order_description_en
+          plant_categories.name AS category_name,
+          plant_categories.description_local AS category_description_local,
+          plant_categories.description_en AS category_description_en,
+          'plant' as species_type
         FROM plants
-        LEFT JOIN plant_images ON plants.id = plant_images.plant_id
-        LEFT JOIN plant_orders ON plants.order_id = plant_orders.id
+        LEFT JOIN plant_categories ON plants.category_id = plant_categories.id
         WHERE plants.id = ?;`,
         [id]
       );
