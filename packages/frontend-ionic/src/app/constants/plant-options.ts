@@ -7,8 +7,7 @@ const languageLabel = (language: string) => {
 export type PlantSortOption =
   | 'alphabetical-local'
   | 'alphabetical-english'
-  | 'alphabetical-scientific'
-  | 'by-category';
+  | 'alphabetical-scientific';
 export type LanguageOption = 'local' | 'english';
 export type SortDirection = 'ascending' | 'descending';
 
@@ -24,7 +23,6 @@ export function getPlantSortOptions(
     },
     { value: 'alphabetical-english', label: 'Alphabetical (English)' },
     { value: 'alphabetical-scientific', label: 'Alphabetical (Scientific)' },
-    { value: 'by-category', label: 'By Category' },
   ];
 }
 

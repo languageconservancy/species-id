@@ -50,7 +50,6 @@ export class PlantDetailPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    console.log('PlantDetailPage ngOnInit');
     await this._loadSpeciesFromUrl();
     this.loading = false;
     this._subscribeToSettings();
@@ -62,14 +61,12 @@ export class PlantDetailPage implements OnInit, OnDestroy {
 
   private async _loadSpeciesFromUrl() {
     const id: number = +(this.route.snapshot.paramMap.get('id') ?? -1);
-    console.log('Loading species with ID:', id);
     if (isNaN(id) || id < 0) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid route parameters: { id: ', id, ' }');
       return;
     }
     try {
       this.species = await this.plantQueriesService.getById(id);
-      console.log('Loaded species from DB:', this.species);
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading species:', error);
     }
@@ -84,7 +81,11 @@ export class PlantDetailPage implements OnInit, OnDestroy {
     try {
       const textAudio = await this.textAudioService.getByText(text);
       if (textAudio) {
+        console.log('Playing text audio:', textAudio);
         const audio = new Audio(`${ASSET_PATHS.SPECIES_AUDIOS}/texts/${textAudio.fileName}`);
+        console.log('Audio:', audio);
+        console.log('Audio canPlayType mp3:', audio.canPlayType('audio/mpeg'));
+        console.log('Audio src:', audio.src);
         audio
           .play()
           .catch((error) => console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing audio:', error));

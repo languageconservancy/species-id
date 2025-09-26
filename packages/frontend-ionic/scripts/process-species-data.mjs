@@ -135,7 +135,7 @@ function main() {
     console.log(`   - Plant Categories: ${parsedData.plantCategories.length}`);
     console.log(`   - Plants: ${parsedData.plants.length}`);
     console.log(`   - Plant Images: ${parsedData.plantImages.length}`);
-    console.log(`   - Plant Audios: ${parsedData.plantAudios.length}`);
+    console.log(`   - Text Audios: ${parsedData.textAudios.length}`);
     console.log(`📁 Output written to: ${outputFile}`);
   } catch (error) {
     console.error('❌ Error processing files:', error.message);

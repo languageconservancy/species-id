@@ -99,6 +99,7 @@ class SpeciesDataParser {
     const birds = [];
     const birdImages = [];
     const birdAudios = [];
+    const textAudios = [];
 
     // Process each data row
     for (let i = 1; i < rows.length; i++) {
@@ -133,6 +134,21 @@ class SpeciesDataParser {
             });
           });
         }
+
+        // Process crow name audios for text_audios table
+        if (rowData.crow_name_audios_json && rowData.crow_name_audios_json.trim()) {
+          const audios = this.parseJsonArray(rowData.crow_name_audios_json);
+          audios.forEach((audio) => {
+            if (audio.file && bird.name_local) {
+              textAudios.push({
+                text: bird.name_local,
+                file_name: audio.file,
+                url_prefix: null,
+                ipa: null,
+              });
+            }
+          });
+        }
       }
     }
 
@@ -141,6 +157,7 @@ class SpeciesDataParser {
       birds,
       birdImages,
       birdAudios,
+      textAudios,
     };
   }
 
@@ -154,7 +171,7 @@ class SpeciesDataParser {
     const headers = rows[0];
     const plants = [];
     const plantImages = [];
-    const plantAudios = [];
+    const plantTextAudios = [];
 
     // Process each data row
     for (let i = 1; i < rows.length; i++) {
@@ -177,17 +194,16 @@ class SpeciesDataParser {
           });
         }
 
-        // Process audio files if present (from crow_name_audios_csv)
-        if (rowData.crow_name_audios_csv && rowData.crow_name_audios_csv.trim()) {
-          const audioFiles = rowData.crow_name_audios_csv.split(',');
-          audioFiles.forEach((audioFile, index) => {
-            const trimmedFile = audioFile.trim();
-            if (trimmedFile) {
-              plantAudios.push({
-                file_name: trimmedFile,
-                plant_id: i, // Using row index as temporary ID
-                caption: 'Crow name audio',
-                sort_order: index + 1,
+        // Process crow name audios for text_audios table
+        if (rowData.crow_name_audios_json && rowData.crow_name_audios_json.trim()) {
+          const audios = this.parseJsonArray(rowData.crow_name_audios_json);
+          audios.forEach((audio) => {
+            if (audio.file && plant.name_local) {
+              plantTextAudios.push({
+                text: plant.name_local,
+                file_name: audio.file,
+                url_prefix: null,
+                ipa: null,
               });
             }
           });
@@ -199,7 +215,7 @@ class SpeciesDataParser {
       plantCategories: Array.from(this.plantCategories.values()),
       plants,
       plantImages,
-      plantAudios,
+      plantTextAudios,
     };
   }
 
@@ -536,13 +552,12 @@ CREATE TABLE IF NOT EXISTS plant_images (
     FOREIGN KEY (plant_id) REFERENCES plants(id)
 );
 
-CREATE TABLE IF NOT EXISTS plant_audios (
+CREATE TABLE IF NOT EXISTS text_audios (
     id INTEGER PRIMARY KEY,
+    text TEXT NOT NULL,
     file_name TEXT NOT NULL,
-    plant_id INTEGER NOT NULL,
-    caption TEXT,
-    sort_order INTEGER,
-    FOREIGN KEY (plant_id) REFERENCES plants(id)
+    url_prefix TEXT,
+    ipa TEXT
 );`;
   }
 
@@ -653,17 +668,17 @@ CREATE TABLE IF NOT EXISTS plant_audios (
       );
     }
 
-    // Insert plant audios
-    if (data.plantAudios && data.plantAudios.length > 0) {
-      const audioValues = data.plantAudios
+    // Insert text audios
+    if (data.textAudios && data.textAudios.length > 0) {
+      const textAudioValues = data.textAudios
         .map(
-          (audio, index) =>
-            `(${index + 1}, '${this.escapeSql(audio.file_name)}', ${audio.plant_id}, ${audio.caption ? `'${this.escapeSql(audio.caption)}'` : 'NULL'}, ${audio.sort_order})`
+          (textAudio, index) =>
+            `(${index + 1}, '${this.escapeSql(textAudio.text)}', '${this.escapeSql(textAudio.file_name)}', ${textAudio.url_prefix ? `'${this.escapeSql(textAudio.url_prefix)}'` : 'NULL'}, ${textAudio.ipa ? `'${this.escapeSql(textAudio.ipa)}'` : 'NULL'})`
         )
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO plant_audios (id, file_name, plant_id, caption, sort_order) VALUES\n  ${audioValues};`
+        `INSERT INTO text_audios (id, text, file_name, url_prefix, ipa) VALUES\n  ${textAudioValues};`
       );
     }
 
@@ -718,7 +733,7 @@ CREATE TABLE IF NOT EXISTS plant_audios (
         plantCategories: [],
         plants: [],
         plantImages: [],
-        plantAudios: [],
+        textAudios: [],
       };
 
       // Process birds if provided
@@ -733,6 +748,7 @@ CREATE TABLE IF NOT EXISTS plant_audios (
         combinedData.birds = birdData.birds;
         combinedData.birdImages = birdData.birdImages;
         combinedData.birdAudios = birdData.birdAudios;
+        combinedData.textAudios = combinedData.textAudios.concat(birdData.textAudios || []);
       }
 
       // Process plants if provided
@@ -748,7 +764,7 @@ CREATE TABLE IF NOT EXISTS plant_audios (
         combinedData.plantCategories = plantData.plantCategories;
         combinedData.plants = plantData.plants;
         combinedData.plantImages = plantData.plantImages;
-        combinedData.plantAudios = plantData.plantAudios;
+        combinedData.textAudios = combinedData.textAudios.concat(plantData.plantTextAudios || []);
       }
 
       const sql = this.generateSql(combinedData);
@@ -763,7 +779,6 @@ CREATE TABLE IF NOT EXISTS plant_audios (
       console.log(`   - Plant Categories: ${combinedData.plantCategories.length}`);
       console.log(`   - Plants: ${combinedData.plants.length}`);
       console.log(`   - Plant Images: ${combinedData.plantImages.length}`);
-      console.log(`   - Plant Audios: ${combinedData.plantAudios.length}`);
 
       return combinedData;
     } catch (error) {

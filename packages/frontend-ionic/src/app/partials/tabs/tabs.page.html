@@ -3,12 +3,13 @@
     <ion-tab-button (click)="openMenu()">
       <ion-icon aria-hidden="true" color="light" name="menu"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button
-      tab="tab1"
-      [routerLink]="['/tabs/tab1', currentDomain === speciesType.Bird ? 'birds' : 'plants']"
-    >
-      <ion-icon aria-hidden="true" color="light" [name]="exploreIcon"></ion-icon>
-      <ion-label class="text-sm font-localNames" color="light">Chichíinnee</ion-label>
+    <ion-tab-button tab="tab1" [routerLink]="['/tabs/tab1', 'birds']">
+      <ion-icon aria-hidden="true" color="light" name="feather"></ion-icon>
+      <ion-label class="text-sm font-localNames" color="light">Dakáake</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="tab1" [routerLink]="['/tabs/tab1', 'plants']">
+      <ion-icon aria-hidden="true" color="light" name="leaf"></ion-icon>
+      <ion-label class="text-sm font-localNames" color="light">Baaapáale</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

@@ -22,16 +22,11 @@ export class DetailDescriptionComponent implements OnInit, OnChanges {
   constructor(private settingsService: SettingsService) {}
 
   ngOnInit() {
-    console.log('DetailDescriptionComponent ngOnInit', this.species?.nameLocal);
-    console.log('Species object:', JSON.stringify(this.species, null, 2));
     this._subscribeToSettings();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('DetailDescriptionComponent ngOnChanges', changes);
     if (changes['species']) {
-      console.log('Species changed:', this.species?.nameLocal);
-      console.log('Species object:', JSON.stringify(this.species, null, 2));
     }
   }
 

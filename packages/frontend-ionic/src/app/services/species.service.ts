@@ -27,7 +27,6 @@ export class SpeciesService {
 
     // Return the bundled asset path
     const assetUrl = `${ASSET_PATHS.SPECIES_IMAGES}/${imagePath}`;
-    console.log(`SpeciesService: Using bundled asset URL: ${assetUrl}`);
     return assetUrl;
   }
 }

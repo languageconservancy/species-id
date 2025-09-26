@@ -23,7 +23,7 @@
     @if (settings.useEnglish && species?.nameEn) {
     <p class="font-medium">{{ species?.nameEn }}</p>
     } @if (settings.showScientificNames && species?.nameScientific) {
-    <p class="italic">{{ species?.nameScientific }}</p>
+    <p class="italic">({{ species?.nameScientific }})</p>
     }
   </ion-label>
 

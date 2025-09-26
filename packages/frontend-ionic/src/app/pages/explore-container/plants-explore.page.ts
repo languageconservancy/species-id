@@ -50,7 +50,6 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     this.preferencesSubscription = this.plantPreferencesService
       .getPreferences()
       .subscribe((preferences) => {
-        console.log('Preferences changed:', preferences);
         this._setItems();
       });
   }
@@ -61,7 +60,6 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
   }
 
   protected override async _loadSpecies() {
-    console.log('PlantExploreContainerComponent _loadSpecies');
     try {
       this.itemsAll = await this.plantQueriesService.getFull();
       this._setItems();
@@ -77,7 +75,6 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     const sortType = preferences;
 
     const getGroupKey = (item: Species): string => {
-      console.log('item', item);
       switch (sortType) {
         case 'alphabetical-local':
           return item.nameLocal.charAt(0).toUpperCase();

@@ -58,10 +58,8 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
   }
 
   protected override async _loadSpecies() {
-    console.log('BirdsExplorePage _loadSpecies');
     try {
       const result = await this.birdQueriesService.getFull();
-      console.log('BirdsExplorePage _loadSpecies result', result);
       this.itemsAll = result;
       this._setItems();
     } catch (error) {

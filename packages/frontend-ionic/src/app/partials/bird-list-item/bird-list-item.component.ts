@@ -33,14 +33,12 @@ export class BirdListItemComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    console.log('BirdListItemComponent ngOnInit');
     this._subscribeToSettings();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     // Watch for changes to the item property
     if (changes['item'] && changes['item'].currentValue) {
-      console.log('BirdListItemComponent ngOnChanges', changes['item'].currentValue);
       this._loadImageUrl();
     }
   }
@@ -63,7 +61,6 @@ export class BirdListItemComponent implements OnInit, OnChanges {
           this.item.images[0].fileName,
           this.item.type
         );
-        console.log('BirdListItemComponent _loadImageUrl done', this.imageUrl);
       } catch (error) {
         console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading image URL:', error);
         this.imageUrl = '';

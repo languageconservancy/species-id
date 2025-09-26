@@ -12,12 +12,18 @@
 
 <ion-content class="ion-padding mt-0" style="--background: transparent">
   <!-- Header section -->
-  <ion-label class="">
-    <h1 class="font-localNames">{{ species?.nameLocal }}</h1>
+  <ion-label class="text-center">
+    <span class="inline-flex cursor-pointer group" (click)="playTextAudio(species?.nameLocal)">
+      <h1 class="font-localNames">{{ species?.nameLocal }}</h1>
+      <ion-icon
+        name="volume-high"
+        class="ml-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100"
+      ></ion-icon>
+    </span>
     @if (settings.useEnglish && species?.nameEn) {
     <p class="font-medium">{{ species?.nameEn }}</p>
     } @if (settings.showScientificNames && species?.nameScientific) {
-    <p class="italic">{{ species?.nameScientific }}</p>
+    <p class="italic">({{ species?.nameScientific }})</p>
     }
   </ion-label>
 

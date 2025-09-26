@@ -12,7 +12,7 @@ Run these scripts from the root directory.
    `node ./scripts/process-bird-data.mjs`
 
 1. Convert sql file to sqlite file
-   `sqlite3 species-production.db < species.db`
+   `sqlite3 species-production.db < species_data.sql`
 
 1. Download all image/audio assets from Amazon S3 bucket
    `./scripts/download-s3-assets.sh`

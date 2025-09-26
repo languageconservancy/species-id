@@ -64,7 +64,6 @@ export class SearchService {
     }
 
     try {
-      console.log('Recording started');
       const result = await VoiceRecorder.startRecording({
         directory: Directory.Data,
         subDirectory: 'recordings',

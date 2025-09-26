@@ -22,9 +22,13 @@ export class PlantQueriesService {
           plant_categories.name AS category_name,
           plant_categories.description_local AS category_description_local,
           plant_categories.description_en AS category_description_en,
+          plant_images.file_name AS image_file_name,
+          plant_images.caption AS image_caption,
+          plant_images.sort_order AS image_sort_order,
           'plant' as species_type
         FROM plants
         LEFT JOIN plant_categories ON plants.category_id = plant_categories.id
+        LEFT JOIN plant_images ON plants.id = plant_images.plant_id
       ;`
       );
       return mapSpeciesWithImagesAndOrder(result);
@@ -47,9 +51,13 @@ export class PlantQueriesService {
           plant_categories.name AS category_name,
           plant_categories.description_local AS category_description_local,
           plant_categories.description_en AS category_description_en,
+          plant_images.file_name AS image_file_name,
+          plant_images.caption AS image_caption,
+          plant_images.sort_order AS image_sort_order,
           'plant' as species_type
         FROM plants
         LEFT JOIN plant_categories ON plants.category_id = plant_categories.id
+        LEFT JOIN plant_images ON plants.id = plant_images.plant_id
         WHERE plants.id = ?;`,
         [id]
       );

@@ -51,7 +51,6 @@ export class BirdDetailPage implements OnInit {
   }
 
   async ngOnInit() {
-    console.log('BirdDetailPage ngOnInit');
     await this._loadSpeciesFromUrl();
     this.loading = false;
     this._subscribeToSettings();
@@ -70,7 +69,6 @@ export class BirdDetailPage implements OnInit {
 
   private async _loadSpeciesFromUrl() {
     const id: number = +(this.route.snapshot.paramMap.get('id') ?? -1);
-    console.log('Loading species with ID:', id);
     if (isNaN(id) || id < 0) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid route parameters: { id: ', id, ' }');
       return;
@@ -78,7 +76,6 @@ export class BirdDetailPage implements OnInit {
 
     try {
       this.species = await this.birdQueriesService.getById(id);
-      console.log('Loaded species from DB:', this.species);
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading species:', error);
     }
