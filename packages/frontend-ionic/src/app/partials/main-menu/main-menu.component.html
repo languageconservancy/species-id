@@ -11,12 +11,12 @@
         @for (item of menuItems; track item; let index = $index) {
           <ion-item button (click)="menuItemClicked(item.link)" color="primary">
             <ion-icon slot="start" [name]="item.icon"></ion-icon>
-            <h2 class="font-menu text-2xl font-bold py-2">{{ item.label }}</h2>
+            <h2 class="font-menuItems text-2xl font-bold py-2">{{ item.label }}</h2>
           </ion-item>
         }
         <ion-item button (click)="openSettingsModal()" color="primary">
           <ion-icon slot="start" name="settings"></ion-icon>
-          <h2 class="font-menu text-2xl font-bold py-2">Settings</h2>
+          <h2 class="font-menuItems text-2xl font-bold py-2">Settings</h2>
         </ion-item>
       </ion-list>
       <!-- X close button -->

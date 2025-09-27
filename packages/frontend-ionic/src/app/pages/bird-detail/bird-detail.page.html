@@ -10,10 +10,13 @@
   <app-image-carousel [species]="species"></app-image-carousel>
 </div>
 
-<ion-content class="ion-padding mt-0" style="--background: transparent">
+<ion-content class="ion-padding mt-0" style="--background: transparent; --padding-bottom: 4rem">
   <!-- Header section -->
   <ion-label class="">
-    <span class="inline-flex cursor-pointer group" (click)="playTextAudio(species?.nameLocal)">
+    <span
+      class="flex w-full align-center justify-center cursor-pointer group"
+      (click)="playTextAudio(species?.nameLocal)"
+    >
       <h1 class="font-localNames">{{ species?.nameLocal }}</h1>
       <ion-icon
         name="volume-high"
@@ -27,9 +30,11 @@
     }
   </ion-label>
 
+  @if (species?.descriptionEn) {
   <app-detail-description [species]="species"></app-detail-description>
-
-  <app-bird-map [species]="species"></app-bird-map>
+  } @if (species?.mapImage) {
+  <app-species-map [species]="species!"></app-species-map>
+  }
 </ion-content>
 }
 <app-back-button [addBottomSafePadding]="false"></app-back-button>

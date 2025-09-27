@@ -36,7 +36,6 @@ export class ConfigService {
         throw new Error('Config file not found or unreadable');
       }
       this.config = await res.json();
-      console.log('config', this.config);
     } catch (err) {
       throw new Error(`❌ Failed to load config.json: ${err}`);
     }

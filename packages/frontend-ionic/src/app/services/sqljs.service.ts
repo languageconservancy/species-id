@@ -130,12 +130,12 @@ export class SqljsService {
     }
 
     try {
-      console.log('SQL.js: Executing query:', query);
+      // console.log('SQL.js: Executing query:', query);
 
       // Execute the query - SQL.js exec() returns an array of result objects
       const results = this.database.exec(query, params);
 
-      console.log('SQL.js: Query results:', results);
+      // console.log('SQL.js: Query results:', results);
 
       // SQL.js exec() returns an array where each element represents a result set
       // Each result set has columns and values properties

@@ -15,6 +15,7 @@ import { BackButtonComponent } from 'app/partials/back-button/back-button.compon
 import { SettingsService, AppSettings } from 'app/services/settings.service';
 import { Subscription } from 'rxjs';
 import { ASSET_PATHS } from 'app/constants/app-consts';
+import { SpeciesMapComponent } from 'app/partials/species-map/species-map.component';
 
 @Component({
   selector: 'app-bird-detail',
@@ -28,6 +29,7 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
     ImageCarouselComponent,
     DetailDescriptionComponent,
     BackButtonComponent,
+    SpeciesMapComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

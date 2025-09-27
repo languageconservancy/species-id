@@ -29,4 +29,21 @@ export class SpeciesService {
     const assetUrl = `${ASSET_PATHS.SPECIES_IMAGES}/${imagePath}`;
     return assetUrl;
   }
+
+  async getMapImageUrl(imageFileName: string, speciesType?: SpeciesType): Promise<string> {
+    let imagePath: string;
+    switch (speciesType) {
+      case SpeciesType.Bird:
+        imagePath = `birds/${imageFileName}`;
+        break;
+      case SpeciesType.Plant:
+        imagePath = `plants/${imageFileName}`;
+        break;
+      default:
+        console.error(ASSET_PATHS.ERROR_EMOJI, `Invalid species type: ${speciesType}`);
+        return '';
+    }
+    const assetUrl = `${ASSET_PATHS.SPECIES_MAPS}/${imagePath}`;
+    return assetUrl;
+  }
 }

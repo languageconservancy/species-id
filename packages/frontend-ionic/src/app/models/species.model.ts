@@ -13,6 +13,7 @@ export interface BaseSpecies {
   nameMeaningEn: string;
   descriptionLocal: string;
   descriptionEn: string;
+  mapImage: string;
   images?: SpeciesImage[];
   type: SpeciesType;
 }
@@ -71,6 +72,7 @@ export function mapBird(row: any): Bird {
     descriptionLocal: row.species_description_local,
     descriptionEn: row.species_description_en,
     orderId: row.species_order_id,
+    mapImage: row.species_map_image,
   };
 }
 
@@ -85,6 +87,7 @@ export function mapPlant(row: any): Plant {
     descriptionLocal: row.species_description_local,
     descriptionEn: row.species_description_en,
     categoryId: row.category_id,
+    mapImage: row.species_map_image,
   };
 }
 

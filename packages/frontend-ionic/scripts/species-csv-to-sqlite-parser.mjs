@@ -403,6 +403,7 @@ class SpeciesDataParser {
       description_local: rowData.description_local || null,
       description_en: rowData.description_en || null,
       size: rowData.size,
+      map_image: rowData.map_image || null,
       order_id: orderId,
     };
   }
@@ -438,11 +439,6 @@ class SpeciesDataParser {
       throw new Error(`Plant Row ${rowIndex}: Category not found: ${categoryName}`);
     }
 
-    // Parse "Have Recording?" field
-    const hasRecording = rowData['Have Recording?']
-      ? ['yes', 'true', '1', 'y'].includes(rowData['Have Recording?'].toLowerCase().trim())
-      : false;
-
     return {
       id: rowIndex,
       name_local: rowData.name_local,
@@ -450,8 +446,9 @@ class SpeciesDataParser {
       alternative_names_local: rowData.alternative_names_local || null,
       name_scientific: rowData.name_scientific,
       name_meaning_en: rowData.name_meaning_en || null,
+      description_en: rowData.description_en || null,
+      map_image: rowData.map_image || null,
       category_id: categoryId,
-      has_recording: hasRecording,
     };
   }
 
@@ -502,6 +499,7 @@ CREATE TABLE IF NOT EXISTS birds (
     description_local TEXT,
     description_en TEXT,
     size TEXT,
+    map_image TEXT,
     order_id INTEGER,
     FOREIGN KEY (order_id) REFERENCES bird_orders(id)
 );
@@ -538,8 +536,9 @@ CREATE TABLE IF NOT EXISTS plants (
     alternative_names_local TEXT,
     name_scientific TEXT NOT NULL,
     name_meaning_en TEXT,
+    description_en TEXT,
+    map_image TEXT,
     category_id INTEGER,
-    has_recording BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (category_id) REFERENCES plant_categories(id)
 );
 
@@ -589,12 +588,12 @@ CREATE TABLE IF NOT EXISTS text_audios (
       const birdValues = data.birds
         .map(
           (bird) =>
-            `(${bird.id}, '${this.escapeSql(bird.name_local)}', '${this.escapeSql(bird.name_en)}', ${bird.alternate_names_local ? `'${this.escapeSql(bird.alternate_names_local)}'` : 'NULL'}, ${bird.alternate_names_en ? `'${this.escapeSql(bird.alternate_names_en)}'` : 'NULL'}, '${this.escapeSql(bird.name_scientific)}', ${bird.name_meaning_en ? `'${this.escapeSql(bird.name_meaning_en)}'` : 'NULL'}, ${bird.description_local ? `'${this.escapeSql(bird.description_local)}'` : 'NULL'}, ${bird.description_en ? `'${this.escapeSql(bird.description_en)}'` : 'NULL'}, '${this.escapeSql(bird.size)}', ${bird.order_id})`
+            `(${bird.id}, '${this.escapeSql(bird.name_local)}', '${this.escapeSql(bird.name_en)}', ${bird.alternate_names_local ? `'${this.escapeSql(bird.alternate_names_local)}'` : 'NULL'}, ${bird.alternate_names_en ? `'${this.escapeSql(bird.alternate_names_en)}'` : 'NULL'}, '${this.escapeSql(bird.name_scientific)}', ${bird.name_meaning_en ? `'${this.escapeSql(bird.name_meaning_en)}'` : 'NULL'}, ${bird.description_local ? `'${this.escapeSql(bird.description_local)}'` : 'NULL'}, ${bird.description_en ? `'${this.escapeSql(bird.description_en)}'` : 'NULL'}, '${this.escapeSql(bird.size)}', ${bird.map_image ? `'${this.escapeSql(bird.map_image)}'` : 'NULL'}, ${bird.order_id})`
         )
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO birds (id, name_local, name_en, alternate_names_local, alternate_names_en, name_scientific, name_meaning_en, description_local, description_en, size, order_id) VALUES\n  ${birdValues};`
+        `INSERT INTO birds (id, name_local, name_en, alternate_names_local, alternate_names_en, name_scientific, name_meaning_en, description_local, description_en, size, map_image, order_id) VALUES\n  ${birdValues};`
       );
     }
 
@@ -645,12 +644,12 @@ CREATE TABLE IF NOT EXISTS text_audios (
       const plantValues = data.plants
         .map(
           (plant) =>
-            `(${plant.id}, '${this.escapeSql(plant.name_local)}', '${this.escapeSql(plant.name_en)}', ${plant.alternative_names_local ? `'${this.escapeSql(plant.alternative_names_local)}'` : 'NULL'}, '${this.escapeSql(plant.name_scientific)}', ${plant.name_meaning_en ? `'${this.escapeSql(plant.name_meaning_en)}'` : 'NULL'}, ${plant.category_id}, ${plant.has_recording ? 1 : 0})`
+            `(${plant.id}, '${this.escapeSql(plant.name_local)}', '${this.escapeSql(plant.name_en)}', ${plant.alternative_names_local ? `'${this.escapeSql(plant.alternative_names_local)}'` : 'NULL'}, '${this.escapeSql(plant.name_scientific)}', ${plant.name_meaning_en ? `'${this.escapeSql(plant.name_meaning_en)}'` : 'NULL'}, ${plant.description_en ? `'${this.escapeSql(plant.description_en)}'` : 'NULL'}, ${plant.map_image ? `'${this.escapeSql(plant.map_image)}'` : 'NULL'}, ${plant.category_id})`
         )
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO plants (id, name_local, name_en, alternative_names_local, name_scientific, name_meaning_en, category_id, has_recording) VALUES\n  ${plantValues};`
+        `INSERT INTO plants (id, name_local, name_en, alternative_names_local, name_scientific, name_meaning_en, description_en, map_image, category_id) VALUES\n  ${plantValues};`
       );
     }
 
