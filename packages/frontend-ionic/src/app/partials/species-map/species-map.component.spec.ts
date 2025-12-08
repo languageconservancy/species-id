@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { BirdMapComponent } from './bird-map.component';
+import { SpeciesMapComponent } from './species-map.component';
 
 describe('BirdMapComponent', () => {
-  let component: BirdMapComponent;
-  let fixture: ComponentFixture<BirdMapComponent>;
+  let component: SpeciesMapComponent;
+  let fixture: ComponentFixture<SpeciesMapComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ BirdMapComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [SpeciesMapComponent],
+      imports: [IonicModule.forRoot()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BirdMapComponent);
+    fixture = TestBed.createComponent(SpeciesMapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

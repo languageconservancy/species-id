@@ -1,2 +1,10 @@
 <!-- Map image -->
-<ion-img [src]="mapImageUrl"></ion-img>
+@if (mapLoadState !== 'error') {
+  <ion-img [src]="mapImageUrl" (ionImgDidLoad)="onMapImageLoad()" (ionError)="onMapImageError()">
+  </ion-img>
+}
+@if (mapLoadState === 'error') {
+  <div class="w-full flex items-center justify-center">
+    <p class="text-sm text-gray-500">--- Map not available ---</p>
+  </div>
+}

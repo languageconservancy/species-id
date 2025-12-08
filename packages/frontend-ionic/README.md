@@ -348,6 +348,7 @@ npm run e2e
    - Check `index.json` file is present and valid
 
 3. **Build errors on mobile**
+
    - Ensure all Capacitor plugins are properly installed
    - Check platform-specific requirements are met
 
@@ -357,6 +358,129 @@ Enable debug logging by setting localStorage:
 
 ```javascript
 localStorage.setItem('debug', 'true');
+```
+
+## Data Organization & Presentation
+
+Each row should be a unique species. But a separate row should be used for the same species if the crow word differentiates age.
+
+- Latin names (semi-colon separated, but different ages are separate lines)
+- Crow names (semi-colon separated, ordered)
+- English names (semi-colon separated)
+- Latin names (semi-colon separated)
+- Crow name audio (semi-colon separated, ordered)
+- Photos (semi-colon separated)
+- Crow name literal meaning (semi-colon separated, ordered)
+- Description (HTML formatting for styling text)
+- Habitat (HTML formatting for styling text)
+- Food Habits (HTML formatting for styling text)
+- Category
+- Map image
+
+### Mapping
+
+- Crow <-> Latin (Many to Many)
+- Crow <-> English (Many to Many)
+- Crow <-> Literal (One to One)
+
+### Crow list
+
+- Each unique **Crow name** + **Species** combination gets its own item
+- Same Crow name appears multiple times if it maps to different species
+- Different Crow names for same species get separate items
+- **Examples**
+  - akbannakkoopé; ‘one who punches holes in wood’; Downy Woodpecker; (Dryobates pubescens)
+  - akbannakkoopé; ‘one who punches holes in wood’; Hairy Woodpecker; (Dryobates villosus)
+  - akbannakkoopkáate; ‘little one who punches holes in wood’; Downy Woodpecker; (Dryobates pubescens)
+  - akbannakkoopísee; ‘big one who punches holes in wood’; Hairy Woodpecker; (Dryobates villosus)
+  - chuuwáawiliche; ‘close to water’; Mountain Plover; (Anarhynchus montanus; Charadrius montanus)
+
+### English list
+
+- Each unique **English name** + **Species** combination gets its own item
+- Multiple Crow names for same species are comma-separated
+- Same species with different English names get separate items
+- **Examples**
+  - Downy Woodpecker; akbannakkoopé, akbannakkoopkáate; (Dryobates pubescens)
+  - Hairy Woodpecker; akbannakkoopé, akbannakkoopísee; (Dryobates villosus)
+  - Anhinga; binnakáake; (Anhinga anhinga)
+  - Water Turkey; binnakáake; (Anhinga anhinga)
+
+### Latin names in above lists
+
+- Latin names that include multiple names should stay together
+
+### Latin list
+
+- Each unique **Latin name** gets its own item (Latin names are unique identifiers)
+- Multiple Crow names are comma-separated
+- Multiple Latin synonyms for same species should be separate items
+- **Examples**
+  - Anarhynchus montanus; chuuwáawiliche; Mountain Plover
+  - Charadrius montanus; chuuwáawiliche; Mountain Plover
+  - Dromaius novaehollandiae; dakáakakdaassee; Emu
+
+### Description, Habitat, Uses
+
+- Use HTML formatting for individual words
+- Examples: <i>italic</i>, <b>bold</b>, <u>underline</u>
+
+### Photos
+
+- Comma-separated so we can decide how many and which to use
+- First photo is used for list view and first photo in detail view
+
+### Crow Name Audios
+
+- Comma-separated so we can display all
+- First audio used for list view
+- All audios will be in detail view.
+
+### Detail View
+
+akbannakkoopé; akbannakkoopkáate
+‘one who punches holes in wood'; 'little one who punches holes in wood’
+Downy Woodpecker
+(Dryobates pubescens)
+
+## Tables
+
+```sql
+CREATE TABLE plants (
+    id INTEGER PRIMARY KEY,
+    latin_name TEXT NOT NULL,
+    category TEXT,
+    notes TEXT
+);
+
+CREATE TABLE english_names (
+    id INTEGER PRIMARY KEY,
+    plant_id INTEGER NOT NULL,
+    english_name TEXT NOT NULL,
+    FOREIGN KEY (plant_id) REFERENCES plants(id)
+);
+
+CREATE TABLE crow_names (
+    id INTEGER PRIMARY KEY,
+    crow_word TEXT NOT NULL,
+    literal_meaning TEXT,
+    audio_file TEXT
+);
+
+CREATE TABLE crow_name_mappings (
+    id INTEGER PRIMARY KEY,
+    crow_name_id INTEGER NOT NULL,
+    plant_id INTEGER NOT NULL,
+    FOREIGN KEY (crow_name_id) REFERENCES crow_names(id),
+    FOREIGN KEY (plant_id) REFERENCES plants(id)
+);
+
+CREATE TABLE scientific_synonyms (
+    id INTEGER PRIMARY KEY,
+    plant_id INTEGER NOT NULL,
+    synonym_name TEXT NOT NULL,
+    FOREIGN KEY (plant_id) REFERENCES plants(id)
+);
 ```
 
 ## 📚 Scripts Reference

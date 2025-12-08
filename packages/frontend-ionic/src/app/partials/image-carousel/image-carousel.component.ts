@@ -20,6 +20,7 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
 export class ImageCarouselComponent implements OnInit, OnChanges {
   @Input() species: Species | null = null;
   imageUrls: string[] = [];
+  imageLoadStates: { [index: number]: 'loading' | 'loaded' | 'error' } = {};
 
   constructor(public speciesService: SpeciesService) {}
 
@@ -37,18 +38,31 @@ export class ImageCarouselComponent implements OnInit, OnChanges {
   private async _loadImageUrls() {
     if (!this.species?.images) {
       this.imageUrls = [];
+      this.imageLoadStates = {};
       return;
     }
 
     this.imageUrls = [];
-    for (const image of this.species.images) {
+    this.imageLoadStates = {};
+    for (let i = 0; i < this.species.images.length; i++) {
+      const image = this.species.images[i];
+      this.imageLoadStates[i] = 'loading';
       try {
         const url = await this.speciesService.getImageUrl(image.fileName, this.species.type);
         this.imageUrls.push(url);
       } catch (error) {
         console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading image URL:', error);
         this.imageUrls.push('');
+        this.imageLoadStates[i] = 'error';
       }
     }
+  }
+
+  onImageLoad(index: number) {
+    this.imageLoadStates[index] = 'loaded';
+  }
+
+  onImageError(index: number) {
+    this.imageLoadStates[index] = 'error';
   }
 }
