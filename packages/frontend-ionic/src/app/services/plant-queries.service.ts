@@ -14,24 +14,27 @@ export class PlantQueriesService {
       const result = await this.sqljsService.executeQuery(
         `SELECT
           plants.id AS species_id,
-          plants.name_scientific AS species_name_scientific,
-          plants.name_local AS species_name_local,
-          plants.name_en AS species_name_en,
-          plants.category_id AS category_id,
-          plants.name_meaning_en AS species_name_meaning_en,
+          plants.latin_name AS species_name_scientific,
+          plant_crow_names.crow_word AS species_name_local,
+          plant_english_names.english_name AS species_name_en,
+          plants.category AS species_category,
+          plant_crow_names.literal_meaning AS species_name_meaning_en,
+          '' AS species_description_local,
           plants.description_en AS species_description_en,
+          plants.habitat_en AS species_habitat_en,
+          plants.uses_en AS species_uses_en,
           plants.map_image AS species_map_image,
-          plant_categories.name AS category_name,
-          plant_categories.description_local AS category_description_local,
-          plant_categories.description_en AS category_description_en,
           plant_images.file_name AS image_file_name,
           plant_images.caption AS image_caption,
           plant_images.sort_order AS image_sort_order,
           'plant' as species_type
         FROM plants
-        LEFT JOIN plant_categories ON plants.category_id = plant_categories.id
+        LEFT JOIN plant_english_names ON plants.id = plant_english_names.plant_id
+        LEFT JOIN plant_crow_name_mappings ON plants.id = plant_crow_name_mappings.plant_id
+        LEFT JOIN plant_crow_names ON plant_crow_name_mappings.crow_name_id = plant_crow_names.id
         LEFT JOIN plant_images ON plants.id = plant_images.plant_id
-      ;`
+        GROUP BY plants.id, plant_images.id
+        ORDER BY plants.id, plant_images.sort_order;`
       );
       return mapSpeciesWithImagesAndOrder(result);
     } catch (error) {
@@ -45,24 +48,28 @@ export class PlantQueriesService {
       const result = await this.sqljsService.executeQuery(
         `SELECT
           plants.id AS species_id,
-          plants.name_scientific AS species_name_scientific,
-          plants.name_local AS species_name_local,
-          plants.name_en AS species_name_en,
-          plants.category_id AS category_id,
-          plants.name_meaning_en AS species_name_meaning_en,
+          plants.latin_name AS species_name_scientific,
+          plant_crow_names.crow_word AS species_name_local,
+          plant_english_names.english_name AS species_name_en,
+          plants.category AS species_category,
+          plant_crow_names.literal_meaning AS species_name_meaning_en,
+          '' AS species_description_local,
           plants.description_en AS species_description_en,
+          plants.habitat_en AS species_habitat_en,
+          plants.uses_en AS species_uses_en,
           plants.map_image AS species_map_image,
-          plant_categories.name AS category_name,
-          plant_categories.description_local AS category_description_local,
-          plant_categories.description_en AS category_description_en,
           plant_images.file_name AS image_file_name,
           plant_images.caption AS image_caption,
           plant_images.sort_order AS image_sort_order,
           'plant' as species_type
         FROM plants
-        LEFT JOIN plant_categories ON plants.category_id = plant_categories.id
+        LEFT JOIN plant_english_names ON plants.id = plant_english_names.plant_id
+        LEFT JOIN plant_crow_name_mappings ON plants.id = plant_crow_name_mappings.plant_id
+        LEFT JOIN plant_crow_names ON plant_crow_name_mappings.crow_name_id = plant_crow_names.id
         LEFT JOIN plant_images ON plants.id = plant_images.plant_id
-        WHERE plants.id = ?;`,
+        WHERE plants.id = ?
+        GROUP BY plants.id, plant_images.id
+        ORDER BY plant_images.sort_order;`,
         [id]
       );
       if (result.values.length === 0) {

@@ -2,90 +2,17 @@ import fs from 'fs';
 
 class SpeciesDataParser {
   constructor() {
-    this.birdOrders = new Map(); // Map to track unique orders
-    this.orderCounter = 1;
-    this.orderNameToId = new Map(); // Map order names to their IDs
-    this.plantCategories = new Map(); // Map to track unique plant categories
-    this.categoryCounter = 1;
-    this.categoryNameToId = new Map(); // Map category names to their IDs
-  }
+    // Normalized name tracking
+    this.birdCrowNames = new Map(); // Map crow words to their IDs
+    this.plantCrowNames = new Map(); // Map crow words to their IDs
+    this.crowNameCounter = 1;
+    this.plantCrowNameCounter = 1;
 
-  /**
-   * Parse bird orders CSV first to establish the order IDs
-   * @param {string} ordersCsvContent - Raw CSV content for bird orders
-   */
-  parseOrdersCsv(ordersCsvContent) {
-    const rows = this.parseCsvRows(ordersCsvContent);
-    const headers = rows[0];
-
-    for (let i = 1; i < rows.length; i++) {
-      const rowData = this.createRowData(rows[i], headers);
-
-      const order = {
-        id: this.orderCounter++,
-        name_scientific: rowData.name_scientific || '',
-        description_en: rowData.description_en || `Order: ${rowData.name_scientific}`,
-        description_local: rowData.description_local || null,
-      };
-
-      this.birdOrders.set(order.id, order);
-      this.orderNameToId.set(order.name_scientific, order.id);
-    }
-  }
-
-  /**
-   * Parse plant categories CSV to establish the category IDs
-   * @param {string} categoriesCsvContent - Raw CSV content for plant categories
-   */
-  parsePlantCategoriesCsv(categoriesCsvContent) {
-    const rows = this.parseCsvRows(categoriesCsvContent);
-    const headers = rows[0];
-
-    for (let i = 1; i < rows.length; i++) {
-      const rowData = this.createRowData(rows[i], headers);
-
-      const category = {
-        id: this.categoryCounter++,
-        name: rowData.name || rowData.category || '',
-        description_en:
-          rowData.description_en || `Plant category: ${rowData.name || rowData.category}`,
-        description_local: rowData.description_local || null,
-      };
-
-      this.plantCategories.set(category.id, category);
-      this.categoryNameToId.set(category.name, category.id);
-    }
-  }
-
-  /**
-   * Parse plant categories from plant CSV to establish unique categories (fallback method)
-   * @param {string} plantsCsvContent - Raw CSV content for plants
-   */
-  parsePlantCategories(plantsCsvContent) {
-    const rows = this.parseCsvRows(plantsCsvContent);
-    const headers = rows[0];
-    const categories = new Set();
-
-    // Collect all unique categories
-    for (let i = 1; i < rows.length; i++) {
-      const rowData = this.createRowData(rows[i], headers);
-      if (rowData.category && rowData.category.trim()) {
-        categories.add(rowData.category.trim());
-      }
-    }
-
-    // Create category entries
-    categories.forEach((categoryName) => {
-      const category = {
-        id: this.categoryCounter++,
-        name: categoryName,
-        description_en: `Plant category: ${categoryName}`,
-        description_local: null,
-      };
-
-      this.plantCategories.set(category.id, category);
-      this.categoryNameToId.set(categoryName, category.id);
-    });
+    // Track missing data for summary reporting
+    this.missingBirdAudio = new Set(); // Bird crow names missing audio recordings
+    this.missingBirdTranslations = new Set(); // Bird crow names missing literal translations
+    this.missingPlantAudio = new Set(); // Plant crow names missing audio recordings
+    this.missingPlantTranslations = new Set(); // Plant crow names missing literal translations
   }
 
   /**
@@ -97,54 +24,67 @@ class SpeciesDataParser {
     const rows = this.parseCsvRows(csvContent);
     const headers = rows[0];
     const birds = [];
+    const birdEnglishNames = [];
+    const birdCrowNames = [];
+    const birdCrowNameMappings = [];
+    const birdScientificSynonyms = [];
     const birdImages = [];
-    const birdAudios = [];
-    const textAudios = [];
+    const birdSongAudios = [];
+    const birdTextAudios = [];
 
     // Process each data row
     for (let i = 1; i < rows.length; i++) {
       const rowData = this.createRowData(rows[i], headers);
-      const bird = this.processBirdRow(rowData, i);
+      const birdData = this.processBirdRow(rowData, i);
 
-      if (bird) {
+      if (birdData) {
+        const { bird, englishNames, crowNames, synonyms } = birdData;
         birds.push(bird);
 
-        // Process images if present
-        if (rowData.images_json && rowData.images_json.trim()) {
-          const images = this.parseJsonArray(rowData.images_json);
-          images.forEach((image, index) => {
-            birdImages.push({
-              file_name: image.file,
-              bird_id: i, // Using row index as temporary ID
-              caption: image.caption || null,
-              sort_order: index + 1,
-            });
+        // Add English names
+        englishNames.forEach((name) => {
+          birdEnglishNames.push({
+            bird_id: bird.id,
+            english_name: name,
           });
-        }
+        });
 
-        // Process audio files if present
-        if (rowData.song_audios && rowData.song_audios.trim()) {
-          const audios = this.parseJsonArray(rowData.song_audios);
-          audios.forEach((audio, index) => {
-            birdAudios.push({
-              file_name: audio.file,
-              bird_id: i, // Using row index as temporary ID
-              caption: audio.caption || null,
-              sort_order: index + 1,
-            });
+        // Add Crow names, mappings, and text audios
+        crowNames.forEach((crowNameData) => {
+          const { crowName, mapping, textAudios } = this.processCrowName(
+            crowNameData,
+            bird.id,
+            'bird'
+          );
+          if (crowName) {
+            birdCrowNames.push(crowName);
+          }
+          if (mapping) {
+            birdCrowNameMappings.push(mapping);
+          }
+          if (textAudios) {
+            birdTextAudios.push(...textAudios);
+          }
+        });
+
+        // Add scientific synonyms
+        synonyms.forEach((synonym) => {
+          birdScientificSynonyms.push({
+            bird_id: bird.id,
+            synonym_name: synonym,
           });
-        }
+        });
 
-        // Process crow name audios for text_audios table
-        if (rowData.crow_name_audios_json && rowData.crow_name_audios_json.trim()) {
-          const audios = this.parseJsonArray(rowData.crow_name_audios_json);
-          audios.forEach((audio) => {
-            if (audio.file && bird.name_local) {
-              textAudios.push({
-                text: bird.name_local,
-                file_name: audio.file,
-                url_prefix: null,
-                ipa: null,
+        // Process images if present (Photos column)
+        if (rowData['Photos'] && rowData['Photos'].trim()) {
+          const imageFiles = this.parseSemicolonSeparated(rowData['Photos']);
+          imageFiles.forEach((imageFile, index) => {
+            if (imageFile.trim() && imageFile.trim() !== 'NO RECORDING') {
+              birdImages.push({
+                file_name: imageFile.trim(),
+                bird_id: bird.id,
+                caption: null,
+                sort_order: index + 1,
               });
             }
           });
@@ -153,11 +93,14 @@ class SpeciesDataParser {
     }
 
     return {
-      birdOrders: Array.from(this.birdOrders.values()),
       birds,
+      birdEnglishNames,
+      birdCrowNames: Array.from(this.birdCrowNames.values()),
+      birdCrowNameMappings,
+      birdScientificSynonyms,
       birdImages,
-      birdAudios,
-      textAudios,
+      birdSongAudios,
+      birdTextAudios,
     };
   }
 
@@ -170,40 +113,66 @@ class SpeciesDataParser {
     const rows = this.parseCsvRows(csvContent);
     const headers = rows[0];
     const plants = [];
+    const plantEnglishNames = [];
+    const plantCrowNames = [];
+    const plantCrowNameMappings = [];
+    const plantScientificSynonyms = [];
     const plantImages = [];
     const plantTextAudios = [];
 
     // Process each data row
     for (let i = 1; i < rows.length; i++) {
       const rowData = this.createRowData(rows[i], headers);
-      const plant = this.processPlantRow(rowData, i);
+      const plantData = this.processPlantRow(rowData, i);
 
-      if (plant) {
+      if (plantData) {
+        const { plant, englishNames, crowNames, synonyms } = plantData;
         plants.push(plant);
 
-        // Process images if present
-        if (rowData.images_json && rowData.images_json.trim()) {
-          const images = this.parseJsonArray(rowData.images_json);
-          images.forEach((image, index) => {
-            plantImages.push({
-              file_name: image.file,
-              plant_id: i, // Using row index as temporary ID
-              caption: image.caption || null,
-              sort_order: index + 1,
-            });
+        // Add English names
+        englishNames.forEach((name) => {
+          plantEnglishNames.push({
+            plant_id: plant.id,
+            english_name: name,
           });
-        }
+        });
 
-        // Process crow name audios for text_audios table
-        if (rowData.crow_name_audios_json && rowData.crow_name_audios_json.trim()) {
-          const audios = this.parseJsonArray(rowData.crow_name_audios_json);
-          audios.forEach((audio) => {
-            if (audio.file && plant.name_local) {
-              plantTextAudios.push({
-                text: plant.name_local,
-                file_name: audio.file,
-                url_prefix: null,
-                ipa: null,
+        // Add Crow names, mappings, and text audios
+        crowNames.forEach((crowNameData) => {
+          const { crowName, mapping, textAudios } = this.processCrowName(
+            crowNameData,
+            plant.id,
+            'plant'
+          );
+          if (crowName) {
+            plantCrowNames.push(crowName);
+          }
+          if (mapping) {
+            plantCrowNameMappings.push(mapping);
+          }
+          if (textAudios) {
+            plantTextAudios.push(...textAudios);
+          }
+        });
+
+        // Add scientific synonyms
+        synonyms.forEach((synonym) => {
+          plantScientificSynonyms.push({
+            plant_id: plant.id,
+            synonym_name: synonym,
+          });
+        });
+
+        // Process images if present (Photos column)
+        if (rowData['Photos'] && rowData['Photos'].trim()) {
+          const imageFiles = this.parseSemicolonSeparated(rowData['Photos']);
+          imageFiles.forEach((imageFile, index) => {
+            if (imageFile.trim() && imageFile.trim() !== 'NO RECORDING') {
+              plantImages.push({
+                file_name: imageFile.trim(),
+                plant_id: plant.id,
+                caption: null,
+                sort_order: index + 1,
               });
             }
           });
@@ -212,8 +181,11 @@ class SpeciesDataParser {
     }
 
     return {
-      plantCategories: Array.from(this.plantCategories.values()),
       plants,
+      plantEnglishNames,
+      plantCrowNames: Array.from(this.plantCrowNames.values()),
+      plantCrowNameMappings,
+      plantScientificSynonyms,
       plantImages,
       plantTextAudios,
     };
@@ -370,7 +342,7 @@ class SpeciesDataParser {
    */
   processBirdRow(rowData, rowIndex) {
     // Validate required fields
-    const requiredFields = ['name_scientific', 'name_en', 'name_local', 'size', 'order'];
+    const requiredFields = ['Latin Name', 'English', 'Crow', 'Category'];
     const missingFields = requiredFields.filter(
       (field) => !rowData[field] || rowData[field].trim() === ''
     );
@@ -381,30 +353,43 @@ class SpeciesDataParser {
       throw new Error(`Row ${rowIndex}: Missing required fields: ${missingFields.join(', ')}`);
     }
 
-    // Look up the order ID using the order name from CSV
-    const orderName = rowData.order;
-    const orderId = this.orderNameToId.get(orderName);
+    // Parse semicolon-separated English names
+    const englishNames = this.parseSemicolonSeparated(rowData['English'] || '');
 
-    if (!orderId) {
-      console.error(
-        `❌ Row ${rowIndex}: Order not found: ${orderName}. Available orders: ${Array.from(this.orderNameToId.keys()).join(', ')}`
-      );
-      throw new Error(`Row ${rowIndex}: Order not found: ${orderName}`);
+    // Parse Crow names with their meanings and audio files
+    const crowNames = this.parseCrowNames(
+      rowData['Crow'],
+      null, // No alternate names column in new format
+      rowData['Literal Translation'],
+      rowData['Audios'],
+      'bird'
+    );
+
+    // Parse scientific synonyms (semicolon-separated)
+    const synonyms = [];
+    const latinName = rowData['Latin Name'];
+    if (latinName && latinName.includes(';')) {
+      const scientificNames = this.parseSemicolonSeparated(latinName);
+      // First name is primary, rest are synonyms
+      synonyms.push(...scientificNames.slice(1));
+      rowData['Latin Name'] = scientificNames[0];
     }
 
-    return {
+    const bird = {
       id: rowIndex,
-      name_local: rowData.name_local,
-      name_en: rowData.name_en,
-      alternate_names_local: rowData.alternate_names_local || null,
-      alternate_names_en: rowData.alternate_names_en || null,
-      name_scientific: rowData.name_scientific,
-      name_meaning_en: rowData.name_meaning_en || null,
-      description_local: rowData.description_local || null,
-      description_en: rowData.description_en || null,
-      size: rowData.size,
-      map_image: rowData.map_image || null,
-      order_id: orderId,
+      latin_name: rowData['Latin Name'],
+      category: rowData['Category'] || null,
+      description_en: rowData['Description'] || null,
+      habitat_en: rowData['Habitat'] || null,
+      food_habits_en: rowData['Food Habits'] || null,
+      map_image: rowData['Map'] || null,
+    };
+
+    return {
+      bird,
+      englishNames,
+      crowNames,
+      synonyms,
     };
   }
 
@@ -413,7 +398,7 @@ class SpeciesDataParser {
    */
   processPlantRow(rowData, rowIndex) {
     // Validate required fields for plants
-    const requiredFields = ['name_scientific', 'name_en', 'name_local', 'category'];
+    const requiredFields = ['Latin Name', 'English', 'Crow', 'Category'];
     const missingFields = requiredFields.filter(
       (field) => !rowData[field] || rowData[field].trim() === ''
     );
@@ -428,27 +413,43 @@ class SpeciesDataParser {
       );
     }
 
-    // Look up the category ID using the category name from CSV
-    const categoryName = rowData.category;
-    const categoryId = this.categoryNameToId.get(categoryName);
+    // Parse semicolon-separated English names
+    const englishNames = this.parseSemicolonSeparated(rowData['English'] || '');
 
-    if (!categoryId) {
-      console.error(
-        `❌ Plant Row ${rowIndex}: Category not found: ${categoryName}. Available categories: ${Array.from(this.categoryNameToId.keys()).join(', ')}`
-      );
-      throw new Error(`Plant Row ${rowIndex}: Category not found: ${categoryName}`);
+    // Parse Crow names with their meanings and audio files
+    const crowNames = this.parseCrowNames(
+      rowData['Crow'],
+      null, // No alternate names column in new format
+      rowData['Literal Translation'],
+      rowData['Audios'],
+      'plant'
+    );
+
+    // Parse scientific synonyms (semicolon-separated)
+    const synonyms = [];
+    const latinName = rowData['Latin Name'];
+    if (latinName && latinName.includes(';')) {
+      const scientificNames = this.parseSemicolonSeparated(latinName);
+      // First name is primary, rest are synonyms
+      synonyms.push(...scientificNames.slice(1));
+      rowData['Latin Name'] = scientificNames[0];
     }
 
-    return {
+    const plant = {
       id: rowIndex,
-      name_local: rowData.name_local,
-      name_en: rowData.name_en,
-      alternative_names_local: rowData.alternative_names_local || null,
-      name_scientific: rowData.name_scientific,
-      name_meaning_en: rowData.name_meaning_en || null,
-      description_en: rowData.description_en || null,
-      map_image: rowData.map_image || null,
-      category_id: categoryId,
+      latin_name: rowData['Latin Name'],
+      category: rowData['Category'] || null,
+      description_en: rowData['Description'] || null,
+      habitat_en: rowData['Habitat'] || null,
+      uses_en: rowData['Uses'] || null,
+      map_image: rowData['Map'] || null,
+    };
+
+    return {
+      plant,
+      englishNames,
+      crowNames,
+      synonyms,
     };
   }
 
@@ -480,28 +481,45 @@ class SpeciesDataParser {
    * Generate CREATE TABLE statements
    */
   generateCreateTableSql() {
-    return `-- Create tables for species data (birds and plants)
-CREATE TABLE IF NOT EXISTS bird_orders (
-    id INTEGER PRIMARY KEY,
-    name_scientific TEXT NOT NULL,
-    description_en TEXT,
-    description_local TEXT
-);
+    return `-- Create tables for species data (birds and plants) - Simplified Design
 
+-- Bird Tables
 CREATE TABLE IF NOT EXISTS birds (
     id INTEGER PRIMARY KEY,
-    name_local TEXT,
-    name_en TEXT,
-    alternate_names_local TEXT,
-    alternate_names_en TEXT,
-    name_scientific TEXT NOT NULL,
-    name_meaning_en TEXT,
-    description_local TEXT,
+    latin_name TEXT NOT NULL,
+    category TEXT NOT NULL,
     description_en TEXT,
-    size TEXT,
-    map_image TEXT,
-    order_id INTEGER,
-    FOREIGN KEY (order_id) REFERENCES bird_orders(id)
+    habitat_en TEXT,
+    food_habits_en TEXT,
+    map_image TEXT
+);
+
+CREATE TABLE IF NOT EXISTS bird_english_names (
+    id INTEGER PRIMARY KEY,
+    bird_id INTEGER NOT NULL,
+    english_name TEXT NOT NULL,
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
+);
+
+CREATE TABLE IF NOT EXISTS bird_crow_names (
+    id INTEGER PRIMARY KEY,
+    crow_word TEXT NOT NULL,
+    literal_meaning TEXT
+);
+
+CREATE TABLE IF NOT EXISTS bird_crow_name_mappings (
+    id INTEGER PRIMARY KEY,
+    crow_name_id INTEGER NOT NULL,
+    bird_id INTEGER NOT NULL,
+    FOREIGN KEY (crow_name_id) REFERENCES bird_crow_names(id),
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
+);
+
+CREATE TABLE IF NOT EXISTS bird_scientific_synonyms (
+    id INTEGER PRIMARY KEY,
+    bird_id INTEGER NOT NULL,
+    synonym_name TEXT NOT NULL,
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
 );
 
 CREATE TABLE IF NOT EXISTS bird_images (
@@ -513,7 +531,7 @@ CREATE TABLE IF NOT EXISTS bird_images (
     FOREIGN KEY (bird_id) REFERENCES birds(id)
 );
 
-CREATE TABLE IF NOT EXISTS bird_audios (
+CREATE TABLE IF NOT EXISTS bird_song_audios (
     id INTEGER PRIMARY KEY,
     file_name TEXT NOT NULL,
     bird_id INTEGER NOT NULL,
@@ -522,24 +540,51 @@ CREATE TABLE IF NOT EXISTS bird_audios (
     FOREIGN KEY (bird_id) REFERENCES birds(id)
 );
 
-CREATE TABLE IF NOT EXISTS plant_categories (
+CREATE TABLE IF NOT EXISTS bird_text_audios (
     id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    description_en TEXT,
-    description_local TEXT
+    crow_name_id INTEGER NOT NULL,
+    file_name TEXT NOT NULL,
+    sort_order INTEGER,
+    FOREIGN KEY (crow_name_id) REFERENCES bird_crow_names(id)
 );
 
+-- Plant Tables
 CREATE TABLE IF NOT EXISTS plants (
     id INTEGER PRIMARY KEY,
-    name_local TEXT,
-    name_en TEXT,
-    alternative_names_local TEXT,
-    name_scientific TEXT NOT NULL,
-    name_meaning_en TEXT,
+    latin_name TEXT NOT NULL,
+    category TEXT,
     description_en TEXT,
-    map_image TEXT,
-    category_id INTEGER,
-    FOREIGN KEY (category_id) REFERENCES plant_categories(id)
+    habitat_en TEXT,
+    uses_en TEXT,
+    map_image TEXT
+);
+
+CREATE TABLE IF NOT EXISTS plant_english_names (
+    id INTEGER PRIMARY KEY,
+    plant_id INTEGER NOT NULL,
+    english_name TEXT NOT NULL,
+    FOREIGN KEY (plant_id) REFERENCES plants(id)
+);
+
+CREATE TABLE IF NOT EXISTS plant_crow_names (
+    id INTEGER PRIMARY KEY,
+    crow_word TEXT NOT NULL,
+    literal_meaning TEXT
+);
+
+CREATE TABLE IF NOT EXISTS plant_crow_name_mappings (
+    id INTEGER PRIMARY KEY,
+    crow_name_id INTEGER NOT NULL,
+    plant_id INTEGER NOT NULL,
+    FOREIGN KEY (crow_name_id) REFERENCES plant_crow_names(id),
+    FOREIGN KEY (plant_id) REFERENCES plants(id)
+);
+
+CREATE TABLE IF NOT EXISTS plant_scientific_synonyms (
+    id INTEGER PRIMARY KEY,
+    plant_id INTEGER NOT NULL,
+    synonym_name TEXT NOT NULL,
+    FOREIGN KEY (plant_id) REFERENCES plants(id)
 );
 
 CREATE TABLE IF NOT EXISTS plant_images (
@@ -551,12 +596,12 @@ CREATE TABLE IF NOT EXISTS plant_images (
     FOREIGN KEY (plant_id) REFERENCES plants(id)
 );
 
-CREATE TABLE IF NOT EXISTS text_audios (
+CREATE TABLE IF NOT EXISTS plant_text_audios (
     id INTEGER PRIMARY KEY,
-    text TEXT NOT NULL,
+    crow_name_id INTEGER NOT NULL,
     file_name TEXT NOT NULL,
-    url_prefix TEXT,
-    ipa TEXT
+    sort_order INTEGER,
+    FOREIGN KEY (crow_name_id) REFERENCES plant_crow_names(id)
 );`;
   }
 
@@ -569,31 +614,69 @@ CREATE TABLE IF NOT EXISTS text_audios (
     // Add CREATE TABLE statements first
     sqlStatements.push(this.generateCreateTableSql());
 
-    // Insert bird orders
-    if (data.birdOrders.length > 0) {
-      const orderValues = data.birdOrders
-        .map(
-          (order) =>
-            `(${order.id}, '${this.escapeSql(order.name_scientific)}', '${this.escapeSql(order.description_en)}', ${order.description_local ? `'${this.escapeSql(order.description_local)}'` : 'NULL'})`
-        )
-        .join(',\n  ');
-
-      sqlStatements.push(
-        `INSERT INTO bird_orders (id, name_scientific, description_en, description_local) VALUES\n  ${orderValues};`
-      );
-    }
-
     // Insert birds
-    if (data.birds.length > 0) {
+    if (data.birds && data.birds.length > 0) {
       const birdValues = data.birds
         .map(
           (bird) =>
-            `(${bird.id}, '${this.escapeSql(bird.name_local)}', '${this.escapeSql(bird.name_en)}', ${bird.alternate_names_local ? `'${this.escapeSql(bird.alternate_names_local)}'` : 'NULL'}, ${bird.alternate_names_en ? `'${this.escapeSql(bird.alternate_names_en)}'` : 'NULL'}, '${this.escapeSql(bird.name_scientific)}', ${bird.name_meaning_en ? `'${this.escapeSql(bird.name_meaning_en)}'` : 'NULL'}, ${bird.description_local ? `'${this.escapeSql(bird.description_local)}'` : 'NULL'}, ${bird.description_en ? `'${this.escapeSql(bird.description_en)}'` : 'NULL'}, '${this.escapeSql(bird.size)}', ${bird.map_image ? `'${this.escapeSql(bird.map_image)}'` : 'NULL'}, ${bird.order_id})`
+            `(${bird.id}, '${this.escapeSql(bird.latin_name)}', ${bird.category ? `'${this.escapeSql(bird.category)}'` : 'NULL'}, ${bird.description_en ? `'${this.escapeSql(bird.description_en)}'` : 'NULL'}, ${bird.habitat_en ? `'${this.escapeSql(bird.habitat_en)}'` : 'NULL'}, ${bird.food_habits_en ? `'${this.escapeSql(bird.food_habits_en)}'` : 'NULL'}, ${bird.map_image ? `'${this.escapeSql(bird.map_image)}'` : 'NULL'})`
         )
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO birds (id, name_local, name_en, alternate_names_local, alternate_names_en, name_scientific, name_meaning_en, description_local, description_en, size, map_image, order_id) VALUES\n  ${birdValues};`
+        `INSERT INTO birds (id, latin_name, category, description_en, habitat_en, food_habits_en, map_image) VALUES\n  ${birdValues};`
+      );
+    }
+
+    // Insert bird English names
+    if (data.birdEnglishNames && data.birdEnglishNames.length > 0) {
+      const englishNameValues = data.birdEnglishNames
+        .map(
+          (name, index) => `(${index + 1}, ${name.bird_id}, '${this.escapeSql(name.english_name)}')`
+        )
+        .join(',\n  ');
+
+      sqlStatements.push(
+        `INSERT INTO bird_english_names (id, bird_id, english_name) VALUES\n  ${englishNameValues};`
+      );
+    }
+
+    // Insert bird Crow names
+    if (data.birdCrowNames && data.birdCrowNames.length > 0) {
+      const crowNameValues = data.birdCrowNames
+        .map(
+          (name) =>
+            `(${name.id}, '${this.escapeSql(name.crow_word)}', ${name.literal_meaning ? `'${this.escapeSql(name.literal_meaning)}'` : 'NULL'})`
+        )
+        .join(',\n  ');
+
+      sqlStatements.push(
+        `INSERT INTO bird_crow_names (id, crow_word, literal_meaning) VALUES\n  ${crowNameValues};`
+      );
+    }
+
+    // Insert bird Crow name mappings
+    if (data.birdCrowNameMappings && data.birdCrowNameMappings.length > 0) {
+      const mappingValues = data.birdCrowNameMappings
+        .map((mapping, index) => `(${index + 1}, ${mapping.crow_name_id}, ${mapping.bird_id})`)
+        .join(',\n  ');
+
+      sqlStatements.push(
+        `INSERT INTO bird_crow_name_mappings (id, crow_name_id, bird_id) VALUES\n  ${mappingValues};`
+      );
+    }
+
+    // Insert bird scientific synonyms
+    if (data.birdScientificSynonyms && data.birdScientificSynonyms.length > 0) {
+      const synonymValues = data.birdScientificSynonyms
+        .map(
+          (synonym, index) =>
+            `(${index + 1}, ${synonym.bird_id}, '${this.escapeSql(synonym.synonym_name)}')`
+        )
+        .join(',\n  ');
+
+      sqlStatements.push(
+        `INSERT INTO bird_scientific_synonyms (id, bird_id, synonym_name) VALUES\n  ${synonymValues};`
       );
     }
 
@@ -611,9 +694,9 @@ CREATE TABLE IF NOT EXISTS text_audios (
       );
     }
 
-    // Insert bird audios
-    if (data.birdAudios && data.birdAudios.length > 0) {
-      const audioValues = data.birdAudios
+    // Insert bird song audios
+    if (data.birdSongAudios && data.birdSongAudios.length > 0) {
+      const audioValues = data.birdSongAudios
         .map(
           (audio, index) =>
             `(${index + 1}, '${this.escapeSql(audio.file_name)}', ${audio.bird_id}, ${audio.caption ? `'${this.escapeSql(audio.caption)}'` : 'NULL'}, ${audio.sort_order})`
@@ -621,21 +704,20 @@ CREATE TABLE IF NOT EXISTS text_audios (
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO bird_audios (id, file_name, bird_id, caption, sort_order) VALUES\n  ${audioValues};`
+        `INSERT INTO bird_song_audios (id, file_name, bird_id, caption, sort_order) VALUES\n  ${audioValues};`
       );
     }
 
-    // Insert plant categories
-    if (data.plantCategories && data.plantCategories.length > 0) {
-      const categoryValues = data.plantCategories
+    // Insert bird text audios
+    if (data.birdTextAudios && data.birdTextAudios.length > 0) {
+      const textAudioValues = data.birdTextAudios
         .map(
-          (category) =>
-            `(${category.id}, '${this.escapeSql(category.name)}', '${this.escapeSql(category.description_en)}', ${category.description_local ? `'${this.escapeSql(category.description_local)}'` : 'NULL'})`
+          (textAudio, index) =>
+            `(${index + 1}, ${textAudio.crow_name_id}, '${this.escapeSql(textAudio.file_name)}', ${textAudio.sort_order})`
         )
         .join(',\n  ');
-
       sqlStatements.push(
-        `INSERT INTO plant_categories (id, name, description_en, description_local) VALUES\n  ${categoryValues};`
+        `INSERT INTO bird_text_audios (id, crow_name_id, file_name, sort_order) VALUES\n  ${textAudioValues};`
       );
     }
 
@@ -644,12 +726,65 @@ CREATE TABLE IF NOT EXISTS text_audios (
       const plantValues = data.plants
         .map(
           (plant) =>
-            `(${plant.id}, '${this.escapeSql(plant.name_local)}', '${this.escapeSql(plant.name_en)}', ${plant.alternative_names_local ? `'${this.escapeSql(plant.alternative_names_local)}'` : 'NULL'}, '${this.escapeSql(plant.name_scientific)}', ${plant.name_meaning_en ? `'${this.escapeSql(plant.name_meaning_en)}'` : 'NULL'}, ${plant.description_en ? `'${this.escapeSql(plant.description_en)}'` : 'NULL'}, ${plant.map_image ? `'${this.escapeSql(plant.map_image)}'` : 'NULL'}, ${plant.category_id})`
+            `(${plant.id}, '${this.escapeSql(plant.latin_name)}', ${plant.category ? `'${this.escapeSql(plant.category)}'` : 'NULL'}, ${plant.description_en ? `'${this.escapeSql(plant.description_en)}'` : 'NULL'}, ${plant.habitat_en ? `'${this.escapeSql(plant.habitat_en)}'` : 'NULL'}, ${plant.uses_en ? `'${this.escapeSql(plant.uses_en)}'` : 'NULL'}, ${plant.map_image ? `'${this.escapeSql(plant.map_image)}'` : 'NULL'})`
         )
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO plants (id, name_local, name_en, alternative_names_local, name_scientific, name_meaning_en, description_en, map_image, category_id) VALUES\n  ${plantValues};`
+        `INSERT INTO plants (id, latin_name, category, description_en, habitat_en, uses_en, map_image) VALUES\n  ${plantValues};`
+      );
+    }
+
+    // Insert plant English names
+    if (data.plantEnglishNames && data.plantEnglishNames.length > 0) {
+      const englishNameValues = data.plantEnglishNames
+        .map(
+          (name, index) =>
+            `(${index + 1}, ${name.plant_id}, '${this.escapeSql(name.english_name)}')`
+        )
+        .join(',\n  ');
+
+      sqlStatements.push(
+        `INSERT INTO plant_english_names (id, plant_id, english_name) VALUES\n  ${englishNameValues};`
+      );
+    }
+
+    // Insert plant Crow names
+    if (data.plantCrowNames && data.plantCrowNames.length > 0) {
+      const crowNameValues = data.plantCrowNames
+        .map(
+          (name) =>
+            `(${name.id}, '${this.escapeSql(name.crow_word)}', ${name.literal_meaning ? `'${this.escapeSql(name.literal_meaning)}'` : 'NULL'})`
+        )
+        .join(',\n  ');
+
+      sqlStatements.push(
+        `INSERT INTO plant_crow_names (id, crow_word, literal_meaning) VALUES\n  ${crowNameValues};`
+      );
+    }
+
+    // Insert plant Crow name mappings
+    if (data.plantCrowNameMappings && data.plantCrowNameMappings.length > 0) {
+      const mappingValues = data.plantCrowNameMappings
+        .map((mapping, index) => `(${index + 1}, ${mapping.crow_name_id}, ${mapping.plant_id})`)
+        .join(',\n  ');
+
+      sqlStatements.push(
+        `INSERT INTO plant_crow_name_mappings (id, crow_name_id, plant_id) VALUES\n  ${mappingValues};`
+      );
+    }
+
+    // Insert plant scientific synonyms
+    if (data.plantScientificSynonyms && data.plantScientificSynonyms.length > 0) {
+      const synonymValues = data.plantScientificSynonyms
+        .map(
+          (synonym, index) =>
+            `(${index + 1}, ${synonym.plant_id}, '${this.escapeSql(synonym.synonym_name)}')`
+        )
+        .join(',\n  ');
+
+      sqlStatements.push(
+        `INSERT INTO plant_scientific_synonyms (id, plant_id, synonym_name) VALUES\n  ${synonymValues};`
       );
     }
 
@@ -664,6 +799,19 @@ CREATE TABLE IF NOT EXISTS text_audios (
 
       sqlStatements.push(
         `INSERT INTO plant_images (id, file_name, plant_id, caption, sort_order) VALUES\n  ${imageValues};`
+      );
+    }
+
+    // Insert plant text audios
+    if (data.plantTextAudios && data.plantTextAudios.length > 0) {
+      const textAudioValues = data.plantTextAudios
+        .map(
+          (textAudio, index) =>
+            `(${index + 1}, ${textAudio.crow_name_id}, '${this.escapeSql(textAudio.file_name)}', ${textAudio.sort_order})`
+        )
+        .join(',\n  ');
+      sqlStatements.push(
+        `INSERT INTO plant_text_audios (id, crow_name_id, file_name, sort_order) VALUES\n  ${textAudioValues};`
       );
     }
 
@@ -685,6 +833,210 @@ CREATE TABLE IF NOT EXISTS text_audios (
   }
 
   /**
+   * Parse semicolon-separated values
+   */
+  parseSemicolonSeparated(str) {
+    if (!str || str.trim() === '') return [];
+    return str
+      .split(';')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+  }
+
+  /**
+   * Parse Crow names with their meanings and audio files
+   */
+  parseCrowNames(
+    crowColumn,
+    alternativeNamesLocal,
+    literalTranslationColumn,
+    audiosColumn,
+    speciesType = 'bird'
+  ) {
+    const crowNames = [];
+
+    // Parse primary crow names
+    const allCrowNames = this.parseSemicolonSeparated(crowColumn || '');
+    if (alternativeNamesLocal) {
+      allCrowNames.push(...this.parseSemicolonSeparated(alternativeNamesLocal));
+    }
+
+    // Parse meanings (semicolon-separated, ordered) - handle NO TRANSLATION
+    const rawMeanings = this.parseSemicolonSeparated(literalTranslationColumn || '');
+    const meanings = rawMeanings.map((meaning) => {
+      const trimmed = meaning.trim();
+      return trimmed === 'NO TRANSLATION' ? null : trimmed;
+    });
+
+    // Parse audio files - semicolon-separated format with comma-separated multiple files
+    let audioFiles = [];
+    if (audiosColumn) {
+      const rawAudios = this.parseSemicolonSeparated(audiosColumn);
+      audioFiles = rawAudios.map((audio) => {
+        const trimmed = audio.trim();
+        if (trimmed === 'NO RECORDING') {
+          return null;
+        }
+        // Handle comma-separated multiple audio files for same crow name
+        // For now, take the first audio file (can be enhanced later for multiple)
+        const audioList = trimmed
+          .split(',')
+          .map((a) => a.trim())
+          .filter((a) => a.length > 0);
+        return audioList.length > 0 ? audioList[0] : null;
+      });
+    }
+
+    // Create crow name entries and track missing data
+    allCrowNames.forEach((crowWord, index) => {
+      if (crowWord.trim()) {
+        const trimmedCrowWord = crowWord.trim();
+        const meaning = meanings[index] || null;
+        const audioFile = audioFiles[index] || null;
+
+        // Track missing translations by species type
+        if (!meaning || rawMeanings[index]?.trim() === 'NO TRANSLATION') {
+          if (speciesType === 'bird') {
+            this.missingBirdTranslations.add(trimmedCrowWord);
+          } else {
+            this.missingPlantTranslations.add(trimmedCrowWord);
+          }
+        }
+
+        // Track missing audio recordings by species type
+        if (!audioFile) {
+          // Check if it was explicitly marked as NO RECORDING
+          const rawAudio = audiosColumn ? this.parseSemicolonSeparated(audiosColumn)[index] : null;
+          if (rawAudio?.trim() === 'NO RECORDING' || !rawAudio) {
+            if (speciesType === 'bird') {
+              this.missingBirdAudio.add(trimmedCrowWord);
+            } else {
+              this.missingPlantAudio.add(trimmedCrowWord);
+            }
+          }
+        }
+
+        crowNames.push({
+          crow_word: trimmedCrowWord,
+          literal_meaning: meaning,
+          audio_files: audioFiles[index]
+            ? audioFiles[index]
+                .split(',')
+                .map((a) => a.trim())
+                .filter((a) => a.length > 0)
+            : [],
+        });
+      }
+    });
+
+    return crowNames;
+  }
+
+  /**
+   * Process a crow name and return the crow name record, mapping, and text audios
+   */
+  processCrowName(crowNameData, speciesId, speciesType) {
+    const { crow_word, literal_meaning, audio_files } = crowNameData;
+
+    // Use appropriate map based on species type
+    const crowNameMap = speciesType === 'bird' ? this.birdCrowNames : this.plantCrowNames;
+    const counter = speciesType === 'bird' ? 'crowNameCounter' : 'plantCrowNameCounter';
+
+    // Check if this crow word already exists (without audio files in comparison)
+    let crowNameId = null;
+    for (const [id, existing] of crowNameMap) {
+      if (existing.crow_word === crow_word && existing.literal_meaning === literal_meaning) {
+        crowNameId = id;
+        break;
+      }
+    }
+
+    let crowName = null;
+    if (!crowNameId) {
+      // Create new crow name entry
+      crowNameId = this[counter]++;
+      crowName = {
+        id: crowNameId,
+        crow_word,
+        literal_meaning,
+      };
+      crowNameMap.set(crowNameId, crowName);
+    }
+
+    // Create mapping
+    const mapping = {
+      crow_name_id: crowNameId,
+      [`${speciesType}_id`]: speciesId,
+    };
+
+    // Create text audio entries
+    const textAudios = audio_files.map((audioFile, index) => ({
+      crow_name_id: crowNameId,
+      file_name: audioFile,
+      sort_order: index + 1,
+    }));
+
+    return { crowName, mapping, textAudios };
+  }
+
+  /**
+   * Report missing audio recordings and translations
+   */
+  reportMissingData() {
+    // Report missing bird audio
+    if (this.missingBirdAudio.size > 0) {
+      console.log(`\n🔇 Bird crow names missing audio recordings (${this.missingBirdAudio.size}):`);
+      const sortedMissingAudio = Array.from(this.missingBirdAudio).sort();
+      sortedMissingAudio.forEach((name) => {
+        console.log(`   - ${name}`);
+      });
+    }
+
+    // Report missing bird translations
+    if (this.missingBirdTranslations.size > 0) {
+      console.log(
+        `\n📝 Bird crow names missing literal translations (${this.missingBirdTranslations.size}):`
+      );
+      const sortedMissingTranslations = Array.from(this.missingBirdTranslations).sort();
+      sortedMissingTranslations.forEach((name) => {
+        console.log(`   - ${name}`);
+      });
+    }
+
+    // Report missing plant audio
+    if (this.missingPlantAudio.size > 0) {
+      console.log(
+        `\n🔇 Plant crow names missing audio recordings (${this.missingPlantAudio.size}):`
+      );
+      const sortedMissingAudio = Array.from(this.missingPlantAudio).sort();
+      sortedMissingAudio.forEach((name) => {
+        console.log(`   - ${name}`);
+      });
+    }
+
+    // Report missing plant translations
+    if (this.missingPlantTranslations.size > 0) {
+      console.log(
+        `\n📝 Plant crow names missing literal translations (${this.missingPlantTranslations.size}):`
+      );
+      const sortedMissingTranslations = Array.from(this.missingPlantTranslations).sort();
+      sortedMissingTranslations.forEach((name) => {
+        console.log(`   - ${name}`);
+      });
+    }
+
+    // Report success if no missing data
+    const totalMissing =
+      this.missingBirdAudio.size +
+      this.missingBirdTranslations.size +
+      this.missingPlantAudio.size +
+      this.missingPlantTranslations.size;
+    if (totalMissing === 0) {
+      console.log(`\n✅ All Crow names have audio recordings and literal translations!`);
+    }
+  }
+
+  /**
    * Escape SQL strings
    */
   escapeSql(str) {
@@ -693,91 +1045,59 @@ CREATE TABLE IF NOT EXISTS text_audios (
   }
 
   /**
-   * Process both orders and birds CSV files
-   */
-  processFiles(ordersFile, birdsFile, outputFile) {
-    try {
-      // First process the orders CSV
-      const ordersCsvContent = fs.readFileSync(ordersFile, 'utf8');
-      this.parseOrdersCsv(ordersCsvContent);
-
-      // Then process the birds CSV
-      const birdsCsvContent = fs.readFileSync(birdsFile, 'utf8');
-      const parsedData = this.parseCsv(birdsCsvContent);
-      const sql = this.generateSql(parsedData);
-
-      fs.writeFileSync(outputFile, sql, 'utf8');
-      console.log(`Successfully processed ${ordersFile} and ${birdsFile} -> ${outputFile}`);
-      console.log(
-        `Generated ${parsedData.birdOrders.length} orders, ${parsedData.birds.length} birds, ${parsedData.birdImages.length} images, ${parsedData.birdAudios.length} audio files`
-      );
-
-      return parsedData;
-    } catch (error) {
-      console.error('Error processing files:', error);
-      throw error;
-    }
-  }
-
-  /**
    * Process birds, plants, and their respective category/order files
    */
-  processSpeciesFiles(ordersFile, birdsFile, categoriesFile, plantsFile, outputFile) {
+  processSpeciesFiles(birdsFile, plantsFile, outputFile) {
     try {
       let combinedData = {
-        birdOrders: [],
         birds: [],
+        birdEnglishNames: [],
+        birdCrowNames: [],
+        birdCrowNameMappings: [],
+        birdScientificSynonyms: [],
         birdImages: [],
-        birdAudios: [],
-        plantCategories: [],
+        birdSongAudios: [],
+        birdTextAudios: [],
         plants: [],
+        plantEnglishNames: [],
+        plantCrowNames: [],
+        plantCrowNameMappings: [],
+        plantScientificSynonyms: [],
         plantImages: [],
-        textAudios: [],
+        plantTextAudios: [],
       };
 
       // Process birds if provided
-      if (ordersFile && birdsFile) {
-        const ordersCsvContent = fs.readFileSync(ordersFile, 'utf8');
-        this.parseOrdersCsv(ordersCsvContent);
-
+      if (birdsFile) {
         const birdsCsvContent = fs.readFileSync(birdsFile, 'utf8');
         const birdData = this.parseCsv(birdsCsvContent);
 
-        combinedData.birdOrders = birdData.birdOrders;
         combinedData.birds = birdData.birds;
+        combinedData.birdEnglishNames = birdData.birdEnglishNames;
+        combinedData.birdCrowNames = birdData.birdCrowNames;
+        combinedData.birdCrowNameMappings = birdData.birdCrowNameMappings;
+        combinedData.birdScientificSynonyms = birdData.birdScientificSynonyms;
         combinedData.birdImages = birdData.birdImages;
-        combinedData.birdAudios = birdData.birdAudios;
-        combinedData.textAudios = combinedData.textAudios.concat(birdData.textAudios || []);
+        combinedData.birdSongAudios = birdData.birdSongAudios;
+        combinedData.birdTextAudios = birdData.birdTextAudios;
       }
 
       // Process plants if provided
-      if (categoriesFile && plantsFile) {
-        // First parse the categories CSV
-        const categoriesCsvContent = fs.readFileSync(categoriesFile, 'utf8');
-        this.parsePlantCategoriesCsv(categoriesCsvContent);
-
-        // Then parse the plants CSV
+      if (plantsFile) {
         const plantsCsvContent = fs.readFileSync(plantsFile, 'utf8');
         const plantData = this.parsePlantsCsv(plantsCsvContent);
 
-        combinedData.plantCategories = plantData.plantCategories;
         combinedData.plants = plantData.plants;
+        combinedData.plantEnglishNames = plantData.plantEnglishNames;
+        combinedData.plantCrowNames = plantData.plantCrowNames;
+        combinedData.plantCrowNameMappings = plantData.plantCrowNameMappings;
+        combinedData.plantScientificSynonyms = plantData.plantScientificSynonyms;
         combinedData.plantImages = plantData.plantImages;
-        combinedData.textAudios = combinedData.textAudios.concat(plantData.plantTextAudios || []);
+        combinedData.plantTextAudios = plantData.plantTextAudios;
       }
 
       const sql = this.generateSql(combinedData);
       fs.writeFileSync(outputFile, sql, 'utf8');
-
-      console.log(`Successfully processed species data -> ${outputFile}`);
-      console.log(`📊 Summary:`);
-      console.log(`   - Bird Orders: ${combinedData.birdOrders.length}`);
-      console.log(`   - Birds: ${combinedData.birds.length}`);
-      console.log(`   - Bird Images: ${combinedData.birdImages.length}`);
-      console.log(`   - Bird Audios: ${combinedData.birdAudios.length}`);
-      console.log(`   - Plant Categories: ${combinedData.plantCategories.length}`);
-      console.log(`   - Plants: ${combinedData.plants.length}`);
-      console.log(`   - Plant Images: ${combinedData.plantImages.length}`);
 
       return combinedData;
     } catch (error) {
@@ -787,31 +1107,23 @@ CREATE TABLE IF NOT EXISTS text_audios (
   }
 }
 
-// Example usage with both orders and birds CSV
+// Example usage with simplified CSV format
 if (import.meta.url === `file://${process.argv[1]}`) {
   const parser = new SpeciesDataParser();
 
-  // Example bird orders CSV content
-  const ordersCSV = `name_scientific,description_en,description_local
-Passeriformes,Order of perching birds,
-Ciconiiformes,Order of storks and related birds,`;
+  // Example birds CSV content with category directly included
+  const birdsCSV = `Category,Crow,Literal Translation,English,Latin Name,Description,Habitat,Food Habits,Audios,Map,Photos
+Passeriformes,áalihte,"black bird","American Crow","Corvus brachyrhynchos","A large black bird","Urban areas","Omnivorous","aalihte1.mp3,aalihte2.mp3","crow_map.jpg","crow1.jpg;crow2.jpg"
+Ciconiiformes,akbaakáatdutche,"one who catches children","White Stork","Ciconia ciconia","Large white bird","Wetlands","Fish","stork1.mp3","stork_map.jpg","NO RECORDING"`;
 
-  // Example birds CSV content
-  const birdsCSV = `name_scientific,name_en,name_local,alternate_names_local,alternate_names_en,name_meaning_en,description_local,description_en,size,order,images_json,song_audios
-Corvus brachyrhynchos,crow,áalihte,,,description of their call,,,Medium-Large,Passeriformes,"[{""file"": ""file.jpg"", ""caption"": ""male""}, {""file"": ""file2.jpg"", ""caption"": ""female""}]","[{""file"": ""file.mp3"", ""caption"": ""female""}]"
-Ciconiidae sp.,stork,akbaakáatdutche,,,one who catches children,,,Very Large,Ciconiiformes,,`;
-
-  // Process orders first
-  parser.parseOrdersCsv(ordersCSV);
-
-  // Then process birds
+  // Process birds directly (no separate orders file needed)
   const parsedData = parser.parseCsv(birdsCSV);
   const sql = parser.generateSql(parsedData);
 
   console.log('Generated SQL:');
   console.log(sql);
   console.log(
-    `\nSummary: ${parsedData.birdOrders.length} orders, ${parsedData.birds.length} birds, ${parsedData.birdImages.length} images, ${parsedData.birdAudios.length} audio files`
+    `\nSummary: ${parsedData.birds.length} birds, ${parsedData.birdImages.length} images, ${parsedData.birdSongAudios.length} song audio files, ${parsedData.birdTextAudios.length} text audio files`
   );
 }
 

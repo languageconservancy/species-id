@@ -31,25 +31,23 @@ function showUsage() {
 Usage: node process-species-data.mjs [options]
 
 Options:
-  --bird-orders <file>       Bird orders CSV file (required if processing birds)
   --birds <file>             Birds CSV file (optional)
-  --plant-categories <file>  Plant categories CSV file (required if processing plants)
   --plants <file>            Plants CSV file (optional)
   --output <file>            Output SQL file (default: species_data.sql)
   --help                     Show this help message
 
 Examples:
   # Process both birds and plants
-  node process-species-data.mjs --bird-orders orders.csv --birds birds.csv --plant-categories categories.csv --plants plants.csv
+  node process-species-data.mjs --birds birds.csv --plants plants.csv
 
   # Process only birds
-  node process-species-data.mjs --bird-orders orders.csv --birds birds.csv
+  node process-species-data.mjs --birds birds.csv
 
   # Process only plants
-  node process-species-data.mjs --plant-categories categories.csv --plants plants.csv
+  node process-species-data.mjs --plants plants.csv
 
   # Custom output file
-  node process-species-data.mjs --bird-orders orders.csv --birds birds.csv --plant-categories categories.csv --plants plants.csv --output my_data.sql
+  node process-species-data.mjs --birds birds.csv --plants plants.csv --output my_data.sql
   `);
 }
 
@@ -70,33 +68,9 @@ function main() {
     process.exit(1);
   }
 
-  // If birds are provided, bird-orders must also be provided
-  if (options.birds && !options['bird-orders']) {
-    console.error('❌ Error: --bird-orders is required when processing birds');
-    showUsage();
-    process.exit(1);
-  }
-
-  // If plants are provided, plant-categories must also be provided
-  if (options.plants && !options['plant-categories']) {
-    console.error('❌ Error: --plant-categories is required when processing plants');
-    showUsage();
-    process.exit(1);
-  }
-
   // Check if provided files exist
-  if (options['bird-orders'] && !fs.existsSync(options['bird-orders'])) {
-    console.error(`❌ Error: Bird orders file not found: ${options['bird-orders']}`);
-    process.exit(1);
-  }
-
   if (options.birds && !fs.existsSync(options.birds)) {
     console.error(`❌ Error: Birds file not found: ${options.birds}`);
-    process.exit(1);
-  }
-
-  if (options['plant-categories'] && !fs.existsSync(options['plant-categories'])) {
-    console.error(`❌ Error: Plant categories file not found: ${options['plant-categories']}`);
     process.exit(1);
   }
 
@@ -110,33 +84,36 @@ function main() {
 
   try {
     console.log('🔄 Processing species data...');
-    if (options['bird-orders']) console.log(`📁 Bird orders file: ${options['bird-orders']}`);
     if (options.birds) console.log(`📁 Birds file: ${options.birds}`);
-    if (options['plant-categories'])
-      console.log(`📁 Plant categories file: ${options['plant-categories']}`);
     if (options.plants) console.log(`📁 Plants file: ${options.plants}`);
     console.log(`📁 Output file: ${outputFile}`);
 
     const parser = new SpeciesDataParser();
-    const parsedData = parser.processSpeciesFiles(
-      options['bird-orders'],
-      options.birds,
-      options['plant-categories'],
-      options.plants,
-      outputFile
-    );
+    const parsedData = parser.processSpeciesFiles(options.birds, options.plants, outputFile);
 
     console.log('\n✅ Processing complete!');
     console.log(`📊 Summary:`);
-    console.log(`   - Bird Orders: ${parsedData.birdOrders.length}`);
     console.log(`   - Birds: ${parsedData.birds.length}`);
+    console.log(`   - Bird English Names: ${parsedData.birdEnglishNames?.length || 0}`);
+    console.log(`   - Bird Crow Names: ${parsedData.birdCrowNames?.length || 0}`);
+    console.log(`   - Bird Crow Name Mappings: ${parsedData.birdCrowNameMappings?.length || 0}`);
+    console.log(`   - Bird Scientific Synonyms: ${parsedData.birdScientificSynonyms?.length || 0}`);
     console.log(`   - Bird Images: ${parsedData.birdImages.length}`);
-    console.log(`   - Bird Audios: ${parsedData.birdAudios.length}`);
-    console.log(`   - Plant Categories: ${parsedData.plantCategories.length}`);
+    console.log(`   - Bird Song Audios: ${parsedData.birdSongAudios.length}`);
+    console.log(`   - Bird Text Audios: ${parsedData.birdTextAudios.length}`);
     console.log(`   - Plants: ${parsedData.plants.length}`);
+    console.log(`   - Plant English Names: ${parsedData.plantEnglishNames?.length || 0}`);
+    console.log(`   - Plant Crow Names: ${parsedData.plantCrowNames?.length || 0}`);
+    console.log(`   - Plant Crow Name Mappings: ${parsedData.plantCrowNameMappings?.length || 0}`);
+    console.log(
+      `   - Plant Scientific Synonyms: ${parsedData.plantScientificSynonyms?.length || 0}`
+    );
     console.log(`   - Plant Images: ${parsedData.plantImages.length}`);
-    console.log(`   - Text Audios: ${parsedData.textAudios.length}`);
+    console.log(`   - Plant Text Audios: ${parsedData.plantTextAudios.length}`);
     console.log(`📁 Output written to: ${outputFile}`);
+
+    // Report missing data
+    parser.reportMissingData();
   } catch (error) {
     console.error('❌ Error processing files:', error.message);
     process.exit(1);

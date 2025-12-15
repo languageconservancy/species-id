@@ -16,6 +16,7 @@ import { SettingsService, AppSettings } from 'app/services/settings.service';
 import { Subscription } from 'rxjs';
 import { ASSET_PATHS } from 'app/constants/app-consts';
 import { SpeciesMapComponent } from 'app/partials/species-map/species-map.component';
+import { SpeciesType } from 'app/models/species.model';
 
 @Component({
   selector: 'app-bird-detail',
@@ -41,6 +42,7 @@ export class BirdDetailPage implements OnInit {
     showScientificNames: true,
   };
   protected subscribers: Subscription = new Subscription();
+  crowNames: Array<{ name: string; hasAudio: boolean }> = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -54,6 +56,7 @@ export class BirdDetailPage implements OnInit {
 
   async ngOnInit() {
     await this._loadSpeciesFromUrl();
+    await this._loadCrowNamesWithAudio();
     this.loading = false;
     this._subscribeToSettings();
   }
@@ -83,6 +86,39 @@ export class BirdDetailPage implements OnInit {
     }
   }
 
+  private async _loadCrowNamesWithAudio() {
+    if (!this.species) return;
+
+    try {
+      // Get all text audios for this species
+      const textAudios = await this.textAudioService.getBySpeciesId(
+        this.species.id,
+        SpeciesType.Bird
+      );
+      const audioTexts = new Set(textAudios.map((audio) => audio.text));
+
+      // Split the comma-separated names and check which ones have audio
+      const names =
+        this.species.nameLocal
+          ?.split(',')
+          .map((name) => name.trim())
+          .filter((name) => name) || [];
+      this.crowNames = names.map((name) => ({
+        name,
+        hasAudio: audioTexts.has(name),
+      }));
+    } catch (error) {
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading crow names with audio:', error);
+      // Fallback to just showing the names without audio indicators
+      const names =
+        this.species?.nameLocal
+          ?.split(',')
+          .map((name) => name.trim())
+          .filter((name) => name) || [];
+      this.crowNames = names.map((name) => ({ name, hasAudio: false }));
+    }
+  }
+
   public async playTextAudio(text: string | undefined) {
     if (!text) {
       console.warn(ASSET_PATHS.WARNING_EMOJI, 'No text provided for audio playback');
@@ -90,9 +126,11 @@ export class BirdDetailPage implements OnInit {
     }
 
     try {
-      const textAudio = await this.textAudioService.getByText(text);
+      const textAudio = await this.textAudioService.getByText(text, SpeciesType.Bird);
       if (textAudio) {
-        const audio = new Audio(`${ASSET_PATHS.SPECIES_AUDIOS}/texts/${textAudio.fileName}`);
+        const audio = new Audio(
+          `${ASSET_PATHS.SPECIES_DATA}/birds/text_audios/${textAudio.fileName}`
+        );
         audio
           .play()
           .catch((error) => console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing audio:', error));

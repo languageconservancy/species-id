@@ -368,7 +368,7 @@ Each row should be a unique species. But a separate row should be used for the s
 - Crow names (semi-colon separated, ordered)
 - English names (semi-colon separated)
 - Latin names (semi-colon separated)
-- Crow name audio (semi-colon separated, ordered)
+- Crow name audios (semi-colon separated, ordered, comma-separated for multiple audio for a single name)
 - Photos (semi-colon separated)
 - Crow name literal meaning (semi-colon separated, ordered)
 - Description (HTML formatting for styling text)
@@ -427,12 +427,12 @@ Each row should be a unique species. But a separate row should be used for the s
 
 ### Photos
 
-- Comma-separated so we can decide how many and which to use
+- Semi-colon-separated so we can decide how many and which to use
 - First photo is used for list view and first photo in detail view
 
 ### Crow Name Audios
 
-- Comma-separated so we can display all
+- Comma-separated within each name so we can display all audio for a given text
 - First audio used for list view
 - All audios will be in detail view.
 
@@ -446,41 +446,126 @@ Downy Woodpecker
 ## Tables
 
 ```sql
-CREATE TABLE plants (
+-- Bird Tables
+CREATE TABLE IF NOT EXISTS birds (
+    id INTEGER PRIMARY KEY,
+    latin_name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    description_en TEXT,
+    habitat_en TEXT,
+    food_habits_en TEXT,
+    map_image TEXT
+);
+
+CREATE TABLE IF NOT EXISTS bird_english_names (
+    id INTEGER PRIMARY KEY,
+    bird_id INTEGER NOT NULL,
+    english_name TEXT NOT NULL,
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
+);
+
+CREATE TABLE IF NOT EXISTS bird_crow_names (
+    id INTEGER PRIMARY KEY,
+    crow_word TEXT NOT NULL,
+    literal_meaning TEXT
+);
+
+CREATE TABLE IF NOT EXISTS bird_crow_name_mappings (
+    id INTEGER PRIMARY KEY,
+    crow_name_id INTEGER NOT NULL,
+    bird_id INTEGER NOT NULL,
+    FOREIGN KEY (crow_name_id) REFERENCES bird_crow_names(id),
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
+);
+
+CREATE TABLE IF NOT EXISTS bird_scientific_synonyms (
+    id INTEGER PRIMARY KEY,
+    bird_id INTEGER NOT NULL,
+    synonym_name TEXT NOT NULL,
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
+);
+
+CREATE TABLE IF NOT EXISTS bird_images (
+    id INTEGER PRIMARY KEY,
+    file_name TEXT NOT NULL,
+    bird_id INTEGER NOT NULL,
+    caption TEXT,
+    sort_order INTEGER,
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
+);
+
+CREATE TABLE IF NOT EXISTS bird_song_audios (
+    id INTEGER PRIMARY KEY,
+    file_name TEXT NOT NULL,
+    bird_id INTEGER NOT NULL,
+    caption TEXT,
+    sort_order INTEGER,
+    FOREIGN KEY (bird_id) REFERENCES birds(id)
+);
+
+CREATE TABLE IF NOT EXISTS bird_text_audios (
+    id INTEGER PRIMARY KEY,
+    crow_name_id INTEGER NOT NULL,
+    file_name TEXT NOT NULL,
+    sort_order INTEGER,
+    FOREIGN KEY (crow_name_id) REFERENCES bird_crow_names(id)
+);
+
+-- Plant Tables
+CREATE TABLE IF NOT EXISTS plants (
     id INTEGER PRIMARY KEY,
     latin_name TEXT NOT NULL,
     category TEXT,
-    notes TEXT
+    description_en TEXT,
+    habitat_en TEXT,
+    uses_en TEXT,
+    map_image TEXT
 );
 
-CREATE TABLE english_names (
+CREATE TABLE IF NOT EXISTS plant_english_names (
     id INTEGER PRIMARY KEY,
     plant_id INTEGER NOT NULL,
     english_name TEXT NOT NULL,
     FOREIGN KEY (plant_id) REFERENCES plants(id)
 );
 
-CREATE TABLE crow_names (
+CREATE TABLE IF NOT EXISTS plant_crow_names (
     id INTEGER PRIMARY KEY,
     crow_word TEXT NOT NULL,
-    literal_meaning TEXT,
-    audio_file TEXT
+    literal_meaning TEXT
 );
 
-CREATE TABLE crow_name_mappings (
+CREATE TABLE IF NOT EXISTS plant_crow_name_mappings (
     id INTEGER PRIMARY KEY,
     crow_name_id INTEGER NOT NULL,
     plant_id INTEGER NOT NULL,
-    FOREIGN KEY (crow_name_id) REFERENCES crow_names(id),
+    FOREIGN KEY (crow_name_id) REFERENCES plant_crow_names(id),
     FOREIGN KEY (plant_id) REFERENCES plants(id)
 );
 
-CREATE TABLE scientific_synonyms (
+CREATE TABLE IF NOT EXISTS plant_scientific_synonyms (
     id INTEGER PRIMARY KEY,
     plant_id INTEGER NOT NULL,
     synonym_name TEXT NOT NULL,
     FOREIGN KEY (plant_id) REFERENCES plants(id)
 );
+
+CREATE TABLE IF NOT EXISTS plant_images (
+    id INTEGER PRIMARY KEY,
+    file_name TEXT NOT NULL,
+    plant_id INTEGER NOT NULL,
+    caption TEXT,
+    sort_order INTEGER,
+    FOREIGN KEY (plant_id) REFERENCES plants(id)
+);
+
+CREATE TABLE IF NOT EXISTS plant_text_audios (
+    id INTEGER PRIMARY KEY,
+    crow_name_id INTEGER NOT NULL,
+    file_name TEXT NOT NULL,
+    sort_order INTEGER,
+    FOREIGN KEY (crow_name_id) REFERENCES plant_crow_names(id)
+)
 ```
 
 ## 📚 Scripts Reference

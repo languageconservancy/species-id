@@ -7,27 +7,35 @@ import path from 'path';
 /**
  * Loads the index.json file and returns a set of image and audio files.
  * @param {string} indexPath - The path to the index.json file.
- * @returns {Promise<{birdImageFiles: Set<string>, birdAudioFiles: Set<string>, plantImageFiles: Set<string>}>} - A promise that resolves to an object containing sets of image and audio files.
+ * @returns {Promise<{birdSpeciesImages: Set<string>, birdTextAudios: Set<string>, birdSongAudios: Set<string>, birdMapImages: Set<string>, plantSpeciesImages: Set<string>, plantTextAudios: Set<string>, plantMapImages: Set<string>}>} - A promise that resolves to an object containing sets of image and audio files.
  */
 async function loadIndexJson(indexPath /*: string*/) {
   const raw = await readFile(indexPath, 'utf-8');
   const parsed = JSON.parse(raw);
 
-  const birdImages = parsed.birds?.images.map((x) => path.basename(x.path)) || [];
-  const birdAudio = parsed.birds?.audio.map((x) => path.basename(x.path)) || [];
-  const plantImages = parsed.plants?.images.map((x) => path.basename(x.path)) || [];
+  const birdSpeciesImages = parsed.birds?.speciesImages?.map((x) => path.basename(x.path)) || [];
+  const birdTextAudios = parsed.birds?.textAudios?.map((x) => path.basename(x.path)) || [];
+  const birdSongAudios = parsed.birds?.songAudios?.map((x) => path.basename(x.path)) || [];
+  const birdMapImages = parsed.birds?.mapImages?.map((x) => path.basename(x.path)) || [];
+  const plantSpeciesImages = parsed.plants?.speciesImages?.map((x) => path.basename(x.path)) || [];
+  const plantTextAudios = parsed.plants?.textAudios?.map((x) => path.basename(x.path)) || [];
+  const plantMapImages = parsed.plants?.mapImages?.map((x) => path.basename(x.path)) || [];
 
   return {
-    birdImageFiles: new Set(birdImages),
-    birdAudioFiles: new Set(birdAudio),
-    plantImageFiles: new Set(plantImages),
+    birdSpeciesImages: new Set(birdSpeciesImages),
+    birdTextAudios: new Set(birdTextAudios),
+    birdSongAudios: new Set(birdSongAudios),
+    birdMapImages: new Set(birdMapImages),
+    plantSpeciesImages: new Set(plantSpeciesImages),
+    plantTextAudios: new Set(plantTextAudios),
+    plantMapImages: new Set(plantMapImages),
   };
 }
 
 /**
  * Loads the database and returns a set of image and audio files.
  * @param {string} dbPath - The path to the database file.
- * @returns {Promise<{birdImageFiles: Set<string>, birdAudioFiles: Set<string>, plantImageFiles: Set<string>}>} - A promise that resolves to an object containing sets of image and audio files.
+ * @returns {Promise<{birdSpeciesImages: Set<string>, birdTextAudios: Set<string>, birdSongAudios: Set<string>, birdMapImages: Set<string>, plantSpeciesImages: Set<string>, plantTextAudios: Set<string>, plantMapImages: Set<string>}>} - A promise that resolves to an object containing sets of image and audio files.
  */
 async function loadDbFilenames(dbPath /*: string*/) {
   const db = await open({
@@ -35,43 +43,91 @@ async function loadDbFilenames(dbPath /*: string*/) {
     driver: sqlite3.Database,
   });
 
-  let birdImageRows = [];
-  let birdAudioRows = [];
-  let plantImageRows = [];
+  let birdSpeciesImageRows = [];
+  let birdTextAudioRows = [];
+  let birdSongAudioRows = [];
+  let birdMapImageRows = [];
+  let plantSpeciesImageRows = [];
+  let plantTextAudioRows = [];
+  let plantMapImageRows = [];
 
   try {
-    birdImageRows = await db.all('SELECT file_name FROM bird_images');
-    if (birdImageRows.length === 0) {
-      console.warn('❌ No bird images found in database');
+    birdSpeciesImageRows = await db.all('SELECT file_name FROM bird_images');
+    if (birdSpeciesImageRows.length === 0) {
+      console.warn('❌ No bird species images found in database');
     }
   } catch (error) {
-    console.error('❌ Error loading bird images:', error);
+    console.error('❌ Error loading bird species images:', error);
   }
 
   try {
-    birdAudioRows = await db.all('SELECT file_name FROM bird_audio');
-    if (birdAudioRows.length === 0) {
-      console.warn('❌ No bird audio found in database');
+    birdTextAudioRows = await db.all('SELECT file_name FROM bird_text_audios');
+    if (birdTextAudioRows.length === 0) {
+      console.warn('❌ No bird text audios found in database');
     }
   } catch (error) {
-    console.error('❌ Error loading bird audio:', error);
+    console.error('❌ Error loading bird text audios:', error);
   }
 
   try {
-    plantImageRows = await db.all('SELECT file_name FROM plant_images');
-    if (plantImageRows.length === 0) {
-      console.warn('❌ No plant images found in database');
+    birdSongAudioRows = await db.all('SELECT file_name FROM bird_song_audios');
+    if (birdSongAudioRows.length === 0) {
+      console.warn('❌ No bird song audios found in database');
     }
   } catch (error) {
-    console.error('❌ Error loading plant images:', error);
+    console.error('❌ Error loading bird song audios:', error);
+  }
+
+  try {
+    birdMapImageRows = await db.all(
+      'SELECT map_image FROM birds WHERE map_image IS NOT NULL AND map_image != ""'
+    );
+    if (birdMapImageRows.length === 0) {
+      console.warn('❌ No bird map images found in database');
+    }
+  } catch (error) {
+    console.error('❌ Error loading bird map images:', error);
+  }
+
+  try {
+    plantSpeciesImageRows = await db.all('SELECT file_name FROM plant_images');
+    if (plantSpeciesImageRows.length === 0) {
+      console.warn('❌ No plant species images found in database');
+    }
+  } catch (error) {
+    console.error('❌ Error loading plant species images:', error);
+  }
+
+  try {
+    plantTextAudioRows = await db.all('SELECT file_name FROM plant_text_audios');
+    if (plantTextAudioRows.length === 0) {
+      console.warn('❌ No plant text audios found in database');
+    }
+  } catch (error) {
+    console.error('❌ Error loading plant text audios:', error);
+  }
+
+  try {
+    plantMapImageRows = await db.all(
+      'SELECT map_image FROM plants WHERE map_image IS NOT NULL AND map_image != ""'
+    );
+    if (plantMapImageRows.length === 0) {
+      console.warn('❌ No plant map images found in database');
+    }
+  } catch (error) {
+    console.error('❌ Error loading plant map images:', error);
   }
 
   await db.close();
 
   return {
-    birdImageFiles: new Set(birdImageRows.map((row) => row.file_name)),
-    birdAudioFiles: new Set(birdAudioRows.map((row) => row.file_name)),
-    plantImageFiles: new Set(plantImageRows.map((row) => row.file_name)),
+    birdSpeciesImages: new Set(birdSpeciesImageRows.map((row) => row.file_name)),
+    birdTextAudios: new Set(birdTextAudioRows.map((row) => row.file_name)),
+    birdSongAudios: new Set(birdSongAudioRows.map((row) => row.file_name)),
+    birdMapImages: new Set(birdMapImageRows.map((row) => path.basename(row.map_image))),
+    plantSpeciesImages: new Set(plantSpeciesImageRows.map((row) => row.file_name)),
+    plantTextAudios: new Set(plantTextAudioRows.map((row) => row.file_name)),
+    plantMapImages: new Set(plantMapImageRows.map((row) => path.basename(row.map_image))),
   };
 }
 
@@ -94,53 +150,87 @@ async function validate(dbPath, indexPath) {
   const index = await loadIndexJson(indexPath);
   const db = await loadDbFilenames(dbPath);
 
-  const missingFromIndexBirdImages = diff(db.birdImageFiles, index.birdImageFiles);
-  const missingFromIndexBirdAudio = diff(db.birdAudioFiles, index.birdAudioFiles);
+  // Calculate differences for all file types
+  const missingFromIndex = {
+    birdSpeciesImages: diff(db.birdSpeciesImages, index.birdSpeciesImages),
+    birdTextAudios: diff(db.birdTextAudios, index.birdTextAudios),
+    birdSongAudios: diff(db.birdSongAudios, index.birdSongAudios),
+    birdMapImages: diff(db.birdMapImages, index.birdMapImages),
+    plantSpeciesImages: diff(db.plantSpeciesImages, index.plantSpeciesImages),
+    plantTextAudios: diff(db.plantTextAudios, index.plantTextAudios),
+    plantMapImages: diff(db.plantMapImages, index.plantMapImages),
+  };
 
-  const orphanedInIndexBirdImages = diff(index.birdImageFiles, db.birdImageFiles);
-  const orphanedInIndexBirdAudio = diff(index.birdAudioFiles, db.birdAudioFiles);
-
-  const missingFromIndexPlantImages = diff(db.plantImageFiles, index.plantImageFiles);
-  const orphanedInIndexPlantImages = diff(index.plantImageFiles, db.plantImageFiles);
+  const orphanedInIndex = {
+    birdSpeciesImages: diff(index.birdSpeciesImages, db.birdSpeciesImages),
+    birdTextAudios: diff(index.birdTextAudios, db.birdTextAudios),
+    birdSongAudios: diff(index.birdSongAudios, db.birdSongAudios),
+    birdMapImages: diff(index.birdMapImages, db.birdMapImages),
+    plantSpeciesImages: diff(index.plantSpeciesImages, db.plantSpeciesImages),
+    plantTextAudios: diff(index.plantTextAudios, db.plantTextAudios),
+    plantMapImages: diff(index.plantMapImages, db.plantMapImages),
+  };
 
   console.log('\n🔎 Validation Report');
   console.log('=========================');
 
-  // Bird images and audio - in s3 but missing from index.json
-  if (
-    missingFromIndexBirdImages.length ||
-    missingFromIndexBirdAudio.length ||
-    missingFromIndexPlantImages.length
-  ) {
+  // Check for files referenced in DB but missing from index.json
+  const hasMissingFiles = Object.values(missingFromIndex).some((arr) => arr.length > 0);
+
+  if (hasMissingFiles) {
     console.log('\n❌ Files referenced in DB but missing from index.json:');
-    if (missingFromIndexBirdImages.length) {
-      console.log(`- Images: ${missingFromIndexBirdImages.join(', ')}`);
+
+    if (missingFromIndex.birdSpeciesImages.length) {
+      console.log(`- Bird Species Images: ${missingFromIndex.birdSpeciesImages.join(', ')}`);
     }
-    if (missingFromIndexBirdAudio.length) {
-      console.log(`- Audio: ${missingFromIndexBirdAudio.join(', ')}`);
+    if (missingFromIndex.birdTextAudios.length) {
+      console.log(`- Bird Text Audios: ${missingFromIndex.birdTextAudios.join(', ')}`);
     }
-    if (missingFromIndexPlantImages.length) {
-      console.log(`- Plant images: ${missingFromIndexPlantImages.join(', ')}`);
+    if (missingFromIndex.birdSongAudios.length) {
+      console.log(`- Bird Song Audios: ${missingFromIndex.birdSongAudios.join(', ')}`);
+    }
+    if (missingFromIndex.birdMapImages.length) {
+      console.log(`- Bird Map Images: ${missingFromIndex.birdMapImages.join(', ')}`);
+    }
+    if (missingFromIndex.plantSpeciesImages.length) {
+      console.log(`- Plant Species Images: ${missingFromIndex.plantSpeciesImages.join(', ')}`);
+    }
+    if (missingFromIndex.plantTextAudios.length) {
+      console.log(`- Plant Text Audios: ${missingFromIndex.plantTextAudios.join(', ')}`);
+    }
+    if (missingFromIndex.plantMapImages.length) {
+      console.log(`- Plant Map Images: ${missingFromIndex.plantMapImages.join(', ')}`);
     }
   } else {
     console.log('\n✅ All DB files are accounted for in index.json');
   }
 
-  // Bird images and audio - in index.json but not in DB
-  if (
-    orphanedInIndexBirdImages.length ||
-    orphanedInIndexBirdAudio.length ||
-    orphanedInIndexPlantImages.length
-  ) {
+  // Check for files in index.json but not referenced by DB
+  const hasOrphanedFiles = Object.values(orphanedInIndex).some((arr) => arr.length > 0);
+
+  if (hasOrphanedFiles) {
     console.log('\n⚠️ Files in index.json not referenced by DB:');
-    if (orphanedInIndexBirdImages.length) {
-      console.log(`- Images: ${orphanedInIndexBirdImages.join(', ')}`);
+
+    if (orphanedInIndex.birdSpeciesImages.length) {
+      console.log(`- Bird Species Images: ${orphanedInIndex.birdSpeciesImages.join(', ')}`);
     }
-    if (orphanedInIndexBirdAudio.length) {
-      console.log(`- Audio: ${orphanedInIndexBirdAudio.join(', ')}`);
+    if (orphanedInIndex.birdTextAudios.length) {
+      console.log(`- Bird Text Audios: ${orphanedInIndex.birdTextAudios.join(', ')}`);
     }
-    if (orphanedInIndexPlantImages.length) {
-      console.log(`- Plant images: ${orphanedInIndexPlantImages.join(', ')}`);
+    if (orphanedInIndex.birdSongAudios.length) {
+      console.log(`- Bird Song Audios: ${orphanedInIndex.birdSongAudios.join(', ')}`);
+    }
+    if (orphanedInIndex.birdMapImages.length) {
+      console.log(`- Bird Map Images: ${orphanedInIndex.birdMapImages.join(', ')}`);
+    }
+    if (orphanedInIndex.plantSpeciesImages.length) {
+      console.log(`- Plant Species Images: ${orphanedInIndex.plantSpeciesImages.join(', ')}`);
+    }
+    if (orphanedInIndex.plantTextAudios.length) {
+      console.log(`- Plant Text Audios: ${orphanedInIndex.plantTextAudios.join(', ')}`);
+    }
+    if (orphanedInIndex.plantMapImages.length) {
+      console.log(`- Plant Map Images: ${orphanedInIndex.plantMapImages.join(', ')}`);
     }
   } else {
     console.log('\n✅ No orphaned files in index.json');

@@ -1,3 +1,7 @@
+/**
+ * This file contains the constants for the plant options.
+ */
+
 import { ConfigService } from 'app/services/config.service';
 
 const languageLabel = (language: string) => {
@@ -7,7 +11,8 @@ const languageLabel = (language: string) => {
 export type PlantSortOption =
   | 'alphabetical-local'
   | 'alphabetical-english'
-  | 'alphabetical-scientific';
+  | 'alphabetical-latin'
+  | 'by-category';
 export type LanguageOption = 'local' | 'english';
 export type SortDirection = 'ascending' | 'descending';
 
@@ -22,7 +27,8 @@ export function getPlantSortOptions(
       label: `Alphabetical (${languageName})`,
     },
     { value: 'alphabetical-english', label: 'Alphabetical (English)' },
-    { value: 'alphabetical-scientific', label: 'Alphabetical (Scientific)' },
+    { value: 'alphabetical-latin', label: 'Alphabetical (Latin)' },
+    { value: 'by-category', label: 'By Category' },
   ];
 }
 

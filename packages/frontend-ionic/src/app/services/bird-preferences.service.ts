@@ -21,6 +21,7 @@ export class BirdPreferencesService extends BasePreferencesService {
     protected override storageReady: StorageReadyService,
     protected configService: ConfigService
   ) {
+    console.log('BirdPreferencesService constructor');
     super(storage, storageReady);
   }
 

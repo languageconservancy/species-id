@@ -80,10 +80,10 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
           return item.nameLocal.charAt(0).toUpperCase();
         case 'alphabetical-english':
           return item.nameEn.charAt(0).toUpperCase();
-        case 'alphabetical-scientific':
+        case 'alphabetical-latin':
           return item.nameScientific.charAt(0).toUpperCase();
         case 'by-category':
-          return (item as Plant).category?.name || 'Unknown';
+          return `${(item as Plant).category}` || 'Other';
         default:
           console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid sort type:', sortType);
           return item.nameLocal.charAt(0).toUpperCase();

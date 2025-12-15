@@ -40,6 +40,10 @@ export abstract class BasePreferencesService {
   protected async init() {
     await this.storageReady.ready();
     // Load initial preferences
+    const sortKey = await this.storage.get(this.SORT_KEY);
+    console.log('sortKey', sortKey);
+    const sortOptions = this.getSortOptions();
+    console.log('sortOptions', sortOptions);
     const sort = (await this.storage.get(this.SORT_KEY)) ?? this.getSortOptions()[0].value;
     const filters = (await this.storage.get(this.FILTERS_KEY)) ?? {};
     const sortDirection = (await this.storage.get(this.SORT_DIRECTION_KEY)) ?? 'ascending';

@@ -78,13 +78,10 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
           return item.nameLocal.charAt(0).toUpperCase();
         case 'alphabetical-english':
           return item.nameEn.charAt(0).toUpperCase();
-        case 'alphabetical-scientific':
+        case 'alphabetical-latin':
           return item.nameScientific.charAt(0).toUpperCase();
-        case 'by-order':
-          return (
-            `${(item as Bird).order?.nameScientific} (${(item as Bird).order?.descriptionEn})` ||
-            'Unknown'
-          );
+        case 'by-category':
+          return `${(item as Bird).category}` || 'Other';
         default:
           console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid sort type:', sortType);
           return item.nameLocal.charAt(0).toUpperCase();

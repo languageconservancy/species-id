@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "author": "Crow Language Consortium",
   "homepage": "https://crowlanguage.org/",
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

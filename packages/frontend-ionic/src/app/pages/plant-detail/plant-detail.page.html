@@ -13,16 +13,25 @@
 <ion-content class="ion-padding mt-0" style="--background: transparent; --padding-bottom: 4rem">
   <!-- Header section -->
   <ion-label class="text-center">
-    <span
-      class="flex w-full align-center justify-center cursor-pointer group"
-      (click)="playTextAudio(species?.nameLocal)"
-    >
-      <h1 class="font-localNames">{{ species?.nameLocal }}</h1>
-      <ion-icon
-        name="volume-high"
-        class="ml-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100"
-      ></ion-icon>
-    </span>
+    <div class="flex flex-wrap justify-center items-center gap-2 mb-2">
+      @for (crowName of crowNames; track crowName.name) {
+      <span
+        class="flex align-center cursor-pointer group"
+        [class.opacity-50]="!crowName.hasAudio"
+        (click)="crowName.hasAudio ? playTextAudio(crowName.name) : null"
+      >
+        <h1 class="font-localNames">{{ crowName.name }}</h1>
+        @if (crowName.hasAudio) {
+        <ion-icon
+          name="volume-high"
+          class="ml-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100"
+        ></ion-icon>
+        }
+      </span>
+      @if (!$last) {
+      <span class="text-gray-400">,</span>
+      } }
+    </div>
     @if (settings.useEnglish && species?.nameEn) {
     <p class="font-medium">{{ species?.nameEn }}</p>
     } @if (settings.showScientificNames && species?.nameScientific) {
