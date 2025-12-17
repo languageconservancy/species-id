@@ -17,7 +17,6 @@
       @for (crowName of crowNames; track crowName.name) {
       <span
         class="flex align-center cursor-pointer group"
-        [class.opacity-50]="!crowName.hasAudio"
         (click)="crowName.hasAudio ? playTextAudio(crowName.name) : null"
       >
         <h1 class="font-localNames">{{ crowName.name }}</h1>
@@ -29,7 +28,14 @@
         }
       </span>
       @if (!$last) {
-      <span class="text-gray-400">,</span>
+      <span class="text-gray-600">; </span>
+      } }
+    </div>
+    <div class="flex flex-wrap justify-center items-center gap-2 mb-2">
+      @for (englishName of species?.nameEn?.split(';'); track englishName; let last = $last) {
+      <span class="text-gray-600">{{ englishName }}</span>
+      @if (!$last) {
+      <span class="text-gray-600">; </span>
       } }
     </div>
     @if (settings.useEnglish && species?.nameEn) {

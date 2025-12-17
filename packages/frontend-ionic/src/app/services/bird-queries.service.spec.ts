@@ -34,7 +34,7 @@ describe('BirdQueriesService', () => {
           id: 1,
         } as Species,
       ]);
-      const result = await service.getFull();
+      const result = await service.getAllBirds();
       expect(sqliteServiceSpy.executeQuery).toHaveBeenCalled();
       expect(mapSpy).toHaveBeenCalledWith(dbRows);
       expect(result.length).toBe(1);
@@ -43,7 +43,7 @@ describe('BirdQueriesService', () => {
 
     it('should throw if sqliteService throws', async () => {
       sqliteServiceSpy.executeQuery.and.rejectWith(new Error('DB error'));
-      await expectAsync(service.getFull()).toBeRejectedWithError('DB error');
+      await expectAsync(service.getAllBirds()).toBeRejectedWithError('DB error');
     });
   });
 
@@ -54,7 +54,7 @@ describe('BirdQueriesService', () => {
       const mapSpy = spyOn(speciesModel, 'mapSpeciesWithImagesAndOrder').and.returnValue([
         { id: 1, type: SpeciesType.Bird } as Species,
       ]);
-      const result = await service.getById(1);
+      const result = await service.getBirdById(1);
       expect(sqliteServiceSpy.executeQuery).toHaveBeenCalledWith(jasmine.any(String), [1]);
       expect(mapSpy).toHaveBeenCalledWith(dbRows);
       expect(result).toEqual(jasmine.objectContaining({ id: 1 }));
@@ -63,14 +63,14 @@ describe('BirdQueriesService', () => {
     it('should return null if no species found', async () => {
       sqliteServiceSpy.executeQuery.and.resolveTo({ values: [] });
       const mapSpy = spyOn(speciesModel, 'mapSpeciesWithImagesAndOrder');
-      const result = await service.getById(999);
+      const result = await service.getBirdById(999);
       expect(result).toBeNull();
       expect(mapSpy).not.toHaveBeenCalled();
     });
 
     it('should throw if sqliteService throws', async () => {
       sqliteServiceSpy.executeQuery.and.rejectWith(new Error('DB error'));
-      await expectAsync(service.getById(1)).toBeRejectedWithError('DB error');
+      await expectAsync(service.getBirdById(1)).toBeRejectedWithError('DB error');
     });
   });
 });

@@ -108,6 +108,9 @@ export class PlantDetailPage implements OnInit, OnDestroy {
     if (!this.species) return;
 
     try {
+      // Get all Crow names for this species
+      const crowNames = await this.plantQueriesService.getPlantCrowNames(this.species.id);
+
       // Get all text audios for this species
       const textAudios = await this.textAudioService.getBySpeciesId(
         this.species.id,
@@ -115,25 +118,17 @@ export class PlantDetailPage implements OnInit, OnDestroy {
       );
       const audioTexts = new Set(textAudios.map((audio) => audio.text));
 
-      // Split the comma-separated names and check which ones have audio
-      const names =
-        this.species.nameLocal
-          ?.split(',')
-          .map((name) => name.trim())
-          .filter((name) => name) || [];
-      this.crowNames = names.map((name) => ({
-        name,
-        hasAudio: audioTexts.has(name),
+      // Map crow names with audio availability
+      this.crowNames = crowNames.map((crowName) => ({
+        name: crowName.name,
+        hasAudio: audioTexts.has(crowName.name),
       }));
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading crow names with audio:', error);
-      // Fallback to just showing the names without audio indicators
-      const names =
-        this.species?.nameLocal
-          ?.split(',')
-          .map((name) => name.trim())
-          .filter((name) => name) || [];
-      this.crowNames = names.map((name) => ({ name, hasAudio: false }));
+      // Fallback to just showing the single name from species
+      this.crowNames = this.species?.nameLocal
+        ? [{ name: this.species.nameLocal, hasAudio: false }]
+        : [];
     }
   }
 

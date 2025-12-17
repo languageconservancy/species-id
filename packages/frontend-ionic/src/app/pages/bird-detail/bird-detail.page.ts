@@ -43,6 +43,9 @@ export class BirdDetailPage implements OnInit {
   };
   protected subscribers: Subscription = new Subscription();
   crowNames: Array<{ name: string; hasAudio: boolean }> = [];
+  englishNames: Array<string> = [];
+  latinNames: Array<string> = [];
+  literalMeanings: Array<string> = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +60,9 @@ export class BirdDetailPage implements OnInit {
   async ngOnInit() {
     await this._loadSpeciesFromUrl();
     await this._loadCrowNamesWithAudio();
+    await this._loadEnglishNames();
+    await this._loadLatinNames();
+    await this._loadLiteralMeanings();
     this.loading = false;
     this._subscribeToSettings();
   }
@@ -80,16 +86,38 @@ export class BirdDetailPage implements OnInit {
     }
 
     try {
-      this.species = await this.birdQueriesService.getById(id);
+      this.species = await this.birdQueriesService.getBirdById(id);
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading species:', error);
     }
+  }
+
+  private async _loadEnglishNames() {
+    if (!this.species) return;
+    console.log('Loading english names for species:', this.species);
+    const englishNames: string[] = await this.birdQueriesService.getBirdEnglishNames(
+      this.species.id
+    );
+    this.englishNames = this.species.nameEn?.split(';') || [];
+  }
+
+  private async _loadLatinNames() {
+    if (!this.species) return;
+    this.latinNames = this.species.nameScientific?.split(';') || [];
+  }
+
+  private async _loadLiteralMeanings() {
+    if (!this.species) return;
+    this.literalMeanings = this.species.nameMeaningEn?.split(';') || [];
   }
 
   private async _loadCrowNamesWithAudio() {
     if (!this.species) return;
 
     try {
+      // Get all Crow names for this species
+      const crowNames = await this.birdQueriesService.getBirdCrowNames(this.species.id);
+
       // Get all text audios for this species
       const textAudios = await this.textAudioService.getBySpeciesId(
         this.species.id,
@@ -97,25 +125,17 @@ export class BirdDetailPage implements OnInit {
       );
       const audioTexts = new Set(textAudios.map((audio) => audio.text));
 
-      // Split the comma-separated names and check which ones have audio
-      const names =
-        this.species.nameLocal
-          ?.split(',')
-          .map((name) => name.trim())
-          .filter((name) => name) || [];
-      this.crowNames = names.map((name) => ({
-        name,
-        hasAudio: audioTexts.has(name),
+      // Map crow names with audio availability
+      this.crowNames = crowNames.map((crowName) => ({
+        name: crowName.name,
+        hasAudio: audioTexts.has(crowName.name),
       }));
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading crow names with audio:', error);
-      // Fallback to just showing the names without audio indicators
-      const names =
-        this.species?.nameLocal
-          ?.split(',')
-          .map((name) => name.trim())
-          .filter((name) => name) || [];
-      this.crowNames = names.map((name) => ({ name, hasAudio: false }));
+      // Fallback to just showing the single name from species
+      this.crowNames = this.species?.nameLocal
+        ? [{ name: this.species.nameLocal, hasAudio: false }]
+        : [];
     }
   }
 

@@ -59,7 +59,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
 
   protected override async _loadSpecies() {
     try {
-      const result = await this.birdQueriesService.getFull();
+      const result = await this.birdQueriesService.getAllBirds();
       this.itemsAll = result;
       this._setItems();
     } catch (error) {
@@ -98,8 +98,29 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
       {} as Record<string, Species[]>
     );
 
+    const getSortValue = (item: Species): string => {
+      switch (sortType) {
+        case 'alphabetical-local':
+          return item.nameLocal;
+        case 'alphabetical-english':
+          return item.nameEn;
+        case 'alphabetical-latin':
+          return item.nameScientific;
+        case 'by-category':
+          return item.nameLocal; // Sort by local name within category groups
+        default:
+          return item.nameLocal;
+      }
+    };
+
     return Object.entries(grouped)
-      .map(([name, items]) => ({ name, items }))
+      .map(([name, items]) => ({
+        name,
+        items: items.sort((a, b) => {
+          const result = getSortValue(a).localeCompare(getSortValue(b));
+          return sortDirection === 'ascending' ? result : -result;
+        }),
+      }))
       .sort((a, b) => {
         const result = a.name.localeCompare(b.name);
         return sortDirection === 'ascending' ? result : -result;

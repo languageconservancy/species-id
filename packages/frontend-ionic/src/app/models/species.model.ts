@@ -44,7 +44,7 @@ export interface SpeciesImage {
 }
 
 export interface SpeciesOrder {
-  nameScientific: string;
+  namesScientific: string[];
   descriptionEn: string;
   descriptionLocal: string;
 }
@@ -145,4 +145,50 @@ export function mapSpeciesWithImagesAndOrder(result: any): Species[] {
   });
 
   return Object.values(speciesMap);
+}
+
+export function mapSpeciesForList(result: any): Species[] {
+  // SQL.js returns { values: any[][], columns: string[] }
+  // For list view, we want each row to be a separate list item (no deduplication by species_id)
+  const { values, columns } = result;
+
+  if (!values || values.length === 0) {
+    return [];
+  }
+
+  // Convert array of arrays to array of objects
+  const rows = values.map((row: any[]) => {
+    const obj: any = {};
+    columns.forEach((column: string, index: number) => {
+      obj[column] = row[index];
+    });
+    return obj;
+  });
+
+  // Map each row to a Species object (no deduplication)
+  return rows.map((row: any) => {
+    let species: Species;
+    switch (row.species_type) {
+      case SpeciesType.Bird:
+        species = mapBird(row);
+        break;
+      case SpeciesType.Plant:
+        species = mapPlant(row);
+        break;
+      default:
+        throw new Error(`Unknown species type: ${row.species_type}`);
+    }
+
+    // Add images if present
+    species.images = [];
+    if (row.image_file_name) {
+      species.images.push({
+        fileName: row.image_file_name,
+        caption: row.image_caption || '',
+        sortOrder: row.image_sort_order || 0,
+      });
+    }
+
+    return species;
+  });
 }

@@ -71,8 +71,8 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
   }
 
   protected override async _groupAndSortItems(items: Species[]): Promise<SpeciesGroup[]> {
-    const preferences = await this.plantPreferencesService.getSort();
-    const sortType = preferences;
+    const sortType = await this.plantPreferencesService.getSort();
+    const sortDirection = await this.plantPreferencesService.getSortDirection();
 
     const getGroupKey = (item: Species): string => {
       switch (sortType) {
@@ -100,8 +100,32 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
       {} as Record<string, Species[]>
     );
 
+    const getSortValue = (item: Species): string => {
+      switch (sortType) {
+        case 'alphabetical-local':
+          return item.nameLocal;
+        case 'alphabetical-english':
+          return item.nameEn;
+        case 'alphabetical-latin':
+          return item.nameScientific;
+        case 'by-category':
+          return item.nameLocal; // Sort by local name within category groups
+        default:
+          return item.nameLocal;
+      }
+    };
+
     return Object.entries(grouped)
-      .map(([name, items]) => ({ name, items }))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .map(([name, items]) => ({
+        name,
+        items: items.sort((a, b) => {
+          const result = getSortValue(a).localeCompare(getSortValue(b));
+          return sortDirection === 'ascending' ? result : -result;
+        }),
+      }))
+      .sort((a, b) => {
+        const result = a.name.localeCompare(b.name);
+        return sortDirection === 'ascending' ? result : -result;
+      });
   }
 }

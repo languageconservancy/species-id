@@ -64,7 +64,8 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
       return (
         item.nameLocal.toLowerCase().includes(this.searchTerm) ||
         item.nameScientific.toLowerCase().includes(this.searchTerm) ||
-        item.nameEn.toLowerCase().includes(this.searchTerm)
+        item.nameEn.toLowerCase().includes(this.searchTerm) ||
+        item.nameMeaningEn.toLowerCase().includes(this.searchTerm)
       );
     });
   }
