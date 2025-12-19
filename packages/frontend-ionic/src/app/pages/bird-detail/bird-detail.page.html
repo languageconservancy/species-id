@@ -15,40 +15,33 @@
   <ion-label class="text-center">
     <div class="flex flex-wrap justify-center items-center gap-2 mb-2">
       @for (crowName of crowNames; track crowName.name) {
-      <span
-        class="flex align-center cursor-pointer group"
-        (click)="crowName.hasAudio ? playTextAudio(crowName.name) : null"
-      >
+      <span class="flex align-center">
         <h1 class="font-localNames">{{ crowName.name }}</h1>
-        @if (crowName.hasAudio) {
+        @for (audio of crowName.audios; track audio.id) {
         <ion-icon
           name="volume-high"
-          class="ml-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100"
+          class="ml-1 text-xs text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
+          (click)="playTextAudio(audio)"
         ></ion-icon>
-        }
-      </span>
-      @if (!$last) {
-      <span class="text-gray-600">; </span>
-      } }
+        } </span
+      >@if (!$last) {<span class="text-gray-600 font-localNames">; </span>} }
     </div>
     <div class="flex flex-wrap justify-center items-center gap-2 mb-2">
-      @for (englishName of species?.nameEn?.split(';'); track englishName; let last = $last) {
-      <span class="text-gray-600">{{ englishName }}</span>
-      @if (!$last) {
-      <span class="text-gray-600">; </span>
-      } }
+      @for (englishName of englishNames; track $index; let last = $last) {
+      <span class="text-gray-600">
+        {{ englishName }}@if (!$last) {<span class="text-gray-600">; </span>}
+      </span>
+      }
     </div>
-    @if (settings.useEnglish && species?.nameEn) {
-    <p class="font-medium">{{ species?.nameEn }}</p>
-    } @if (settings.showScientificNames && species?.nameScientific) {
+    @if (settings.showScientificNames && species?.nameScientific) {
     <p class="italic">({{ species?.nameScientific }})</p>
     }
   </ion-label>
 
   @if (species?.descriptionEn) {
-  <app-detail-description [species]="species"></app-detail-description>
+  <app-detail-description class="mt-6" [species]="species"></app-detail-description>
   } @if (species?.mapImage) {
-  <app-species-map [species]="species!"></app-species-map>
+  <app-species-map class="mt-6" [species]="species!"></app-species-map>
   }
 </ion-content>
 }

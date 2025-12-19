@@ -7,6 +7,7 @@ import { Species } from 'app/models/species.model';
 import { BirdQueriesService } from 'app/services/bird-queries.service';
 import { SpeciesService } from 'app/services/species.service';
 import { TextAudioQueriesService } from 'app/services/text-audio-queries.service';
+import { TextAudio } from 'app/models/text-audio.model';
 import { volumeHigh } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { ImageCarouselComponent } from 'app/partials/image-carousel/image-carousel.component';
@@ -42,7 +43,7 @@ export class BirdDetailPage implements OnInit {
     showScientificNames: true,
   };
   protected subscribers: Subscription = new Subscription();
-  crowNames: Array<{ name: string; hasAudio: boolean }> = [];
+  crowNames: Array<{ name: string; audios: TextAudio[] }> = [];
   englishNames: Array<string> = [];
   latinNames: Array<string> = [];
   literalMeanings: Array<string> = [];
@@ -98,7 +99,7 @@ export class BirdDetailPage implements OnInit {
     const englishNames: string[] = await this.birdQueriesService.getBirdEnglishNames(
       this.species.id
     );
-    this.englishNames = this.species.nameEn?.split(';') || [];
+    this.englishNames = englishNames;
   }
 
   private async _loadLatinNames() {
@@ -123,40 +124,43 @@ export class BirdDetailPage implements OnInit {
         this.species.id,
         SpeciesType.Bird
       );
-      const audioTexts = new Set(textAudios.map((audio) => audio.text));
 
-      // Map crow names with audio availability
+      // Group audios by text/crow name
+      const audiosByText = new Map<string, TextAudio[]>();
+      textAudios.forEach((audio) => {
+        if (!audiosByText.has(audio.text)) {
+          audiosByText.set(audio.text, []);
+        }
+        audiosByText.get(audio.text)!.push(audio);
+      });
+
+      // Map crow names with their associated audios
       this.crowNames = crowNames.map((crowName) => ({
         name: crowName.name,
-        hasAudio: audioTexts.has(crowName.name),
+        audios: audiosByText.get(crowName.name) || [],
       }));
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading crow names with audio:', error);
       // Fallback to just showing the single name from species
       this.crowNames = this.species?.nameLocal
-        ? [{ name: this.species.nameLocal, hasAudio: false }]
+        ? [{ name: this.species.nameLocal, audios: [] }]
         : [];
     }
   }
 
-  public async playTextAudio(text: string | undefined) {
-    if (!text) {
-      console.warn(ASSET_PATHS.WARNING_EMOJI, 'No text provided for audio playback');
+  public async playTextAudio(textAudio: TextAudio) {
+    if (!textAudio) {
+      console.warn(ASSET_PATHS.WARNING_EMOJI, 'No audio provided for playback');
       return;
     }
 
     try {
-      const textAudio = await this.textAudioService.getByText(text, SpeciesType.Bird);
-      if (textAudio) {
-        const audio = new Audio(
-          `${ASSET_PATHS.SPECIES_DATA}/birds/text_audios/${textAudio.fileName}`
-        );
-        audio
-          .play()
-          .catch((error) => console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing audio:', error));
-      } else {
-        console.warn(ASSET_PATHS.WARNING_EMOJI, `No audio found for text: ${text}`);
-      }
+      const audio = new Audio(
+        `${ASSET_PATHS.SPECIES_DATA}/birds/text_audios/${textAudio.fileName}`
+      );
+      audio
+        .play()
+        .catch((error) => console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing audio:', error));
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing text audio:', error);
     }

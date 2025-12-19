@@ -14,6 +14,7 @@ export interface BaseSpecies {
   descriptionLocal: string;
   descriptionEn: string;
   mapImage: string;
+  category: string;
   images?: SpeciesImage[];
   type: SpeciesType;
 }
@@ -25,14 +26,12 @@ export interface SpeciesGroup {
 
 export interface Bird extends BaseSpecies {
   type: SpeciesType.Bird;
-  category: string;
   habitatEn?: string;
   foodHabitsEn?: string;
 }
 
 export interface Plant extends BaseSpecies {
   type: SpeciesType.Plant;
-  category: string;
   habitatEn?: string;
   usesEn?: string;
 }

@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { Species } from 'app/models/species.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { Bird, Plant, Species, SpeciesType } from 'app/models/species.model';
 import { IonText } from '@ionic/angular/standalone';
 import { SettingsService, AppSettings } from 'app/services/settings.service';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [IonText],
 })
-export class DetailDescriptionComponent implements OnInit, OnChanges {
+export class DetailDescriptionComponent implements OnInit {
   @Input() species: Species | null = null;
   @Input() settings: AppSettings = {
     useEnglish: true,
@@ -25,11 +25,6 @@ export class DetailDescriptionComponent implements OnInit, OnChanges {
     this._subscribeToSettings();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['species']) {
-    }
-  }
-
   ngOnDestroy() {
     this.subscribers.unsubscribe();
   }
@@ -39,5 +34,19 @@ export class DetailDescriptionComponent implements OnInit, OnChanges {
       this.settings = settings;
     });
     this.subscribers.add(sub);
+  }
+
+  public isBird(species: Species | null): species is Bird {
+    if (!species) {
+      return false;
+    }
+    return species.type === SpeciesType.Bird;
+  }
+
+  public isPlant(species: Species | null): species is Plant {
+    if (!species) {
+      return false;
+    }
+    return species.type === SpeciesType.Plant;
   }
 }

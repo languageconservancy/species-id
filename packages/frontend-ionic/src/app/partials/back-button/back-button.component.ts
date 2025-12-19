@@ -22,12 +22,27 @@ import { addIcons } from 'ionicons';
 })
 export class BackButtonComponent {
   @Input() addBottomSafePadding = true;
+  private isNavigating = false;
 
   constructor(private navController: NavController) {
     addIcons({ arrowBack });
   }
 
   goBack() {
-    this.navController.back();
+    if (this.isNavigating) {
+      console.log('Navigation already in progress, ignoring click');
+      return;
+    }
+
+    this.isNavigating = true;
+    console.log('Going back');
+
+    // Use pop() instead of back() to ensure we go back exactly one page
+    this.navController.pop().finally(() => {
+      // Reset the flag after navigation completes
+      setTimeout(() => {
+        this.isNavigating = false;
+      }, 300);
+    });
   }
 }

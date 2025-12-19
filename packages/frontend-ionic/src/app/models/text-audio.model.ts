@@ -1,4 +1,5 @@
 export interface TextAudio {
+  id: number;
   text: string;
   fileName: string;
   urlPrefix: string;
@@ -7,6 +8,7 @@ export interface TextAudio {
 
 export function mapTextAudio(row: any): TextAudio {
   return {
+    id: row.id,
     text: row.text,
     fileName: row.file_name,
     urlPrefix: row.url_prefix,

@@ -181,25 +181,25 @@ async function validate(dbPath, indexPath) {
     console.log('\n❌ Files referenced in DB but missing from index.json:');
 
     if (missingFromIndex.birdSpeciesImages.length) {
-      console.log(`- Bird Species Images: ${missingFromIndex.birdSpeciesImages.join(', ')}`);
+      console.log(`\n- Bird Species Images: ${missingFromIndex.birdSpeciesImages.join(', ')}`);
     }
     if (missingFromIndex.birdTextAudios.length) {
-      console.log(`- Bird Text Audios: ${missingFromIndex.birdTextAudios.join(', ')}`);
+      console.log(`\n- Bird Text Audios: ${missingFromIndex.birdTextAudios.join(', ')}`);
     }
     if (missingFromIndex.birdSongAudios.length) {
-      console.log(`- Bird Song Audios: ${missingFromIndex.birdSongAudios.join(', ')}`);
+      console.log(`\n- Bird Song Audios: ${missingFromIndex.birdSongAudios.join(', ')}`);
     }
     if (missingFromIndex.birdMapImages.length) {
-      console.log(`- Bird Map Images: ${missingFromIndex.birdMapImages.join(', ')}`);
+      console.log(`\n- Bird Map Images: ${missingFromIndex.birdMapImages.join(', ')}`);
     }
     if (missingFromIndex.plantSpeciesImages.length) {
-      console.log(`- Plant Species Images: ${missingFromIndex.plantSpeciesImages.join(', ')}`);
+      console.log(`\n- Plant Species Images: ${missingFromIndex.plantSpeciesImages.join(', ')}`);
     }
     if (missingFromIndex.plantTextAudios.length) {
-      console.log(`- Plant Text Audios: ${missingFromIndex.plantTextAudios.join(', ')}`);
+      console.log(`\n- Plant Text Audios: ${missingFromIndex.plantTextAudios.join(', ')}`);
     }
     if (missingFromIndex.plantMapImages.length) {
-      console.log(`- Plant Map Images: ${missingFromIndex.plantMapImages.join(', ')}`);
+      console.log(`\n- Plant Map Images: ${missingFromIndex.plantMapImages.join(', ')}`);
     }
   } else {
     console.log('\n✅ All DB files are accounted for in index.json');
@@ -212,25 +212,25 @@ async function validate(dbPath, indexPath) {
     console.log('\n⚠️ Files in index.json not referenced by DB:');
 
     if (orphanedInIndex.birdSpeciesImages.length) {
-      console.log(`- Bird Species Images: ${orphanedInIndex.birdSpeciesImages.join(', ')}`);
+      console.log(`\n- Bird Species Images: ${orphanedInIndex.birdSpeciesImages.join(', ')}`);
     }
     if (orphanedInIndex.birdTextAudios.length) {
-      console.log(`- Bird Text Audios: ${orphanedInIndex.birdTextAudios.join(', ')}`);
+      console.log(`\n- Bird Text Audios: ${orphanedInIndex.birdTextAudios.join(', ')}`);
     }
     if (orphanedInIndex.birdSongAudios.length) {
-      console.log(`- Bird Song Audios: ${orphanedInIndex.birdSongAudios.join(', ')}`);
+      console.log(`\n- Bird Song Audios: ${orphanedInIndex.birdSongAudios.join(', ')}`);
     }
     if (orphanedInIndex.birdMapImages.length) {
-      console.log(`- Bird Map Images: ${orphanedInIndex.birdMapImages.join(', ')}`);
+      console.log(`\n- Bird Map Images: ${orphanedInIndex.birdMapImages.join(', ')}`);
     }
     if (orphanedInIndex.plantSpeciesImages.length) {
-      console.log(`- Plant Species Images: ${orphanedInIndex.plantSpeciesImages.join(', ')}`);
+      console.log(`\n- Plant Species Images: ${orphanedInIndex.plantSpeciesImages.join(', ')}`);
     }
     if (orphanedInIndex.plantTextAudios.length) {
-      console.log(`- Plant Text Audios: ${orphanedInIndex.plantTextAudios.join(', ')}`);
+      console.log(`\n- Plant Text Audios: ${orphanedInIndex.plantTextAudios.join(', ')}`);
     }
     if (orphanedInIndex.plantMapImages.length) {
-      console.log(`- Plant Map Images: ${orphanedInIndex.plantMapImages.join(', ')}`);
+      console.log(`\n- Plant Map Images: ${orphanedInIndex.plantMapImages.join(', ')}`);
     }
   } else {
     console.log('\n✅ No orphaned files in index.json');
