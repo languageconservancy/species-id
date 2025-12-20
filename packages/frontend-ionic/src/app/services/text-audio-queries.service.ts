@@ -108,6 +108,12 @@ export class TextAudioQueriesService {
         return [];
     }
 
+    console.log('Getting text audios for species:', speciesId, speciesType);
+    console.log('Text audio table:', textAudioTable);
+    console.log('Crow names table:', crowNamesTable);
+    console.log('Mapping table:', mappingTable);
+    console.log('Species id column:', speciesIdColumn);
+
     try {
       // Join text audios with crow names and mappings to get all audios for a species
       const result = await this.sqljsService.executeQuery(
@@ -126,6 +132,8 @@ export class TextAudioQueriesService {
         ORDER BY ${crowNamesTable}.crow_word, ${textAudioTable}.sort_order;`,
         [speciesId]
       );
+
+      console.log('Result:', result);
 
       if (result.values.length === 0) {
         return [];

@@ -44,7 +44,10 @@ export abstract class BasePreferencesService {
     console.log('sortKey', sortKey);
     const sortOptions = this.getSortOptions();
     console.log('sortOptions', sortOptions);
-    const sort = (await this.storage.get(this.SORT_KEY)) ?? this.getSortOptions()[0].value;
+
+    // Safely get default sort value with fallback
+    const defaultSortValue = sortOptions && sortOptions.length > 0 ? sortOptions[0].value : '';
+    const sort = (await this.storage.get(this.SORT_KEY)) ?? defaultSortValue;
     const filters = (await this.storage.get(this.FILTERS_KEY)) ?? {};
     const sortDirection = (await this.storage.get(this.SORT_DIRECTION_KEY)) ?? 'ascending';
     this.preferencesSubject.next({ sort, filters, sortDirection });
@@ -59,7 +62,9 @@ export abstract class BasePreferencesService {
 
   async getSort(): Promise<string> {
     await this.storageReady.ready();
-    return (await this.storage.get(this.SORT_KEY)) ?? this.getSortOptions()[0].value;
+    const sortOptions = this.getSortOptions();
+    const defaultSortValue = sortOptions && sortOptions.length > 0 ? sortOptions[0].value : '';
+    return (await this.storage.get(this.SORT_KEY)) ?? defaultSortValue;
   }
 
   async setSort(option: string): Promise<void> {
@@ -97,8 +102,10 @@ export abstract class BasePreferencesService {
     await this.storageReady.ready();
     await this.storage.remove(this.SORT_KEY);
     await this.storage.remove(this.FILTERS_KEY);
+    const sortOptions = this.getSortOptions();
+    const defaultSortValue = sortOptions && sortOptions.length > 0 ? sortOptions[0].value : '';
     this.preferencesSubject.next({
-      sort: this.getSortOptions()[0].value,
+      sort: defaultSortValue,
       filters: {},
       sortDirection: 'ascending',
     });

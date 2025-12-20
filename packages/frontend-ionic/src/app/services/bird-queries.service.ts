@@ -101,8 +101,7 @@ export class BirdQueriesService {
           bird_crow_names.literal_meaning as meaning
         FROM bird_crow_names
         JOIN bird_crow_name_mappings ON bird_crow_names.id = bird_crow_name_mappings.crow_name_id
-        WHERE bird_crow_name_mappings.bird_id = ?
-        ORDER BY bird_crow_names.crow_word;`,
+        WHERE bird_crow_name_mappings.bird_id = ?;`,
         [birdId]
       );
 
@@ -121,8 +120,7 @@ export class BirdQueriesService {
       const result = await this.sqljsService.executeQuery(
         `SELECT DISTINCT bird_english_names.english_name
          FROM bird_english_names
-         WHERE bird_english_names.bird_id = ?
-         ORDER BY bird_english_names.english_name;`,
+         WHERE bird_english_names.bird_id = ?;`,
         [birdId]
       );
 
@@ -130,6 +128,55 @@ export class BirdQueriesService {
         .map((row: any[]) => row[0])
         .filter((name: string) => name && name.trim())
         .map((name: string) => name.trim());
+    } catch (error) {
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error executing query:', error);
+      return [];
+    }
+  }
+
+  async getBirdLiteralMeanings(birdId: number): Promise<string[]> {
+    try {
+      const result = await this.sqljsService.executeQuery(
+        `SELECT bird_crow_names.literal_meaning
+         FROM bird_crow_names
+         JOIN bird_crow_name_mappings ON bird_crow_names.id = bird_crow_name_mappings.crow_name_id
+         WHERE bird_crow_name_mappings.bird_id = ?;`,
+        [birdId]
+      );
+      return result.values.map((row: any[]) => row[0] || '');
+    } catch (error) {
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error executing query:', error);
+      return [];
+    }
+  }
+
+  async getBirdScientificNames(birdId: number): Promise<string[]> {
+    try {
+      const result = await this.sqljsService.executeQuery(
+        `SELECT
+          birds.latin_name as primary_name,
+          bird_scientific_synonyms.synonym_name
+         FROM birds
+         LEFT JOIN bird_scientific_synonyms ON birds.id = bird_scientific_synonyms.bird_id
+         WHERE birds.id = ?;`,
+        [birdId]
+      );
+
+      const scientificNames: string[] = [];
+
+      // Add the primary scientific name first
+      if (result.values.length > 0 && result.values[0][0]) {
+        scientificNames.push(result.values[0][0]);
+      }
+
+      // Add all synonyms
+      result.values.forEach((row: any[]) => {
+        if (row[1] && row[1].trim()) {
+          scientificNames.push(row[1].trim());
+        }
+      });
+
+      return scientificNames;
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error executing query:', error);
       return [];

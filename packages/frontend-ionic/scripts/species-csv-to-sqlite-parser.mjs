@@ -8,6 +8,10 @@ class SpeciesDataParser {
     this.crowNameCounter = 1;
     this.plantCrowNameCounter = 1;
 
+    // Track text audios to prevent duplicates
+    this.birdTextAudioFiles = new Set(); // Track unique bird text audio files by crow_name_id + file_name
+    this.plantTextAudioFiles = new Set(); // Track unique plant text audio files by crow_name_id + file_name
+
     // Track missing data for summary reporting
     this.missingBirdAudio = new Set(); // Bird crow names missing audio recordings
     this.missingBirdTranslations = new Set(); // Bird crow names missing literal translations
@@ -941,6 +945,8 @@ CREATE TABLE IF NOT EXISTS plant_text_audios (
     // Use appropriate map based on species type
     const crowNameMap = speciesType === 'bird' ? this.birdCrowNames : this.plantCrowNames;
     const counter = speciesType === 'bird' ? 'crowNameCounter' : 'plantCrowNameCounter';
+    const audioFileSet =
+      speciesType === 'bird' ? this.birdTextAudioFiles : this.plantTextAudioFiles;
 
     // Check if this crow word already exists (without audio files in comparison)
     let crowNameId = null;
@@ -969,12 +975,19 @@ CREATE TABLE IF NOT EXISTS plant_text_audios (
       [`${speciesType}_id`]: speciesId,
     };
 
-    // Create text audio entries
-    const textAudios = audio_files.map((audioFile, index) => ({
-      crow_name_id: crowNameId,
-      file_name: audioFile,
-      sort_order: index + 1,
-    }));
+    // Create text audio entries only if they don't already exist
+    const textAudios = [];
+    audio_files.forEach((audioFile, index) => {
+      const audioKey = `${crowNameId}:${audioFile}`;
+      if (!audioFileSet.has(audioKey)) {
+        audioFileSet.add(audioKey);
+        textAudios.push({
+          crow_name_id: crowNameId,
+          file_name: audioFile,
+          sort_order: index + 1,
+        });
+      }
+    });
 
     return { crowName, mapping, textAudios };
   }

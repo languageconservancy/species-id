@@ -46,13 +46,15 @@ export class BirdDetailPage implements OnInit {
   crowNames: Array<{ name: string; audios: TextAudio[] }> = [];
   englishNames: Array<string> = [];
   latinNames: Array<string> = [];
+  scientificNames: Array<string> = [];
   literalMeanings: Array<string> = [];
+  private currentAudio: HTMLAudioElement | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private birdQueriesService: BirdQueriesService,
     public speciesService: SpeciesService,
-    private textAudioService: TextAudioQueriesService,
+    private textAudioQueriesService: TextAudioQueriesService,
     private settingsService: SettingsService
   ) {
     addIcons({ volumeHigh });
@@ -63,6 +65,7 @@ export class BirdDetailPage implements OnInit {
     await this._loadCrowNamesWithAudio();
     await this._loadEnglishNames();
     await this._loadLatinNames();
+    await this._loadScientificNames();
     await this._loadLiteralMeanings();
     this.loading = false;
     this._subscribeToSettings();
@@ -70,6 +73,11 @@ export class BirdDetailPage implements OnInit {
 
   ngOnDestroy() {
     this.subscribers.unsubscribe();
+    // Stop any playing audio when component is destroyed
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
   }
 
   private _subscribeToSettings() {
@@ -107,9 +115,21 @@ export class BirdDetailPage implements OnInit {
     this.latinNames = this.species.nameScientific?.split(';') || [];
   }
 
+  private async _loadScientificNames() {
+    if (!this.species) return;
+    console.log('Loading scientific names for species:', this.species);
+    const scientificNames: string[] = await this.birdQueriesService.getBirdScientificNames(
+      this.species.id
+    );
+    this.scientificNames = scientificNames;
+  }
+
   private async _loadLiteralMeanings() {
     if (!this.species) return;
-    this.literalMeanings = this.species.nameMeaningEn?.split(';') || [];
+    const literalMeanings: string[] = await this.birdQueriesService.getBirdLiteralMeanings(
+      this.species.id
+    );
+    this.literalMeanings = literalMeanings;
   }
 
   private async _loadCrowNamesWithAudio() {
@@ -120,7 +140,7 @@ export class BirdDetailPage implements OnInit {
       const crowNames = await this.birdQueriesService.getBirdCrowNames(this.species.id);
 
       // Get all text audios for this species
-      const textAudios = await this.textAudioService.getBySpeciesId(
+      const textAudios = await this.textAudioQueriesService.getBySpeciesId(
         this.species.id,
         SpeciesType.Bird
       );
@@ -149,18 +169,49 @@ export class BirdDetailPage implements OnInit {
   }
 
   public async playTextAudio(textAudio: TextAudio) {
+    console.log('Playing text audio:', textAudio);
     if (!textAudio) {
       console.warn(ASSET_PATHS.WARNING_EMOJI, 'No audio provided for playback');
       return;
     }
 
     try {
+      // Stop and cleanup any currently playing audio
+      if (this.currentAudio) {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+        this.currentAudio = null;
+      }
+
+      // Create and play new audio
       const audio = new Audio(
         `${ASSET_PATHS.SPECIES_DATA}/birds/text_audios/${textAudio.fileName}`
       );
-      audio
-        .play()
-        .catch((error) => console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing audio:', error));
+
+      // Store reference to current audio
+      this.currentAudio = audio;
+
+      // Clean up reference when audio ends
+      audio.addEventListener('ended', () => {
+        if (this.currentAudio === audio) {
+          this.currentAudio = null;
+        }
+      });
+
+      // Clean up reference on error
+      audio.addEventListener('error', () => {
+        if (this.currentAudio === audio) {
+          this.currentAudio = null;
+        }
+      });
+
+      audio.play().catch((error) => {
+        console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing audio:', error);
+        // Clean up reference on play error
+        if (this.currentAudio === audio) {
+          this.currentAudio = null;
+        }
+      });
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error playing text audio:', error);
     }

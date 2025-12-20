@@ -128,4 +128,36 @@ export class PlantQueriesService {
       return [];
     }
   }
+
+  async getPlantScientificNames(plantId: number): Promise<string[]> {
+    try {
+      const result = await this.sqljsService.executeQuery(
+        `SELECT DISTINCT plants.latin_name as primary_name,
+          plant_scientific_synonyms.synonym_name
+         FROM plants
+         LEFT JOIN plant_scientific_synonyms ON plants.id = plant_scientific_synonyms.plant_id
+         WHERE plants.id = ?;`,
+        [plantId]
+      );
+
+      const scientificNames: string[] = [];
+
+      // Add the primary scientific name first
+      if (result.values.length > 0 && result.values[0][0]) {
+        scientificNames.push(result.values[0][0]);
+      }
+
+      // Add all synonyms
+      result.values.forEach((row: any[]) => {
+        if (row[1] && row[1].trim()) {
+          scientificNames.push(row[1].trim());
+        }
+      });
+
+      return scientificNames;
+    } catch (error) {
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error executing query:', error);
+      return [];
+    }
+  }
 }
