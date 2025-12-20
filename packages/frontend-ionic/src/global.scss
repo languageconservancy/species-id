@@ -52,3 +52,37 @@
 .font-bold-force {
   font-weight: 700 !important;
 }
+
+/* Force visible hyphens for long words */
+.hyphenate-force {
+  /* Try automatic hyphens first */
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+
+  /* Ensure words can break */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+
+  /* Force line breaks with visible hyphens using CSS content */
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+  }
+}
+
+/* Alternative approach: manually add soft hyphens via CSS */
+.hyphenate-manual {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+
+  /* Add soft hyphens at common break points */
+  &::before {
+    content: '\00AD'; /* Soft hyphen character */
+    position: absolute;
+    opacity: 0;
+  }
+}

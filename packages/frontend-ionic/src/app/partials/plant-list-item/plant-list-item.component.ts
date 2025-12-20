@@ -37,6 +37,12 @@ export class PlantListItemComponent implements OnInit {
     this._loadImageUrl();
   }
 
+  get hyphenatedNameLocal(): string {
+    if (!this.item?.nameLocal) return '';
+    // Insert soft hyphens every 4-6 characters to enable better breaking
+    return this.item.nameLocal.replace(/(.{4,6})/g, '$1\u00AD');
+  }
+
   ngOnDestroy() {
     this.subscribers.unsubscribe();
   }

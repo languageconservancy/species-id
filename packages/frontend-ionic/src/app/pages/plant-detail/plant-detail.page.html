@@ -14,13 +14,13 @@
   <!-- Header section -->
   <ion-label class="text-center">
     <!-- Crow names section with audio playback -->
-    <div class="flex flex-wrap justify-center items-center gap-0 mb-1">
+    <div class="flex flex-wrap justify-center items-center mb-1">
       @for (crowName of crowNames; track crowName.name) {
       <span
         class="flex align-center"
         (click)="crowName.audios.length === 0 ? null : playTextAudio(crowName.audios[0])"
       >
-        <h1 class="font-localNames">{{ crowName.name }}</h1>
+        <h1 class="font-localNames font-bold-force text-xl">{{ crowName.name }}</h1>
         @for (audio of crowName.audios; track audio.id) {
         <ion-icon
           name="volume-high"
@@ -44,7 +44,7 @@
     <!-- English names section -->
     <div class="flex flex-wrap justify-center items-center gap-1 mb-1">
       @for (englishName of englishNames; track $index; let last = $last) {
-      <span class="text-gray-600">
+      <span class="text-gray-600 font-semibold text-lg">
         {{ englishName }}@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}
       </span>
       }

@@ -36,6 +36,12 @@ export class BirdListItemComponent implements OnInit, OnChanges {
     this._subscribeToSettings();
   }
 
+  get hyphenatedNameLocal(): string {
+    if (!this.item?.nameLocal) return '';
+    // Insert soft hyphens every 4-6 characters to enable better breaking
+    return this.item.nameLocal.replace(/(.{4,6})/g, '$1\u00AD');
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     // Watch for changes to the item property
     if (changes['item'] && changes['item'].currentValue) {
