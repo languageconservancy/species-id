@@ -4,7 +4,7 @@
 ./scripts/download-s3-assets.sh
 
 # Generate the index.json file
-./scripts/generate-index-json.mjs
+node ./scripts/generate-index-json.mjs
 
 # Validate the index.json file against the database
-./scripts/validate-index-against-db.mjs
+node ./scripts/validate-index-against-db.mjs external-assets/databases/species-production.db external-assets/index.json

@@ -11,8 +11,8 @@ const languageLabel = (language: string) => {
 export type BirdSortOption =
   | 'alphabetical-local'
   | 'alphabetical-english'
-  | 'alphabetical-scientific'
-  | 'by-order';
+  | 'alphabetical-latin'
+  | 'by-category';
 export type LanguageOption = 'local' | 'english';
 export type SortDirection = 'ascending' | 'descending';
 
@@ -27,8 +27,8 @@ export function getBirdSortOptions(
       label: `Alphabetical (${languageName})`,
     },
     { value: 'alphabetical-english', label: 'Alphabetical (English)' },
-    { value: 'alphabetical-scientific', label: 'Alphabetical (Scientific)' },
-    { value: 'by-order', label: 'By Order' },
+    { value: 'alphabetical-latin', label: 'Alphabetical (Latin)' },
+    { value: 'by-category', label: 'By Category' },
   ];
 }
 

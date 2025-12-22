@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'frontend-ionic',
+  appId: 'org.crowlanguage.apsaalookebirdsplants',
+  appName: 'Apsáalooke Birds & Plants',
   webDir: 'www',
   plugins: {
     CapacitorHttp: {

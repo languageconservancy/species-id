@@ -15,10 +15,10 @@ export class SpeciesService {
     let imagePath: string;
     switch (speciesType) {
       case SpeciesType.Bird:
-        imagePath = `birds/${imageFileName}`;
+        imagePath = `birds/species_images/${imageFileName}`;
         break;
       case SpeciesType.Plant:
-        imagePath = `plants/${imageFileName}`;
+        imagePath = `plants/species_images/${imageFileName}`;
         break;
       default:
         console.error(ASSET_PATHS.ERROR_EMOJI, `Invalid species type: ${speciesType}`);
@@ -26,8 +26,24 @@ export class SpeciesService {
     }
 
     // Return the bundled asset path
-    const assetUrl = `${ASSET_PATHS.SPECIES_IMAGES}/${imagePath}`;
-    console.log(`SpeciesService: Using bundled asset URL: ${assetUrl}`);
+    const assetUrl = `${ASSET_PATHS.SPECIES_DATA}/${imagePath}`;
+    return assetUrl;
+  }
+
+  async getMapImageUrl(imageFileName: string, speciesType?: SpeciesType): Promise<string> {
+    let imagePath: string;
+    switch (speciesType) {
+      case SpeciesType.Bird:
+        imagePath = `birds/map_images/${imageFileName}`;
+        break;
+      case SpeciesType.Plant:
+        imagePath = `plants/map_images/${imageFileName}`;
+        break;
+      default:
+        console.error(ASSET_PATHS.ERROR_EMOJI, `Invalid species type: ${speciesType}`);
+        return '';
+    }
+    const assetUrl = `${ASSET_PATHS.SPECIES_DATA}/${imagePath}`;
     return assetUrl;
   }
 }

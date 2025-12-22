@@ -8,6 +8,69 @@
 }
 
 @font-face {
+  font-family: 'Noto Sans';
+  src: url('../assets/core/fonts/NotoSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../assets/core/fonts/NotoSans-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../assets/core/fonts/NotoSans-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../assets/core/fonts/NotoSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../assets/core/fonts/NotoSans-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../assets/core/fonts/NotoSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../assets/core/fonts/NotoSans-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../assets/core/fonts/NotoSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../assets/core/fonts/NotoSans-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
   font-family: 'Gabriela';
   src: url('../assets/core/fonts/Gabriela-Regular.ttf') format('truetype');
   font-weight: normal;
@@ -15,8 +78,10 @@
 }
 
 :root {
-  --ion-font-family-local-names: 'Gabriela', serif;
-  --ion-font-family-english-titles: 'Architects Daughter', cursive;
+  --ion-font-family-local-names: 'Noto Sans', sans-serif;
+  --ion-font-family-english-titles: 'Noto Sans', sans-serif;
+  --ion-font-family-latin-names: 'Noto Sans', italic;
+  --ion-font-family-menu-items: 'Architects Daughter', cursive;
 
   // Light mode colors
   --ion-color-primary: #6fa2c7;

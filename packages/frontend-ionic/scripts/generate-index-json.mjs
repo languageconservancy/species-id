@@ -47,19 +47,34 @@ async function generateIndexJson() {
 
   // For each path, if it doesn't exist, return an empty array
   const dbFiles = await scanFolder(path.join(root, 'databases'), 'databases');
-  const birdsImages = (await scanFolder(path.join(root, 'birds/images'), 'birds/images')) || [];
-  const birdsAudio = (await scanFolder(path.join(root, 'birds/audio'), 'birds/audio')) || [];
-  const plantsImages = (await scanFolder(path.join(root, 'plants/images'), 'plants/images')) || [];
+  const birdsSpeciesImages =
+    (await scanFolder(path.join(root, 'birds/species_images'), 'birds/species_images')) || [];
+  const birdsTextAudios =
+    (await scanFolder(path.join(root, 'birds/text_audios'), 'birds/text_audios')) || [];
+  const birdsSongAudios =
+    (await scanFolder(path.join(root, 'birds/song_audios'), 'birds/song_audios')) || [];
+  const birdsMapImages =
+    (await scanFolder(path.join(root, 'birds/map_images'), 'birds/map_images')) || [];
+  const plantsSpeciesImages =
+    (await scanFolder(path.join(root, 'plants/species_images'), 'plants/species_images')) || [];
+  const plantsTextAudios =
+    (await scanFolder(path.join(root, 'plants/text_audios'), 'plants/text_audios')) || [];
+  const plantsMapImages =
+    (await scanFolder(path.join(root, 'plants/map_images'), 'plants/map_images')) || [];
 
   const index = {
     version: new Date().toISOString().split('T')[0],
     databases: dbFiles,
     birds: {
-      images: birdsImages,
-      audio: birdsAudio,
+      speciesImages: birdsSpeciesImages,
+      textAudios: birdsTextAudios,
+      songAudios: birdsSongAudios,
+      mapImages: birdsMapImages,
     },
     plants: {
-      images: plantsImages,
+      speciesImages: plantsSpeciesImages,
+      textAudios: plantsTextAudios,
+      mapImages: plantsMapImages,
     },
   };
 

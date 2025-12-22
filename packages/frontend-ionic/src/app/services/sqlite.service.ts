@@ -32,8 +32,6 @@ export class SqliteService {
    * @returns {Promise<void>} A promise that resolves when the database is initialized.
    */
   async init(): Promise<void> {
-    console.log('db is ready');
-
     if (Capacitor.getPlatform() === 'web') {
       // Define custom elements for Jeep SQLite
       jeepSqlite(window);

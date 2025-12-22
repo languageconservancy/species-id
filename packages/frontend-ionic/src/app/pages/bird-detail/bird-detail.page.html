@@ -10,26 +10,59 @@
   <app-image-carousel [species]="species"></app-image-carousel>
 </div>
 
-<ion-content class="ion-padding mt-0" style="--background: transparent">
+<ion-content class="ion-padding mt-0" style="--background: transparent; --padding-bottom: 4rem">
   <!-- Header section -->
-  <ion-label class="">
-    <span class="inline-flex cursor-pointer group" (click)="playTextAudio(species?.nameLocal)">
-      <h1 class="font-localNames">{{ species?.nameLocal }}</h1>
-      <ion-icon
-        name="volume-high"
-        class="ml-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100"
-      ></ion-icon>
-    </span>
-    @if (settings.useEnglish && species?.nameEn) {
-    <p class="font-medium">{{ species?.nameEn }}</p>
-    } @if (settings.showScientificNames && species?.nameScientific) {
-    <p class="italic">{{ species?.nameScientific }}</p>
+  <ion-label class="text-center">
+    <!-- Crow names section with audio playback -->
+    <div class="flex flex-wrap justify-center items-center mb-1">
+      @for (crowName of crowNames; track crowName.name) {
+      <span
+        class="flex align-center"
+        (click)="crowName.audios.length === 1 ? playTextAudio(crowName.audios[0]) : null"
+      >
+        <h1 class="font-localNames font-bold-force text-xl">{{ crowName.name }}</h1>
+        @for (audio of crowName.audios; track audio.id) {
+        <ion-icon
+          name="volume-high"
+          class="ml-1 text-xs text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
+          (click)="crowName.audios.length > 1 ? playTextAudio(audio) : null"
+        ></ion-icon>
+        } </span
+      >@if (!$last) {<span class="text-gray-600 font-localNames">;&nbsp;</span>} }
+    </div>
+    <!-- Literal meanings section in single quotes -->
+    <div class="flex flex-wrap justify-center items-center mb-1">
+      @for (literalMeaning of literalMeanings; track $index; let last = $last) {
+      <span class="text-gray-600">
+        {{ literalMeaning ? `‘${literalMeaning}’` : 'unknown' }} @if (!$last) {<span
+          class="text-gray-600"
+          >;&nbsp;</span
+        >}
+      </span>
+      }
+    </div>
+    <!-- English names section -->
+    <div class="flex flex-wrap justify-center items-center mb-1">
+      @for (englishName of englishNames; track $index; let last = $last) {
+      <span class="text-gray-600 font-semibold text-lg">
+        {{ englishName }}@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}
+      </span>
+      }
+    </div>
+    <!-- Scientific names section -->
+    @if (settings.showScientificNames && scientificNames.length > 0) {
+    <p class="italic text-gray-700">
+      (@for (scientificName of scientificNames; track $index; let last = $last) {{{ scientificName
+      }}@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}})
+    </p>
     }
   </ion-label>
 
+  @if (species?.descriptionEn) {
   <app-detail-description [species]="species"></app-detail-description>
-
-  <app-bird-map [species]="species"></app-bird-map>
+  } @if (species?.mapImage) {
+  <app-species-map [species]="species!"></app-species-map>
+  }
 </ion-content>
 }
 <app-back-button [addBottomSafePadding]="false"></app-back-button>

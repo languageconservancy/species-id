@@ -42,7 +42,6 @@ export class SettingsService extends BasePreferencesService {
   }
 
   async updateSettings(settings: Partial<AppSettings>): Promise<void> {
-    console.log('updateSettings', settings);
     await this.storageReady.ready();
     const currentSettings = this.settingsSubject.value;
     const newSettings = { ...currentSettings, ...settings };

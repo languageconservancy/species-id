@@ -5,9 +5,6 @@ export const ASSET_PATHS = {
 
   // Species data assets
   SPECIES_DATA: 'assets/species-data',
-  SPECIES_IMAGES: 'assets/species-data/images',
-  SPECIES_AUDIOS: 'assets/species-data/audios',
-  SPECIES_DATABASES: 'assets/species-data/databases',
   SPECIES_CONFIG: 'assets/species-data/config/config.json',
 
   // Database files

@@ -58,10 +58,8 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
   }
 
   protected override async _loadSpecies() {
-    console.log('BirdsExplorePage _loadSpecies');
     try {
-      const result = await this.birdQueriesService.getFull();
-      console.log('BirdsExplorePage _loadSpecies result', result);
+      const result = await this.birdQueriesService.getAllBirds();
       this.itemsAll = result;
       this._setItems();
     } catch (error) {
@@ -80,13 +78,10 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
           return item.nameLocal.charAt(0).toUpperCase();
         case 'alphabetical-english':
           return item.nameEn.charAt(0).toUpperCase();
-        case 'alphabetical-scientific':
+        case 'alphabetical-latin':
           return item.nameScientific.charAt(0).toUpperCase();
-        case 'by-order':
-          return (
-            `${(item as Bird).order?.nameScientific} (${(item as Bird).order?.descriptionEn})` ||
-            'Unknown'
-          );
+        case 'by-category':
+          return `${(item as Bird).category}` || 'Other';
         default:
           console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid sort type:', sortType);
           return item.nameLocal.charAt(0).toUpperCase();
@@ -103,8 +98,29 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
       {} as Record<string, Species[]>
     );
 
+    const getSortValue = (item: Species): string => {
+      switch (sortType) {
+        case 'alphabetical-local':
+          return item.nameLocal;
+        case 'alphabetical-english':
+          return item.nameEn;
+        case 'alphabetical-latin':
+          return item.nameScientific;
+        case 'by-category':
+          return item.nameLocal; // Sort by local name within category groups
+        default:
+          return item.nameLocal;
+      }
+    };
+
     return Object.entries(grouped)
-      .map(([name, items]) => ({ name, items }))
+      .map(([name, items]) => ({
+        name,
+        items: items.sort((a, b) => {
+          const result = getSortValue(a).localeCompare(getSortValue(b));
+          return sortDirection === 'ascending' ? result : -result;
+        }),
+      }))
       .sort((a, b) => {
         const result = a.name.localeCompare(b.name);
         return sortDirection === 'ascending' ? result : -result;

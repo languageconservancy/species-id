@@ -13,6 +13,8 @@ export interface BaseSpecies {
   nameMeaningEn: string;
   descriptionLocal: string;
   descriptionEn: string;
+  mapImage: string;
+  category: string;
   images?: SpeciesImage[];
   type: SpeciesType;
 }
@@ -24,14 +26,14 @@ export interface SpeciesGroup {
 
 export interface Bird extends BaseSpecies {
   type: SpeciesType.Bird;
-  orderId: number;
-  order?: SpeciesOrder;
+  habitatEn?: string;
+  foodHabitsEn?: string;
 }
 
 export interface Plant extends BaseSpecies {
   type: SpeciesType.Plant;
-  categoryId: number;
-  category?: SpeciesCategory;
+  habitatEn?: string;
+  usesEn?: string;
 }
 
 export interface SpeciesImage {
@@ -41,7 +43,7 @@ export interface SpeciesImage {
 }
 
 export interface SpeciesOrder {
-  nameScientific: string;
+  namesScientific: string[];
   descriptionEn: string;
   descriptionLocal: string;
 }
@@ -64,13 +66,16 @@ export function mapBird(row: any): Bird {
   return {
     type: SpeciesType.Bird,
     id: row.species_id,
-    nameLocal: row.species_name_local,
-    nameScientific: row.species_name_scientific,
-    nameEn: row.species_name_en,
-    nameMeaningEn: row.species_name_meaning_en,
-    descriptionLocal: row.species_description_local,
-    descriptionEn: row.species_description_en,
-    orderId: row.species_order_id,
+    nameLocal: row.species_name_local || '',
+    nameScientific: row.species_name_scientific || '',
+    nameEn: row.species_name_en || '',
+    nameMeaningEn: row.species_name_meaning_en || '',
+    descriptionLocal: row.species_description_local || '',
+    descriptionEn: row.species_description_en || '',
+    category: row.species_category || '',
+    habitatEn: row.species_habitat_en || '',
+    foodHabitsEn: row.species_food_habits_en || '',
+    mapImage: row.species_map_image || '',
   };
 }
 
@@ -78,13 +83,16 @@ export function mapPlant(row: any): Plant {
   return {
     type: SpeciesType.Plant,
     id: row.species_id,
-    nameLocal: row.species_name_local,
-    nameScientific: row.species_name_scientific,
-    nameEn: row.species_name_en,
-    nameMeaningEn: row.species_name_meaning_en,
-    descriptionLocal: row.species_description_local,
-    descriptionEn: row.species_description_en,
-    categoryId: row.category_id,
+    nameLocal: row.species_name_local || '',
+    nameScientific: row.species_name_scientific || '',
+    nameEn: row.species_name_en || '',
+    nameMeaningEn: row.species_name_meaning_en || '',
+    descriptionLocal: row.species_description_local || '',
+    descriptionEn: row.species_description_en || '',
+    category: row.species_category || '',
+    habitatEn: row.species_habitat_en || '',
+    usesEn: row.species_uses_en || '',
+    mapImage: row.species_map_image || '',
   };
 }
 
@@ -115,30 +123,18 @@ export function mapSpeciesWithImagesAndOrder(result: any): Species[] {
         case SpeciesType.Bird:
           speciesMap[speciesId] = mapBird(row);
           speciesMap[speciesId].images = [];
-          (speciesMap[speciesId] as any).orderId = row.order_id;
-          (speciesMap[speciesId] as any).order = {
-            nameScientific: row.order_name_scientific,
-            descriptionEn: row.order_description_en,
-            descriptionLocal: row.order_description_local,
-          };
           break;
         case SpeciesType.Plant:
           speciesMap[speciesId] = mapPlant(row);
           speciesMap[speciesId].images = [];
-          (speciesMap[speciesId] as any).categoryId = row.category_id;
-          (speciesMap[speciesId] as any).category = {
-            name: row.category_name,
-            descriptionEn: row.category_description_en,
-            descriptionLocal: row.category_description_local,
-          };
           break;
       }
     }
     if (row.image_file_name) {
       speciesMap[speciesId].images?.push({
         fileName: row.image_file_name,
-        caption: row.image_caption,
-        sortOrder: row.image_sort_order,
+        caption: row.image_caption || '',
+        sortOrder: row.image_sort_order || 0,
       });
     }
   });
@@ -148,4 +144,50 @@ export function mapSpeciesWithImagesAndOrder(result: any): Species[] {
   });
 
   return Object.values(speciesMap);
+}
+
+export function mapSpeciesForList(result: any): Species[] {
+  // SQL.js returns { values: any[][], columns: string[] }
+  // For list view, we want each row to be a separate list item (no deduplication by species_id)
+  const { values, columns } = result;
+
+  if (!values || values.length === 0) {
+    return [];
+  }
+
+  // Convert array of arrays to array of objects
+  const rows = values.map((row: any[]) => {
+    const obj: any = {};
+    columns.forEach((column: string, index: number) => {
+      obj[column] = row[index];
+    });
+    return obj;
+  });
+
+  // Map each row to a Species object (no deduplication)
+  return rows.map((row: any) => {
+    let species: Species;
+    switch (row.species_type) {
+      case SpeciesType.Bird:
+        species = mapBird(row);
+        break;
+      case SpeciesType.Plant:
+        species = mapPlant(row);
+        break;
+      default:
+        throw new Error(`Unknown species type: ${row.species_type}`);
+    }
+
+    // Add images if present
+    species.images = [];
+    if (row.image_file_name) {
+      species.images.push({
+        fileName: row.image_file_name,
+        caption: row.image_caption || '',
+        sortOrder: row.image_sort_order || 0,
+      });
+    }
+
+    return species;
+  });
 }

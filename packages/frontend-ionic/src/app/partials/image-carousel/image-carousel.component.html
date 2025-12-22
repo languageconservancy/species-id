@@ -1,19 +1,37 @@
 <!-- Images carousel -->
-<swiper-container pagination="false" navigation="true">
+<swiper-container pagination="false" navigation="true" class="h-60 md:h-auto">
   @for (image of species?.images; track species; let index = $index) {
     <swiper-slide lazy="true">
-      <img class="w-full h-60" [src]="imageUrls[index]" loading="lazy" />
+      @if (imageLoadStates[index] !== 'error') {
+        <img
+          class="w-full h-60 md:w-1/2 md:h-auto mx-auto"
+          [src]="imageUrls[index]"
+          loading="lazy"
+          (load)="onImageLoad(index)"
+          (error)="onImageError(index)"
+        />
+      }
+      @if (imageLoadStates[index] === 'error') {
+        <div
+          class="w-full h-60 md:w-1/2 md:h-auto mx-auto bg-gray-200 flex items-center justify-center"
+        >
+          <div class="text-center text-gray-500">
+            <ion-icon name="image-outline" class="text-4xl mb-2"></ion-icon>
+            <p class="text-sm">Image not available</p>
+          </div>
+        </div>
+      }
       <!-- caption -->
-      <div class="w-full bg-slate-900 bg-opacity-25 text-gray-200 text-center">
-        <p class="text-sm p1">{{ image.caption }}</p>
-      </div>
+      @if (image.caption) {
+        <div class="w-full bg-slate-900 bg-opacity-25 text-gray-200 text-center">
+          <p class="text-sm p1">{{ image.caption }}</p>
+        </div>
+      }
     </swiper-slide>
   }
   @if (!species?.images?.length) {
-    <swiper-slide>
-      <div class="w-full h-60 bg-slate-900 bg-opacity-25 text-gray-200 text-center">
-        <p class="text-sm p1">No images available</p>
-      </div>
-    </swiper-slide>
+    <div class="w-full h-60 bg-slate-900 bg-opacity-25 text-gray-200 text-center">
+      <p class="text-sm p1">No images available</p>
+    </div>
   }
 </swiper-container>

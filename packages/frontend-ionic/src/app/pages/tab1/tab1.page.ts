@@ -20,12 +20,10 @@ export class Tab1Page implements OnInit {
   }
 
   async ngOnInit() {
-    console.log('Tab1Page ngOnInit');
     this._setDomain();
   }
 
   private _setDomain() {
     this.domain = (this.route.snapshot.params['domain'] as SpeciesType) ?? SpeciesType.Bird;
-    console.log('Domain: ', this.domain);
   }
 }
