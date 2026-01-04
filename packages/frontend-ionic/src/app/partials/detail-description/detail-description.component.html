@@ -1,17 +1,49 @@
 <!-- Description in local language and English -->
-<ion-text class="px-4 mx-auto max-w-prose ion-text-dark">
+<div class="px-2 mt-2 mx-auto max-w-2xl text-gray-800">
   @if (species?.descriptionLocal) {
-    <p class="text-sm leading-6" [innerHTML]="species?.descriptionLocal"></p>
-  }
-  @if (settings.useEnglish && species?.descriptionEn) {
-    <p class="text-sm leading-relaxed" color="dark" [innerHTML]="species?.descriptionEn"></p>
+    <!-- Label for local description -->
+    <span class="inline-block mt-2">
+      <span class="text-sm leading-6 font-bold">Local Description:&nbsp;&nbsp;</span>
+      <span
+        class="text-sm leading-relaxed"
+        color="dark"
+        [innerHTML]="species?.descriptionLocal"
+      ></span>
+    </span>
   }
 
-  @if (isBird(species) && species.habitatEn) {
-    <p class="text-sm leading-relaxed" color="dark" [innerHTML]="species.habitatEn"></p>
+  @if (settings.useEnglish && species?.descriptionEn) {
+    <!-- Label for English description -->
+    <span class="inline-block mt-2">
+      <span class="text-sm leading-6 font-bold">Description:&nbsp;&nbsp;</span>
+      <span
+        class="text-sm leading-relaxed"
+        color="dark"
+        [innerHTML]="species?.descriptionEn"
+      ></span>
+    </span>
+  }
+
+  @if (species?.habitatEn) {
+    <!-- Start text on same line after colon (Habitat: <text>) -->
+    <span class="inline-block mt-2">
+      <span class="text-sm leading-6 font-bold">Habitat:&nbsp;&nbsp;</span>
+      <span class="text-sm leading-relaxed" color="dark" [innerHTML]="species?.habitatEn"></span>
+    </span>
+  }
+
+  @if (isBird(species) && species.foodHabitsEn) {
+    <!-- Start text on same line after colon (Food Habits: <text>) -->
+    <span class="inline-block mt-2">
+      <span class="text-sm leading-6 font-bold">Food Habits:&nbsp;&nbsp;</span>
+      <span class="text-sm leading-relaxed" color="dark" [innerHTML]="species.foodHabitsEn"></span>
+    </span>
   }
 
   @if (isPlant(species) && species.usesEn) {
-    <p class="text-sm leading-relaxed" color="dark" [innerHTML]="species.usesEn"></p>
+    <span class="inline-block mt-2">
+      <span class="text-sm leading-6 font-bold">Uses:&nbsp;&nbsp;</span>
+      <span class="text-sm leading-relaxed" color="dark" [innerHTML]="species.usesEn"></span>
+    </span>
   }
-</ion-text>
+</div>

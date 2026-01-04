@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Bird, Plant, Species, SpeciesType } from 'app/models/species.model';
-import { IonText } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
 import { SettingsService, AppSettings } from 'app/services/settings.service';
 import { Subscription } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './detail-description.component.html',
   styleUrls: ['./detail-description.component.scss'],
   standalone: true,
-  imports: [IonText],
+  imports: [CommonModule],
 })
 export class DetailDescriptionComponent implements OnInit {
   @Input() species: Species | null = null;
