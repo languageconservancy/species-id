@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
-    path: 'tab1',
+    path: 'species',
     children: [
       {
         path: 'birds',

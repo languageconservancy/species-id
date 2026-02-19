@@ -28,6 +28,8 @@ export interface Bird extends BaseSpecies {
   type: SpeciesType.Bird;
   habitatEn?: string;
   foodHabitsEn?: string;
+  migrationEn?: string;
+  culturalEn?: string;
 }
 
 export interface Plant extends BaseSpecies {
@@ -39,6 +41,7 @@ export interface Plant extends BaseSpecies {
 export interface SpeciesImage {
   fileName: string;
   caption: string;
+  credit: string;
   sortOrder: number;
 }
 
@@ -75,6 +78,8 @@ export function mapBird(row: any): Bird {
     category: row.species_category || '',
     habitatEn: row.species_habitat_en || '',
     foodHabitsEn: row.species_food_habits_en || '',
+    migrationEn: row.species_migration_en || '',
+    culturalEn: row.species_cultural_en || '',
     mapImage: row.species_map_image || '',
   };
 }
@@ -134,6 +139,7 @@ export function mapSpeciesWithImagesAndOrder(result: any): Species[] {
       speciesMap[speciesId].images?.push({
         fileName: row.image_file_name,
         caption: row.image_caption || '',
+        credit: row.image_credit || '',
         sortOrder: row.image_sort_order || 0,
       });
     }
@@ -184,6 +190,7 @@ export function mapSpeciesForList(result: any): Species[] {
       species.images.push({
         fileName: row.image_file_name,
         caption: row.image_caption || '',
+        credit: row.image_credit || '',
         sortOrder: row.image_sort_order || 0,
       });
     }

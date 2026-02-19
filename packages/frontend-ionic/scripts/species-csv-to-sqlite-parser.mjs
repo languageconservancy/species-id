@@ -82,12 +82,14 @@ class SpeciesDataParser {
         // Process images if present (Photos column)
         if (rowData['Photos'] && rowData['Photos'].trim()) {
           const imageFiles = this.parseSemicolonSeparated(rowData['Photos']);
+          const photoCredits = this.parseSemicolonSeparated(rowData['Photo Credits'] || '');
           imageFiles.forEach((imageFile, index) => {
             if (imageFile.trim() && imageFile.trim() !== 'NO RECORDING') {
               birdImages.push({
                 file_name: imageFile.trim(),
                 bird_id: bird.id,
                 caption: null,
+                credit: photoCredits[index]?.trim() || null,
                 sort_order: index + 1,
               });
             }
@@ -170,12 +172,14 @@ class SpeciesDataParser {
         // Process images if present (Photos column)
         if (rowData['Photos'] && rowData['Photos'].trim()) {
           const imageFiles = this.parseSemicolonSeparated(rowData['Photos']);
+          const photoCredits = this.parseSemicolonSeparated(rowData['Photo Credits'] || '');
           imageFiles.forEach((imageFile, index) => {
             if (imageFile.trim() && imageFile.trim() !== 'NO RECORDING') {
               plantImages.push({
                 file_name: imageFile.trim(),
                 plant_id: plant.id,
                 caption: null,
+                credit: photoCredits[index]?.trim() || null,
                 sort_order: index + 1,
               });
             }
@@ -383,9 +387,12 @@ class SpeciesDataParser {
       id: rowIndex,
       latin_name: rowData['Latin Name'],
       category: rowData['Category'] || null,
+      description_local: rowData['Description Local'] || null,
       description_en: rowData['Description'] || null,
       habitat_en: rowData['Habitat'] || null,
       food_habits_en: rowData['Food Habits'] || null,
+      migration_en: rowData['Migration'] || null,
+      cultural_en: rowData['Cultural'] || null,
       map_image: rowData['Map'] || null,
     };
 
@@ -443,6 +450,7 @@ class SpeciesDataParser {
       id: rowIndex,
       latin_name: rowData['Latin Name'],
       category: rowData['Category'] || null,
+      description_local: rowData['Description Local'] || null,
       description_en: rowData['Description'] || null,
       habitat_en: rowData['Habitat'] || null,
       uses_en: rowData['Uses'] || null,
@@ -492,9 +500,12 @@ CREATE TABLE IF NOT EXISTS birds (
     id INTEGER PRIMARY KEY,
     latin_name TEXT NOT NULL,
     category TEXT NOT NULL,
+    description_local TEXT,
     description_en TEXT,
     habitat_en TEXT,
     food_habits_en TEXT,
+    migration_en TEXT,
+    cultural_en TEXT,
     map_image TEXT
 );
 
@@ -531,6 +542,7 @@ CREATE TABLE IF NOT EXISTS bird_images (
     file_name TEXT NOT NULL,
     bird_id INTEGER NOT NULL,
     caption TEXT,
+    credit TEXT,
     sort_order INTEGER,
     FOREIGN KEY (bird_id) REFERENCES birds(id)
 );
@@ -557,6 +569,7 @@ CREATE TABLE IF NOT EXISTS plants (
     id INTEGER PRIMARY KEY,
     latin_name TEXT NOT NULL,
     category TEXT,
+    description_local TEXT,
     description_en TEXT,
     habitat_en TEXT,
     uses_en TEXT,
@@ -596,6 +609,7 @@ CREATE TABLE IF NOT EXISTS plant_images (
     file_name TEXT NOT NULL,
     plant_id INTEGER NOT NULL,
     caption TEXT,
+    credit TEXT,
     sort_order INTEGER,
     FOREIGN KEY (plant_id) REFERENCES plants(id)
 );
@@ -623,12 +637,12 @@ CREATE TABLE IF NOT EXISTS plant_text_audios (
       const birdValues = data.birds
         .map(
           (bird) =>
-            `(${bird.id}, '${this.escapeSql(bird.latin_name)}', ${bird.category ? `'${this.escapeSql(bird.category)}'` : 'NULL'}, ${bird.description_en ? `'${this.escapeSql(bird.description_en)}'` : 'NULL'}, ${bird.habitat_en ? `'${this.escapeSql(bird.habitat_en)}'` : 'NULL'}, ${bird.food_habits_en ? `'${this.escapeSql(bird.food_habits_en)}'` : 'NULL'}, ${bird.map_image ? `'${this.escapeSql(bird.map_image)}'` : 'NULL'})`
+            `(${bird.id}, '${this.escapeSql(bird.latin_name)}', ${bird.category ? `'${this.escapeSql(bird.category)}'` : 'NULL'}, ${bird.description_local ? `'${this.escapeSql(bird.description_local)}'` : 'NULL'}, ${bird.description_en ? `'${this.escapeSql(bird.description_en)}'` : 'NULL'}, ${bird.habitat_en ? `'${this.escapeSql(bird.habitat_en)}'` : 'NULL'}, ${bird.food_habits_en ? `'${this.escapeSql(bird.food_habits_en)}'` : 'NULL'}, ${bird.migration_en ? `'${this.escapeSql(bird.migration_en)}'` : 'NULL'}, ${bird.cultural_en ? `'${this.escapeSql(bird.cultural_en)}'` : 'NULL'}, ${bird.map_image ? `'${this.escapeSql(bird.map_image)}'` : 'NULL'})`
         )
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO birds (id, latin_name, category, description_en, habitat_en, food_habits_en, map_image) VALUES\n  ${birdValues};`
+        `INSERT INTO birds (id, latin_name, category, description_local, description_en, habitat_en, food_habits_en, migration_en, cultural_en, map_image) VALUES\n  ${birdValues};`
       );
     }
 
@@ -689,12 +703,12 @@ CREATE TABLE IF NOT EXISTS plant_text_audios (
       const imageValues = data.birdImages
         .map(
           (image, index) =>
-            `(${index + 1}, '${this.escapeSql(image.file_name)}', ${image.bird_id}, ${image.caption ? `'${this.escapeSql(image.caption)}'` : 'NULL'}, ${image.sort_order})`
+            `(${index + 1}, '${this.escapeSql(image.file_name)}', ${image.bird_id}, ${image.caption ? `'${this.escapeSql(image.caption)}'` : 'NULL'}, ${image.credit ? `'${this.escapeSql(image.credit)}'` : 'NULL'}, ${image.sort_order})`
         )
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO bird_images (id, file_name, bird_id, caption, sort_order) VALUES\n  ${imageValues};`
+        `INSERT INTO bird_images (id, file_name, bird_id, caption, credit, sort_order) VALUES\n  ${imageValues};`
       );
     }
 
@@ -730,12 +744,12 @@ CREATE TABLE IF NOT EXISTS plant_text_audios (
       const plantValues = data.plants
         .map(
           (plant) =>
-            `(${plant.id}, '${this.escapeSql(plant.latin_name)}', ${plant.category ? `'${this.escapeSql(plant.category)}'` : 'NULL'}, ${plant.description_en ? `'${this.escapeSql(plant.description_en)}'` : 'NULL'}, ${plant.habitat_en ? `'${this.escapeSql(plant.habitat_en)}'` : 'NULL'}, ${plant.uses_en ? `'${this.escapeSql(plant.uses_en)}'` : 'NULL'}, ${plant.map_image ? `'${this.escapeSql(plant.map_image)}'` : 'NULL'})`
+            `(${plant.id}, '${this.escapeSql(plant.latin_name)}', ${plant.category ? `'${this.escapeSql(plant.category)}'` : 'NULL'}, ${plant.description_local ? `'${this.escapeSql(plant.description_local)}'` : 'NULL'}, ${plant.description_en ? `'${this.escapeSql(plant.description_en)}'` : 'NULL'}, ${plant.habitat_en ? `'${this.escapeSql(plant.habitat_en)}'` : 'NULL'}, ${plant.uses_en ? `'${this.escapeSql(plant.uses_en)}'` : 'NULL'}, ${plant.map_image ? `'${this.escapeSql(plant.map_image)}'` : 'NULL'})`
         )
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO plants (id, latin_name, category, description_en, habitat_en, uses_en, map_image) VALUES\n  ${plantValues};`
+        `INSERT INTO plants (id, latin_name, category, description_local, description_en, habitat_en, uses_en, map_image) VALUES\n  ${plantValues};`
       );
     }
 
@@ -797,12 +811,12 @@ CREATE TABLE IF NOT EXISTS plant_text_audios (
       const imageValues = data.plantImages
         .map(
           (image, index) =>
-            `(${index + 1}, '${this.escapeSql(image.file_name)}', ${image.plant_id}, ${image.caption ? `'${this.escapeSql(image.caption)}'` : 'NULL'}, ${image.sort_order})`
+            `(${index + 1}, '${this.escapeSql(image.file_name)}', ${image.plant_id}, ${image.caption ? `'${this.escapeSql(image.caption)}'` : 'NULL'}, ${image.credit ? `'${this.escapeSql(image.credit)}'` : 'NULL'}, ${image.sort_order})`
         )
         .join(',\n  ');
 
       sqlStatements.push(
-        `INSERT INTO plant_images (id, file_name, plant_id, caption, sort_order) VALUES\n  ${imageValues};`
+        `INSERT INTO plant_images (id, file_name, plant_id, caption, credit, sort_order) VALUES\n  ${imageValues};`
       );
     }
 
@@ -1125,9 +1139,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const parser = new SpeciesDataParser();
 
   // Example birds CSV content with category directly included
-  const birdsCSV = `Category,Crow,Literal Translation,English,Latin Name,Description,Habitat,Food Habits,Audios,Map,Photos
-Passeriformes,áalihte,"black bird","American Crow","Corvus brachyrhynchos","A large black bird","Urban areas","Omnivorous","aalihte1.mp3,aalihte2.mp3","crow_map.jpg","crow1.jpg;crow2.jpg"
-Ciconiiformes,akbaakáatdutche,"one who catches children","White Stork","Ciconia ciconia","Large white bird","Wetlands","Fish","stork1.mp3","stork_map.jpg","NO RECORDING"`;
+  const birdsCSV = `Category,Crow,Literal Translation,English,Latin Name,Description Local,Description,Habitat,Food Habits,Migration,Cultural,Audios,Map,Photos,Photo Credits
+Passeriformes,áalihte,"black bird","American Crow","Corvus brachyrhynchos","Crow description in Apsáalooke","A large black bird","Urban areas","Omnivorous","Resident bird","Important in ceremonies","aalihte1.mp3,aalihte2.mp3","crow_map.jpg","crow1.jpg;crow2.jpg","John Smith;Jane Doe"
+Ciconiiformes,akbaakáatdutche,"one who catches children","White Stork","Ciconia ciconia","","Large white bird","Wetlands","Fish","Migratory","","stork1.mp3","stork_map.jpg","NO RECORDING",""`;
+
 
   // Process birds directly (no separate orders file needed)
   const parsedData = parser.parseCsv(birdsCSV);

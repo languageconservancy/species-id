@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { feather } from '../../../assets/core/icon/feather';
+import { bird } from '../../../assets/core/icon/bird';
 import { leaf } from '../../../assets/core/icon/leaf';
 import { SpeciesType } from 'app/models/species.model';
 import { ConfigService } from 'app/services/config.service';
@@ -22,12 +22,12 @@ export class LandingPage {
     private router: Router,
     private configService: ConfigService
   ) {
-    addIcons({ feather, leaf });
+    addIcons({ bird, leaf });
     this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Birds & Plants';
   }
 
   navigateToExplore(type: SpeciesType) {
-    this.router.navigateByUrl(`/tabs/tab1/${type === SpeciesType.Bird ? 'birds' : 'plants'}`, {
+    this.router.navigateByUrl(`/tabs/species/${type === SpeciesType.Bird ? 'birds' : 'plants'}`, {
       replaceUrl: true,
     });
   }

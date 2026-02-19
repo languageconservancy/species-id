@@ -1,18 +1,18 @@
 @if (loading) {
-<ion-content class="ion-padding flex items-center justify-center h-full">
+<ion-content class="flex items-center justify-center h-full overflow-y-auto">
   <ion-label class="ion-text-center">
     <p>Loading...</p>
   </ion-label>
 </ion-content>
 } @else {
 
-<div class="bg-black pt-safe">
-  <app-image-carousel [species]="species"></app-image-carousel>
-</div>
+<ion-content class="mt-0" style="--background: transparent; --padding-bottom: 6rem">
+  <div class="bg-black pt-safe">
+    <app-image-carousel [species]="species"></app-image-carousel>
+  </div>
 
-<ion-content class="ion-padding mt-0" style="--background: transparent; --padding-bottom: 4rem">
   <!-- Header section -->
-  <ion-label class="text-center">
+  <ion-label class="text-center ion-padding">
     <!-- Crow names section with audio playback -->
     <div class="flex flex-wrap justify-center items-center mb-1">
       @for (crowName of crowNames; track crowName.name) {
