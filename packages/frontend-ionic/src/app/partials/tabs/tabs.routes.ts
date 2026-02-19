@@ -2,31 +2,26 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
-    path: 'species',
-    children: [
-      {
-        path: 'birds',
-        loadComponent: () =>
-          import('app/pages/explore-container/birds-explore.page').then((m) => m.BirdsExplorePage),
-      },
-      {
-        path: 'plants',
-        loadComponent: () =>
-          import('app/pages/explore-container/plants-explore.page').then(
-            (m) => m.PlantsExplorePage
-          ),
-      },
-      {
-        path: 'birds/:id',
-        loadComponent: () =>
-          import('app/pages/bird-detail/bird-detail.page').then((m) => m.BirdDetailPage),
-      },
-      {
-        path: 'plants/:id',
-        loadComponent: () =>
-          import('app/pages/plant-detail/plant-detail.page').then((m) => m.PlantDetailPage),
-      },
-    ],
+    path: 'birds',
+    loadComponent: () =>
+      import('app/pages/explore-container/birds-explore.page').then((m) => m.BirdsExplorePage),
+  },
+  {
+    path: 'plants',
+    loadComponent: () =>
+      import('app/pages/explore-container/plants-explore.page').then(
+        (m) => m.PlantsExplorePage
+      ),
+  },
+  {
+    path: 'birds/:id',
+    loadComponent: () =>
+      import('app/pages/bird-detail/bird-detail.page').then((m) => m.BirdDetailPage),
+  },
+  {
+    path: 'plants/:id',
+    loadComponent: () =>
+      import('app/pages/plant-detail/plant-detail.page').then((m) => m.PlantDetailPage),
   },
   {
     path: 'tab2',

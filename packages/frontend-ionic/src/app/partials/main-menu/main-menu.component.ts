@@ -60,12 +60,12 @@ export class MainMenuComponent {
     {
       label: 'Birds',
       icon: 'bird',
-      link: '/tabs/species/birds',
+      link: '/tabs/birds',
     },
     {
       label: 'Plants',
       icon: 'leaf',
-      link: '/tabs/species/plants',
+      link: '/tabs/plants',
     },
     {
       label: 'About',

@@ -27,7 +27,7 @@ export class LandingPage {
   }
 
   navigateToExplore(type: SpeciesType) {
-    this.router.navigateByUrl(`/tabs/species/${type === SpeciesType.Bird ? 'birds' : 'plants'}`, {
+    this.router.navigateByUrl(`/tabs/${type === SpeciesType.Bird ? 'birds' : 'plants'}`, {
       replaceUrl: true,
     });
   }

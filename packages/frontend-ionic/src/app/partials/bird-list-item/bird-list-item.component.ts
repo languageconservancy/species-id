@@ -75,7 +75,7 @@ export class BirdListItemComponent implements OnInit, OnChanges {
   }
 
   onItemClick(item: Species) {
-    this.navController.navigateForward(['/tabs/species', 'birds', item.id], {
+    this.navController.navigateForward(['/tabs/birds', item.id], {
       animationDirection: 'forward',
       animated: true,
     });
