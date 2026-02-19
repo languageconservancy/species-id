@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { IonContent, NavController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { close } from 'ionicons/icons';
-import { BackButtonComponent } from 'app/partials/back-button/back-button.component';
 import { HeaderComponent } from 'app/partials/header/header.component';
 import { ConfigService } from 'app/services/config.service';
 
@@ -11,7 +10,7 @@ import { ConfigService } from 'app/services/config.service';
   selector: 'app-about',
   templateUrl: './about.page.html',
   standalone: true,
-  imports: [CommonModule, IonContent, BackButtonComponent, HeaderComponent],
+  imports: [CommonModule, IonContent, HeaderComponent],
 })
 export class AboutPage {
   mainMenuLabel: string = '';
