@@ -116,7 +116,12 @@ export class PlantDetailPage implements OnInit, OnDestroy {
 
   private async _loadLiteralMeanings() {
     if (!this.species) return;
-    this.literalMeanings = this.species.nameMeaningEn?.split(';') || [];
+    // GROUP_CONCAT returns comma-separated values
+    this.literalMeanings =
+      this.species.nameMeaningEn
+        ?.split(',')
+        .map((m) => m.trim())
+        .filter((m) => m.length > 0) || [];
   }
 
   private async _loadCrowNamesWithAudio() {

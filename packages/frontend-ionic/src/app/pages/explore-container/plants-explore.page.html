@@ -1,7 +1,7 @@
 <app-header title="Explore Plants"></app-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list class="pt-2">
+  <ion-list class="">
     <!-- No items found -->
     @if (items.length === 0) {
     <div class="ion-text-center flex items-center justify-center h-32">
@@ -20,7 +20,7 @@
     @for (itemGroup of itemsGrouped; track itemGroup.name) {
     <ion-item-group>
       <app-list-divider [itemGroup]="itemGroup"></app-list-divider>
-      @for (item of itemGroup.items; track item; let last = $last) {
+      @for (item of itemGroup.items; track item.id + '-' + $index; let last = $last) {
       <app-plant-list-item [item]="item" [isLastItem]="last"></app-plant-list-item>
       }
     </ion-item-group>

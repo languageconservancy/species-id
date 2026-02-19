@@ -6,13 +6,16 @@
 </ion-content>
 } @else {
 
-<div class="bg-black pt-safe">
-  <app-image-carousel [species]="species"></app-image-carousel>
-</div>
+<!-- <div class="bg-black pt-safe"> -->
+<!-- <app-image-carousel [species]="species"></app-image-carousel> -->
+<!-- </div> -->
 
-<ion-content class="ion-padding mt-0" style="--background: transparent; --padding-bottom: 4rem">
+<ion-content class="mt-0" style="--background: transparent; --padding-bottom: 6rem">
+  <div class="bg-black pt-safe">
+    <app-image-carousel [species]="species"></app-image-carousel>
+  </div>
   <!-- Header section -->
-  <ion-label class="text-center">
+  <ion-label class="text-center ion-padding">
     <!-- Crow names section with audio playback -->
     <div class="flex flex-wrap justify-center items-center mb-1">
       @for (crowName of crowNames; track crowName.name) {
@@ -32,28 +35,22 @@
     </div>
     <!-- Literal meanings section in single quotes -->
     <div class="flex flex-wrap justify-center items-center gap-1 mb-1">
-      @for (literalMeaning of literalMeanings; track $index; let last = $last) {
-      <span class="text-gray-600">
-        {{ literalMeaning ? `‘${literalMeaning}’` : 'unknown' }} @if (!$last) {<span
-          class="text-gray-600"
-          >;&nbsp;</span
-        >}
-      </span>
-      }
+      @for (literalMeaning of literalMeanings; track $index) {<span class="text-gray-600"
+        >'{{ literalMeaning || 'unknown' }}'</span
+      >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
     </div>
     <!-- English names section -->
     <div class="flex flex-wrap justify-center items-center gap-1 mb-1">
-      @for (englishName of englishNames; track $index; let last = $last) {
-      <span class="text-gray-600 font-semibold text-lg">
-        {{ englishName }}@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}
-      </span>
-      }
+      @for (englishName of englishNames; track $index) {<span
+        class="text-gray-600 font-semibold text-lg"
+        >{{ englishName }}</span
+      >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
     </div>
     <!-- Scientific names section -->
     @if (settings.showScientificNames && scientificNames.length > 0) {
     <p class="italic text-gray-700">
-      (@for (scientificName of scientificNames; track $index; let last = $last) {{{ scientificName
-      }}@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}})
+      (@for (scientificName of scientificNames; track $index) {{{ scientificName }}@if (!$last)
+      {<span class="text-gray-600">;&nbsp;</span>}})
     </p>
     }
   </ion-label>

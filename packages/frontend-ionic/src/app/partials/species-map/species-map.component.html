@@ -1,7 +1,7 @@
 <!-- Map image -->
 @if (mapLoadState !== 'error') {
   <ion-img
-    class="w-full h-auto md:w-1/3 mx-auto mt-6 md:mt-8"
+    class="w-full h-auto md:w-1/3 mx-auto ion-padding mt-6 md:mt-8"
     [src]="mapImageUrl"
     (ionImgDidLoad)="onMapImageLoad()"
     (ionError)="onMapImageError()"
@@ -9,7 +9,7 @@
   </ion-img>
 }
 @if (mapLoadState === 'error') {
-  <div class="w-full flex items-center justify-center mt-6 md:mt-8">
+  <div class="w-full flex items-center justify-center ion-padding mt-6 md:mt-8">
     <p class="text-sm text-gray-500">--- Map not available ---</p>
   </div>
 }

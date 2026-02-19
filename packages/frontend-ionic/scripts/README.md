@@ -9,9 +9,9 @@ Run these scripts from the root directory.
 1. If missing or needs updating, download species data from Google Sheets to csv files
 
 1. Convert CSV files to a single sql
-   `node ./scripts/process-bird-data.mjs`
+   `node ./scripts/process-species-data.mjs`
 
-1. Convert sql file to sqlite file
+1. Convert sql file to sqlite file (ensure no existing species-production.db file exists)
    `sqlite3 species-production.db < species_data.sql`
 
 1. Download all image/audio assets from Amazon S3 bucket

@@ -1,20 +1,34 @@
-<ion-content class="ion-padding">
-  <div class="flex flex-col items-center justify-center h-full gap-8">
+<ion-content class="">
+  <div class="flex flex-col items-center justify-center h-full gap-8 bg-[#FDF6EC] ion-padding">
     <div class="text-center">
-      <h1 class="text-4xl font-bold mb-4 font-englishTitles">{{ mainMenuLabel }}</h1>
-      <p class="text-lg mb-8">
+      <h1 class="text-4xl font-semibold mb-4 tracking-wide font-englishTitles text-shadow-lg">
+        {{ mainMenuLabel }}
+      </h1>
+      <p class="text-lg mb-8 text-gray-600">
         A comprehensive guide to birds and plants found in the Crow Reservation, in the Crow
         language.
       </p>
     </div>
 
     <div class="flex flex-col gap-4 w-full max-w-md">
-      <ion-button expand="block" (click)="navigateToExplore(SpeciesType.Bird)" color="primary">
-        <ion-icon slot="start" name="feather"></ion-icon>
+      <ion-button
+        style="--box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+        expand="block"
+        shape="round"
+        (click)="navigateToExplore(SpeciesType.Bird)"
+        color="primary"
+      >
+        <ion-icon slot="start" name="bird"></ion-icon>
         Explore Birds
       </ion-button>
 
-      <ion-button expand="block" (click)="navigateToExplore(SpeciesType.Plant)" color="secondary">
+      <ion-button
+        style="--box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+        expand="block"
+        shape="round"
+        (click)="navigateToExplore(SpeciesType.Plant)"
+        color="secondary"
+      >
         <ion-icon slot="start" name="leaf"></ion-icon>
         Explore Plants
       </ion-button>

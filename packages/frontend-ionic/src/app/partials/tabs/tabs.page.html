@@ -1,13 +1,13 @@
 <ion-tabs color="primary">
-  <ion-tab-bar slot="bottom" color="primary" class="pt-2">
+  <ion-tab-bar slot="bottom" color="primary" class="pt-1 pb-1">
     <ion-tab-button (click)="openMenu()">
       <ion-icon aria-hidden="true" color="light" name="menu"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button tab="tab1" [routerLink]="['/tabs/tab1', 'birds']">
-      <ion-icon aria-hidden="true" color="light" name="feather"></ion-icon>
+    <ion-tab-button tab="birds" [routerLink]="['/tabs/birds']">
+      <ion-icon aria-hidden="true" color="light" name="bird"></ion-icon>
       <ion-label class="text-sm font-localNames" color="light">Dakáake</ion-label>
     </ion-tab-button>
-    <ion-tab-button tab="tab1" [routerLink]="['/tabs/tab1', 'plants']">
+    <ion-tab-button tab="plants" [routerLink]="['/tabs/plants']">
       <ion-icon aria-hidden="true" color="light" name="leaf"></ion-icon>
       <ion-label class="text-sm font-localNames" color="light">Baaapáale</ion-label>
     </ion-tab-button>

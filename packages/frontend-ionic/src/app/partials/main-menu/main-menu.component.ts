@@ -14,7 +14,7 @@ import {
 } from '@ionic/angular/standalone';
 import { SettingsPage } from 'app/pages/settings/settings.page';
 import { addIcons } from 'ionicons';
-import { feather } from '../../../assets/core/icon/feather';
+import { bird } from '../../../assets/core/icon/bird';
 import { leaf } from '../../../assets/core/icon/leaf';
 import { search, settings, informationCircle, close, chevronBack, home } from 'ionicons/icons';
 import { Router } from '@angular/router';
@@ -59,13 +59,13 @@ export class MainMenuComponent {
     },
     {
       label: 'Birds',
-      icon: 'feather',
-      link: '/tabs/tab1/birds',
+      icon: 'bird',
+      link: '/tabs/birds',
     },
     {
       label: 'Plants',
       icon: 'leaf',
-      link: '/tabs/tab1/plants',
+      link: '/tabs/plants',
     },
     {
       label: 'About',
@@ -85,7 +85,7 @@ export class MainMenuComponent {
       search,
       settings,
       informationCircle,
-      feather,
+      bird,
       close,
       chevronBack,
       home,

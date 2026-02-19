@@ -59,7 +59,7 @@ export class BackButtonComponent {
     } else {
       // No history, navigate to a safe default (birds list)
       console.log('No navigation history, navigating to birds list');
-      this.router.navigate(['/tabs/tab1/birds']).finally(() => {
+      this.router.navigate(['/tabs/birds']).finally(() => {
         this.resetNavigationFlag();
       });
     }
