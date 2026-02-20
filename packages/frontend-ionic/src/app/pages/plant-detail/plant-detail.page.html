@@ -15,7 +15,7 @@
     <app-image-carousel [species]="species"></app-image-carousel>
   </div>
   <!-- Header section -->
-  <ion-label class="text-center ion-padding-horizontal">
+  <div class="text-center p-6">
     <!-- Crow names section with audio playback -->
     <div class="flex flex-wrap justify-center items-center">
       @for (crowName of crowNames; track crowName.name) {
@@ -23,37 +23,40 @@
         class="flex align-center"
         (click)="crowName.audios.length === 0 ? null : playTextAudio(crowName.audios[0])"
       >
-        <h1 class="font-localNames font-bold-force text-xl">{{ crowName.name }}</h1>
+        <h1 class="font-localNames font-bold-force text-xl sm:text-2xl lg:text-3xl">
+          {{ crowName.name }}
+        </h1>
         @for (audio of crowName.audios; track audio.id) {
         <ion-icon
           name="volume-high"
-          class="ml-1 text-lg text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
+          class="ml-1 text-lg sm:text-xl lg:text-2xl text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
           (click)="crowName.audios.length > 1 ? playTextAudio(audio) : null"
         ></ion-icon>
         } </span
-      >@if (!$last) {<span class="text-gray-600 font-localNames">;&nbsp;</span>} }
+      >@if (!$last) {<span class="text-gray-600 font-localNames">&nbsp;</span>} }
     </div>
     <!-- Literal meanings section in single quotes -->
     <div class="flex flex-wrap justify-center items-center gap-1">
-      @for (literalMeaning of literalMeanings; track $index) {<span class="text-gray-600"
+      @for (literalMeaning of literalMeanings; track $index) {<span
+        class="text-gray-600 text-base sm:text-lg lg:text-xl"
         >'{{ literalMeaning || 'unknown' }}'</span
       >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
     </div>
     <!-- English names section -->
     <div class="flex flex-wrap justify-center items-center gap-1">
       @for (englishName of englishNames; track $index) {<span
-        class="text-gray-600 font-semibold text-lg"
+        class="text-gray-600 font-semibold text-base sm:text-lg lg:text-xl"
         >{{ englishName }}</span
       >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
     </div>
     <!-- Scientific names section -->
     @if (settings.showScientificNames && scientificNames.length > 0) {
-    <p class="italic text-gray-700">
+    <p class="italic text-gray-700 text-base sm:text-lg lg:text-xl">
       (@for (scientificName of scientificNames; track $index) {{{ scientificName }}@if (!$last)
       {<span class="text-gray-600">;&nbsp;</span>}})
     </p>
     }
-  </ion-label>
+  </div>
 
   @if (species?.descriptionEn) {
   <app-detail-description [species]="species"></app-detail-description>

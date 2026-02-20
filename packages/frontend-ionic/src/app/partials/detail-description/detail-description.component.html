@@ -3,9 +3,11 @@
   @if (species?.descriptionLocal) {
     <!-- Label for local description -->
     <span class="inline-block">
-      <span class="text-sm leading-6 font-bold">Local Description:&nbsp;&nbsp;</span>
+      <span class="text-sm sm:text-base lg:text-lg leading-6 font-bold"
+        >Local Description:&nbsp;&nbsp;</span
+      >
       <span
-        class="text-sm leading-relaxed"
+        class="text-sm sm:text-base lg:text-lg leading-relaxed"
         color="dark"
         [innerHTML]="species?.descriptionLocal"
       ></span>
@@ -15,9 +17,11 @@
   @if (settings.useEnglish && species?.descriptionEn) {
     <!-- Label for English description -->
     <span class="inline-block">
-      <span class="text-sm leading-6 font-bold">Description:&nbsp;&nbsp;</span>
+      <span class="text-sm sm:text-base lg:text-lg leading-6 font-bold"
+        >Description:&nbsp;&nbsp;</span
+      >
       <span
-        class="text-sm leading-relaxed"
+        class="text-sm sm:text-base lg:text-lg leading-relaxed"
         color="dark"
         [innerHTML]="species?.descriptionEn"
       ></span>
@@ -27,37 +31,61 @@
   @if (species?.habitatEn) {
     <!-- Start text on same line after colon (Habitat: <text>) -->
     <span class="inline-block mt-2">
-      <span class="text-sm leading-6 font-bold">Habitat:&nbsp;&nbsp;</span>
-      <span class="text-sm leading-relaxed" color="dark" [innerHTML]="species?.habitatEn"></span>
+      <span class="text-sm sm:text-base lg:text-lg leading-6 font-bold">Habitat:&nbsp;&nbsp;</span>
+      <span
+        class="text-sm sm:text-base lg:text-lg leading-relaxed"
+        color="dark"
+        [innerHTML]="species?.habitatEn"
+      ></span>
     </span>
   }
 
   @if (isBird(species) && species.foodHabitsEn) {
     <!-- Start text on same line after colon (Food Habits: <text>) -->
     <span class="inline-block mt-2">
-      <span class="text-sm leading-6 font-bold">Food Habits:&nbsp;&nbsp;</span>
-      <span class="text-sm leading-relaxed" color="dark" [innerHTML]="species.foodHabitsEn"></span>
+      <span class="text-sm sm:text-base lg:text-lg leading-6 font-bold"
+        >Food Habits:&nbsp;&nbsp;</span
+      >
+      <span
+        class="text-sm sm:text-base lg:text-lg leading-relaxed"
+        color="dark"
+        [innerHTML]="species.foodHabitsEn"
+      ></span>
     </span>
   }
 
   @if (isBird(species) && species.migrationEn) {
     <span class="inline-block mt-2">
-      <span class="text-sm leading-6 font-bold">Migration:&nbsp;&nbsp;</span>
-      <span class="text-sm leading-relaxed" color="dark" [innerHTML]="species.migrationEn"></span>
+      <span class="text-sm sm:text-base lg:text-lg leading-6 font-bold"
+        >Migration:&nbsp;&nbsp;</span
+      >
+      <span
+        class="text-sm sm:text-base lg:text-lg leading-relaxed"
+        color="dark"
+        [innerHTML]="species.migrationEn"
+      ></span>
     </span>
   }
 
   @if (isBird(species) && species.culturalEn) {
     <span class="inline-block mt-2">
-      <span class="text-sm leading-6 font-bold">Cultural:&nbsp;&nbsp;</span>
-      <span class="text-sm leading-relaxed" color="dark" [innerHTML]="species.culturalEn"></span>
+      <span class="text-sm sm:text-base lg:text-lg leading-6 font-bold">Cultural:&nbsp;&nbsp;</span>
+      <span
+        class="text-sm sm:text-base lg:text-lg leading-relaxed"
+        color="dark"
+        [innerHTML]="species.culturalEn"
+      ></span>
     </span>
   }
 
   @if (isPlant(species) && species.usesEn) {
     <span class="inline-block mt-2">
-      <span class="text-sm leading-6 font-bold">Uses:&nbsp;&nbsp;</span>
-      <span class="text-sm leading-relaxed" color="dark" [innerHTML]="species.usesEn"></span>
+      <span class="text-sm sm:text-base lg:text-lg leading-6 font-bold">Uses:&nbsp;&nbsp;</span>
+      <span
+        class="text-sm sm:text-base lg:text-lg leading-relaxed"
+        color="dark"
+        [innerHTML]="species.usesEn"
+      ></span>
     </span>
   }
 </div>
