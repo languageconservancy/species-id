@@ -27,7 +27,7 @@
         @for (audio of crowName.audios; track audio.id) {
         <ion-icon
           name="volume-high"
-          class="ml-1 text-xs text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
+          class="ml-1 text-lg text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
           (click)="crowName.audios.length > 1 ? playTextAudio(audio) : null"
         ></ion-icon>
         } </span
