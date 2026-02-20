@@ -1,34 +1,42 @@
 <!-- Images carousel -->
-<swiper-container pagination="false" navigation="true" class="max-h-60 sm:max-h-96 lg:max-h-96">
+<swiper-container pagination="false" navigation="true" class="h-60 sm:h-96 lg:h-96 w-full">
   @for (image of species?.images; track image.fileName; let index = $index) {
-    <swiper-slide lazy="true">
-      @if (imageLoadStates[index] !== 'error') {
-        <img
-          class="max-h-60 sm:max-h-96 lg:max-h-96 mx-auto"
-          [src]="imageUrls[index]"
-          loading="lazy"
-          (load)="onImageLoad(index)"
-          (error)="onImageError(index)"
-        />
-      }
-      @if (imageLoadStates[index] === 'error') {
-        <div
-          class="w-full h-60 md:w-1/2 md:h-auto mx-auto bg-gray-200 flex items-center justify-center"
-        >
-          <div class="text-center text-gray-500">
-            <ion-icon name="image-outline" class="text-4xl mb-2"></ion-icon>
-            <p class="text-sm">Image not available</p>
+    <swiper-slide lazy="true" class="h-full flex relative">
+      <div class="w-full h-full overflow-hidden">
+        @if (imageLoadStates[index] !== 'error') {
+          <img
+            class="w-full h-full object-cover object-center"
+            [src]="imageUrls[index]"
+            loading="lazy"
+            (load)="onImageLoad(index)"
+            (error)="onImageError(index)"
+          />
+        }
+        @if (imageLoadStates[index] === 'error') {
+          <div class="w-full h-full min-h-60 bg-gray-200 flex items-center justify-center">
+            <div class="text-center text-gray-500">
+              <ion-icon name="image-outline" class="text-4xl mb-2"></ion-icon>
+              <p class="text-sm">Image not available</p>
+            </div>
           </div>
-        </div>
+        }
+      </div>
+      <!-- credit -->
+      @if (image.credit) {
+        <p
+          class="text-xs sm:text-sm text-gray-200 font-medium absolute bottom-1 left-0 px-2 py-1 z-10"
+          style="
+            text-shadow:
+              0 1px 3px rgba(0, 0, 0, 0.8),
+              0 1px 2px rgba(0, 0, 0, 0.6);
+          "
+        >
+          {{ image.credit }}
+        </p>
       }
-      <!-- caption -->
-      <!-- @if (image.caption) { -->
-      <!-- <div class="w-full bg-slate-900 bg-opacity-25 text-gray-200 text-center"> -->
-      <!-- <p class="text-sm p1">{{ image.caption }}</p> -->
-      <!-- </div> -->
-      <!-- } -->
     </swiper-slide>
   }
+
   @if (!species?.images?.length) {
     <div class="w-full h-60 bg-slate-900 bg-opacity-25 text-gray-200 text-center">
       <p class="text-sm p1">No images available</p>
