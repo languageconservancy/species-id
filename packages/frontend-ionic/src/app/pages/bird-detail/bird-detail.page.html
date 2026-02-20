@@ -6,15 +6,15 @@
 </ion-content>
 } @else {
 
-<ion-content class="mt-0" style="--background: transparent; --padding-bottom: 6rem">
+<ion-content class="mt-0" style="--padding-bottom: 5rem">
   <div class="bg-black pt-safe">
     <app-image-carousel [species]="species"></app-image-carousel>
   </div>
 
   <!-- Header section -->
-  <ion-label class="text-center ion-padding">
+  <ion-label class="text-center ion-padding-horizontal">
     <!-- Crow names section with audio playback -->
-    <div class="flex flex-wrap justify-center items-center mb-1">
+    <div class="flex flex-wrap justify-center items-center">
       @for (crowName of crowNames; track crowName.name) {
       <span
         class="flex align-center"
@@ -31,7 +31,7 @@
       >@if (!$last) {<span class="text-gray-600 font-localNames">;&nbsp;</span>} }
     </div>
     <!-- Literal meanings section in single quotes -->
-    <div class="flex flex-wrap justify-center items-center mb-1">
+    <div class="flex flex-wrap justify-center items-center">
       @for (literalMeaning of literalMeanings; track $index; let last = $last) {
       <span class="text-gray-600">
         {{ literalMeaning ? `‘${literalMeaning}’` : 'unknown' }} @if (!$last) {<span
@@ -42,7 +42,7 @@
       }
     </div>
     <!-- English names section -->
-    <div class="flex flex-wrap justify-center items-center mb-1">
+    <div class="flex flex-wrap justify-center items-center">
       @for (englishName of englishNames; track $index; let last = $last) {
       <span class="text-gray-600 font-semibold text-lg">
         {{ englishName }}@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}
