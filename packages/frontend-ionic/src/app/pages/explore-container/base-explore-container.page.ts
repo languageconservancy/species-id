@@ -19,6 +19,34 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
   itemsGrouped: SpeciesGroup[] = [];
   protected subscribers: Subscription = new Subscription();
   searchTerm: string = '';
+  protected CROW_ALPHABET: readonly string[] = [
+    'a',
+    'aa',
+    'b',
+    'ch',
+    'd',
+    'e',
+    'ee',
+    'h',
+    'i',
+    'ii',
+    'ia',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'oo',
+    'p',
+    's',
+    'sh',
+    't',
+    'u',
+    'uu',
+    'ua',
+    'w',
+    'x',
+  ];
 
   constructor(
     protected speciesService: SpeciesService,
@@ -83,6 +111,22 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
     this.items = this._applySearch();
     this.items = this._applyFilters(this.items);
     this.itemsGrouped = await this._groupAndSortItems(this.items);
+  }
+
+  protected _removeAccents(text: string): string {
+    const ACCENTS_MAP: Record<string, string> = {
+      á: 'a',
+      é: 'e',
+      í: 'i',
+      ó: 'o',
+      ú: 'u',
+    };
+
+    let modifiedText: string = text.toLowerCase();
+    Object.entries(ACCENTS_MAP).forEach(([key, value]) => {
+      modifiedText = modifiedText.replace(new RegExp(key, 'g'), value);
+    });
+    return modifiedText;
   }
 
   protected async _groupAndSortItems(items: Species[]): Promise<SpeciesGroup[]> {

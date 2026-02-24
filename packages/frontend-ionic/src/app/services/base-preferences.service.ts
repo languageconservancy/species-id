@@ -40,10 +40,7 @@ export abstract class BasePreferencesService {
   protected async init() {
     await this.storageReady.ready();
     // Load initial preferences
-    const sortKey = await this.storage.get(this.SORT_KEY);
-    console.log('sortKey', sortKey);
     const sortOptions = this.getSortOptions();
-    console.log('sortOptions', sortOptions);
 
     // Safely get default sort value with fallback
     const defaultSortValue = sortOptions && sortOptions.length > 0 ? sortOptions[0].value : '';

@@ -77,7 +77,27 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     const getGroupKey = (item: Species): string => {
       switch (sortType) {
         case 'alphabetical-local':
-          return item.nameLocal.charAt(0).toUpperCase();
+          // Check first two letters first, since single letters will always be part of double letters.
+          const firstTwoLetters: string = this._removeAccents(
+            item.nameLocal.slice(0, 2).toLowerCase()
+          );
+          if (this.CROW_ALPHABET.includes(firstTwoLetters)) {
+            // Capitalize first letter and return both letters
+            return firstTwoLetters.charAt(0).toUpperCase() + firstTwoLetters.charAt(1);
+          }
+
+          const firstLetter: string = this._removeAccents(item.nameLocal.charAt(0).toLowerCase());
+          if (this.CROW_ALPHABET.includes(firstLetter)) {
+            // Capitalize first letter and return both letters
+            return firstLetter.toUpperCase();
+          }
+
+          console.error(
+            ASSET_PATHS.ERROR_EMOJI,
+            'Unable to determine group key for:',
+            item.nameLocal
+          );
+          return 'Other';
         case 'alphabetical-english':
           return item.nameEn.charAt(0).toUpperCase();
         case 'alphabetical-latin':
