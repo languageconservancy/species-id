@@ -1,5 +1,5 @@
 PODS:
-  - Capacitor (7.2.0):
+  - Capacitor (8.1.0):
     - CapacitorCordova
   - CapacitorApp (7.0.1):
     - Capacitor
@@ -7,33 +7,33 @@ PODS:
     - Capacitor
     - SQLCipher
     - ZIPFoundation
-  - CapacitorCordova (7.2.0)
-  - CapacitorFilesystem (7.1.1):
+  - CapacitorCordova (8.1.0)
+  - CapacitorFilesystem (7.1.8):
     - Capacitor
-    - IONFilesystemLib (~> 1.0)
+    - IONFilesystemLib (~> 1.1.1)
   - CapacitorHaptics (7.0.1):
     - Capacitor
   - CapacitorKeyboard (7.0.1):
     - Capacitor
-  - CapacitorNetwork (7.0.1):
+  - CapacitorNetwork (7.0.4):
     - Capacitor
-  - CapacitorPreferences (7.0.1):
+  - CapacitorPreferences (7.0.4):
     - Capacitor
-  - CapacitorStatusBar (7.0.1):
+  - CapacitorStatusBar (7.0.5):
     - Capacitor
   - CapacitorVoiceRecorder (7.0.6):
     - Capacitor
   - CapawesomeCapacitorPosthog (7.1.0):
     - Capacitor
     - PostHog (~> 3.19.1)
-  - IONFilesystemLib (1.0.0)
+  - IONFilesystemLib (1.1.1)
   - PostHog (3.19.9)
-  - SQLCipher (4.9.0):
-    - SQLCipher/standard (= 4.9.0)
-  - SQLCipher/common (4.9.0)
-  - SQLCipher/standard (4.9.0):
+  - SQLCipher (4.10.0):
+    - SQLCipher/standard (= 4.10.0)
+  - SQLCipher/common (4.10.0)
+  - SQLCipher/standard (4.10.0):
     - SQLCipher/common
-  - ZIPFoundation (0.9.19)
+  - ZIPFoundation (0.9.20)
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
@@ -83,23 +83,23 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capawesome/capacitor-posthog"
 
 SPEC CHECKSUMS:
-  Capacitor: 106e7a4205f4618d582b886a975657c61179138d
+  Capacitor: 830fc6ff88e99bb5ba48350f02c01ab01ba3b2b8
   CapacitorApp: d63334c052278caf5d81585d80b21905c6f93f39
   CapacitorCommunitySqlite: 6501e7349acf998346acf24ef757861bb3f6fc2b
-  CapacitorCordova: 5967b9ba03915ef1d585469d6e31f31dc49be96f
-  CapacitorFilesystem: 3acaa1d2b909a9dd904581a86f21782886e6bb38
+  CapacitorCordova: e8b76fd95fc1e157775abc484c59cc0de464095d
+  CapacitorFilesystem: f54cd6b76be06fa7ceb219cf313d32e0d626ea87
   CapacitorHaptics: 70e47470fa1a6bd6338cd102552e3846b7f9a1b3
   CapacitorKeyboard: 969647d0ca2e5c737d7300088e2517aa832434e2
-  CapacitorNetwork: 07ec4c69c1bb696f41c23e00d31bda1bbb221bba
-  CapacitorPreferences: cbf154e5e5519b7f5ab33817a334dda1e98387f9
-  CapacitorStatusBar: 275cbf2f4dfc00388f519ef80c7ec22edda342c9
+  CapacitorNetwork: 3d56050f929a8c86427a5b28558ce605e7cf61b3
+  CapacitorPreferences: d82a7e3b95fcab43a553268b803356522910d153
+  CapacitorStatusBar: b4bdcf487553983ffc68d81dfe1668bacb48252f
   CapacitorVoiceRecorder: b136a5989c9a306d57f0c9fc530be79a06ccf7b2
   CapawesomeCapacitorPosthog: 0b45d854823d7e6ab024baeb32349e59a7cf4797
-  IONFilesystemLib: ceacae793975039530458eabab0c495c70515a0d
+  IONFilesystemLib: dfa8706539ac9ab77ccfd6e5b3830ce9b5e57f6c
   PostHog: 49247855f4cfdc1d2750b4247e6f6c0ff921e142
-  SQLCipher: 31878d8ebd27e5c96db0b7cb695c96e9f8ad77da
-  ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
+  SQLCipher: eb79c64049cb002b4e9fcb30edb7979bf4706dfc
+  ZIPFoundation: dfd3d681c4053ff7e2f7350bc4e53b5dba3f5351
 
-PODFILE CHECKSUM: 50a4a6791b058b916b6911fa8e492c9a54cf0bc7
+PODFILE CHECKSUM: febe08b064bc4047761b5448a80b2ecf7ff73351
 
 COCOAPODS: 1.16.2

@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "org.crowlanguage.apsaalookebirdsplants"
-    compileSdk = rootProject.ext.compileSdkVersion
+    namespace = "org.crowlanguage.apsaalookebirdsplants"
+    compileSdk = project.hasProperty('complieSdkVersion') ? rootProject.ext.compileSdkVersion : 36
     defaultConfig {
         applicationId "org.crowlanguage.apsaalookebirdsplants"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 24
+        targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 36
         versionCode 5
         versionName "0.4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
