@@ -97,3 +97,22 @@
     opacity: 0;
   }
 }
+
+// Container for crow names: font size responds to *available width* (viewport + padding + zoom).
+.crow-names-container {
+  container-type: inline-size;
+  container-name: crow-names;
+}
+
+// Ideal size when there's space; scales down smoothly when container is narrow.
+// Uses container width so zoom and padding are accounted for (not just viewport).
+.crow-name-title {
+  font-size: clamp(0.75rem, 6cqw, 1.5rem);
+
+  // @container crow-names (min-width: 640px) {
+  //   font-size: clamp(1.25rem, 2.5cqw, 1.875rem);
+  // }
+  // @container crow-names (min-width: 1024px) {
+  //   font-size: 1.875rem; // lg: fixed ideal size
+  // }
+}
