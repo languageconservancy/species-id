@@ -17,19 +17,17 @@
   <!-- Header section -->
   <div class="text-center p-6">
     <!-- Crow names section with audio playback -->
-    <div class="flex flex-wrap justify-center items-center">
+    <div class="crow-names-container flex flex-wrap justify-center items-center">
       @for (crowName of crowNames; track crowName.name) {
       <span
         class="flex align-center"
         (click)="crowName.audios.length === 0 ? null : playTextAudio(crowName.audios[0])"
       >
-        <h1 class="font-localNames font-bold-force text-xl sm:text-2xl lg:text-3xl">
-          {{ crowName.name }}
-        </h1>
+        <h1 class="font-localNames font-bold-force crow-name-title">{{ crowName.name }}</h1>
         @for (audio of crowName.audios; track audio.id) {
         <ion-icon
           name="volume-high"
-          class="ml-1 text-lg sm:text-xl lg:text-2xl text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
+          class="ml-1 crow-name-title text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
           (click)="crowName.audios.length > 1 ? playTextAudio(audio) : null"
         ></ion-icon>
         } </span
