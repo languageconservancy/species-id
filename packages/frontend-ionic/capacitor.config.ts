@@ -11,6 +11,9 @@ const config: CapacitorConfig = {
     CapacitorSQLite: {
       iosDatabaseLocation: 'Library/NoCloud/databases',
     },
+    StatusBar: {
+      overlaysWebView: false,
+    },
     VoiceRecorder: {
       enabled: true,
     },
