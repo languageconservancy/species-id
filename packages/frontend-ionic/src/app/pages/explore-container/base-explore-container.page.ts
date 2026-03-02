@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
-import { SearchService } from 'app/services/search.service';
+import { SearchBarService } from 'app/services/search-bar.service';
+import { FuzzySearchService } from 'app/services/fuzzy-search.service';
 import { Subscription } from 'rxjs';
 import { addIcons } from 'ionicons';
 import { search, options } from 'ionicons/icons';
@@ -50,7 +51,8 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
 
   constructor(
     protected speciesService: SpeciesService,
-    protected searchService: SearchService,
+    protected searchBarService: SearchBarService,
+    protected fuzzySearchService: FuzzySearchService,
     protected analyticsService: AnalyticsService
   ) {
     addIcons({ search, options });
@@ -62,12 +64,12 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy() {
-    this.searchService.setSearch('');
+    this.searchBarService.setSearch('');
     this.subscribers.unsubscribe();
   }
 
   protected _subscribeAndHandleSearches() {
-    const sub = this.searchService.search$.subscribe((searchTerm: string) => {
+    const sub = this.searchBarService.search$.subscribe((searchTerm: string) => {
       this.searchTerm = searchTerm.toLowerCase().trim();
       if (this.searchTerm) {
         this.analyticsService.track('search', { searchTerm: this.searchTerm });
@@ -90,10 +92,10 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
     }
     return this.itemsAll.filter((item: Species) => {
       return (
-        item.nameLocal.toLowerCase().includes(this.searchTerm) ||
-        item.nameScientific.toLowerCase().includes(this.searchTerm) ||
-        item.nameEn.toLowerCase().includes(this.searchTerm) ||
-        item.nameMeaningEn.toLowerCase().includes(this.searchTerm)
+        this.fuzzySearchService.matches(this.searchTerm, item.nameLocal) ||
+        this.fuzzySearchService.matches(this.searchTerm, item.nameScientific) ||
+        this.fuzzySearchService.matches(this.searchTerm, item.nameEn) ||
+        this.fuzzySearchService.matches(this.searchTerm, item.nameMeaningEn)
       );
     });
   }

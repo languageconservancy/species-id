@@ -14,7 +14,7 @@ export enum RecordingState {
 @Injectable({
   providedIn: 'root',
 })
-export class SearchService {
+export class SearchBarService {
   private searchSubject: Subject<string> = new Subject<string>();
   public search$: Observable<string> = this.searchSubject.asObservable();
 
