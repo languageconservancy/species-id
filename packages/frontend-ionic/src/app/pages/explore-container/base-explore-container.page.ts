@@ -90,14 +90,18 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
     if (!this.searchTerm) {
       return this.itemsAll;
     }
-    return this.itemsAll.filter((item: Species) => {
+    const exactMatches = this.itemsAll.filter((item: Species) => {
       return (
-        this.fuzzySearchService.matches(this.searchTerm, item.nameLocal) ||
-        this.fuzzySearchService.matches(this.searchTerm, item.nameScientific) ||
-        this.fuzzySearchService.matches(this.searchTerm, item.nameEn) ||
-        this.fuzzySearchService.matches(this.searchTerm, item.nameMeaningEn)
+        item.nameLocal.toLowerCase().includes(this.searchTerm) ||
+        item.nameScientific.toLowerCase().includes(this.searchTerm) ||
+        item.nameEn.toLowerCase().includes(this.searchTerm) ||
+        item.nameMeaningEn.toLowerCase().includes(this.searchTerm)
       );
     });
+    const fuzzyMatches = this.itemsAll.filter((item: Species) => {
+      return this.fuzzySearchService.matches(this.searchTerm, item.nameLocal);
+    });
+    return [...exactMatches, ...fuzzyMatches];
   }
 
   protected _applyFilters(items: Species[]): Species[] {

@@ -32,15 +32,17 @@ export class FuzzySearchService {
    * letters, and normalizes phonetically similar sounds.
    */
   approximate(str: string): string {
+    // Remove diacritics
     let result = str.toLowerCase().replace(this.vowelPattern, (c) => {
       return this.vowelReplacements[c] ?? c;
     });
+    console.log('result w/o diacritics', result);
 
-    // Strip common affixes for longer words
+    // Remove common affixes for longer words
     if (str.length > 8) {
       result = result.replace(this.affixPattern, '');
     }
-
+    console.log('result w/o affixes', result);
     // Collapse repeated letters and normalize phonetically similar sounds
     result = result
       .replace(/([aeiou])\1+/g, '$1') // collapse repeated vowels
@@ -62,7 +64,7 @@ export class FuzzySearchService {
       .replace(/g/g, 'k')
       .replace(/z/g, 's')
       .replace(/ /g, '');
-
+    console.log('result w/o phonetic normalization', result);
     return result;
   }
 
@@ -72,6 +74,12 @@ export class FuzzySearchService {
   matches(query: string, target: string): boolean {
     const normalizedQuery = this.approximate(query);
     const normalizedTarget = this.approximate(target);
+
+    console.log('query', query);
+    console.log('target', target);
+    console.log('normalizedQuery', normalizedQuery);
+    console.log('normalizedTarget', normalizedTarget);
+
     return normalizedTarget.includes(normalizedQuery);
   }
 

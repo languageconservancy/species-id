@@ -1,7 +1,7 @@
 <!-- Map image -->
 @if (mapLoadState !== 'error') {
   <ion-img
-    class="w-full h-auto md:w-1/3 mx-auto ion-padding mt-4 md:mt-8"
+    class="w-full h-auto max-w-lg mx-auto ion-padding mt-4 md:mt-8"
     [src]="mapImageUrl"
     (ionImgDidLoad)="onMapImageLoad()"
     (ionError)="onMapImageError()"
