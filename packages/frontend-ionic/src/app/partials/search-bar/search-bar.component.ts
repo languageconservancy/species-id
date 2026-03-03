@@ -7,13 +7,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { OptionsComponent } from 'app/modals/options/options.component';
-import { SearchService } from 'app/services/search.service';
+import { SearchBarService } from 'app/services/search-bar.service';
 import { IonSearchbar, IonIcon, ModalController, IonSpinner } from '@ionic/angular/standalone';
 import { search, options, mic, stop } from 'ionicons/icons';
 import { SpeciesType } from 'app/models/species.model';
 import { addIcons } from 'ionicons';
 import { Subscription } from 'rxjs';
-import { RecordingState } from 'app/services/search.service';
+import { RecordingState } from 'app/services/search-bar.service';
 import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Component({
@@ -34,7 +34,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public showRecordingMaxDurationToast = false;
 
   constructor(
-    public searchService: SearchService,
+    public searchBarService: SearchBarService,
     private modalController: ModalController
   ) {
     addIcons({ search, options, mic, stop });
@@ -43,7 +43,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Subscribe to the isRecording observable
     this.subscription.add(
-      this.searchService.recordingState$.subscribe((recordingState) => {
+      this.searchBarService.recordingState$.subscribe((recordingState) => {
         this.recordingState = recordingState;
         if (recordingState === RecordingState.ConvertingBecauseMaxDurationReached) {
           this.showRecordingMaxDurationToast = true;
@@ -53,7 +53,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     // Subscribe to recording text updates
     this.subscription.add(
-      this.searchService.recordingText$.subscribe((text) => {
+      this.searchBarService.recordingText$.subscribe((text) => {
         this.setSearchInput(text);
       })
     );
@@ -65,7 +65,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   searchChanged(event: CustomEvent) {
     const searchTerm = event.detail.value;
-    this.searchService.setSearch(searchTerm);
+    this.searchBarService.setSearch(searchTerm);
   }
 
   async setSearchInput(searchTerm: string) {
@@ -77,7 +77,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         // Trigger the input event to update the searchbar's internal state
         inputElement.dispatchEvent(new Event('input', { bubbles: true }));
       }
-      this.searchService.setSearch(searchTerm);
+      this.searchBarService.setSearch(searchTerm);
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error setting search input:', error);
     }
@@ -99,9 +99,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   // Helper methods for template
   async toggleRecording() {
     if (this.recordingState === RecordingState.Recording) {
-      await this.searchService.stopRecording(true);
+      await this.searchBarService.stopRecording(true);
     } else {
-      await this.searchService.startRecording();
+      await this.searchBarService.startRecording();
     }
   }
 }

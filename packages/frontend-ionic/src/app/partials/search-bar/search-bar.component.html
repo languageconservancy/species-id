@@ -13,19 +13,19 @@
 
     <div class="flex items-center gap-2 pr-2">
       @if (
-        searchService.recordingState === RecordingStateEnum.Recording ||
-        searchService.recordingState === RecordingStateEnum.NotRecording
+        searchBarService.recordingState === RecordingStateEnum.Recording ||
+        searchBarService.recordingState === RecordingStateEnum.NotRecording
       ) {
         <ion-icon
-          [name]="searchService.recordingState === RecordingStateEnum.Recording ? 'stop' : 'mic'"
+          [name]="searchBarService.recordingState === RecordingStateEnum.Recording ? 'stop' : 'mic'"
           size="large"
           color="light"
           class="cursor-pointer"
           (click)="toggleRecording()"
         ></ion-icon>
       } @else if (
-        searchService.recordingState === RecordingStateEnum.Converting ||
-        searchService.recordingState === RecordingStateEnum.ConvertingBecauseMaxDurationReached
+        searchBarService.recordingState === RecordingStateEnum.Converting ||
+        searchBarService.recordingState === RecordingStateEnum.ConvertingBecauseMaxDurationReached
       ) {
         <ion-spinner name="dots" color="light" class="w-8"></ion-spinner>
       }

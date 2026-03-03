@@ -5,7 +5,7 @@ import { BaseExploreContainerComponent } from './base-explore-container.page';
 import { BirdListItemComponent } from '../../partials/bird-list-item/bird-list-item.component';
 import { Bird, Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
-import { SearchService } from 'app/services/search.service';
+import { SearchBarService } from 'app/services/search-bar.service';
 import { SpeciesType } from 'app/models/species.model';
 import { IonList, IonItemGroup, IonLabel, IonContent } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
@@ -13,6 +13,7 @@ import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component
 import { HeaderComponent } from 'app/partials/header/header.component';
 import { ListDividerComponent } from 'app/partials/list-divider/list-divider.component';
 import { AnalyticsService } from 'app/services/analytics.service';
+import { FuzzySearchService } from 'app/services/fuzzy-search.service';
 import { ASSET_PATHS } from 'app/constants/app-consts';
 
 @Component({
@@ -38,10 +39,11 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
     private birdQueriesService: BirdQueriesService,
     private birdPreferencesService: BirdPreferencesService,
     protected override speciesService: SpeciesService,
-    protected override searchService: SearchService,
+    protected override searchBarService: SearchBarService,
+    protected override fuzzySearchService: FuzzySearchService,
     protected override analyticsService: AnalyticsService
   ) {
-    super(speciesService, searchService, analyticsService);
+    super(speciesService, searchBarService, fuzzySearchService, analyticsService);
   }
 
   override ngOnInit() {
