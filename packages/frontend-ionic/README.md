@@ -28,12 +28,7 @@ A cross-platform mobile application for species identification, built with Ionic
 - **Capacitor CLI**: `npm install -g @capacitor/cli`
 - **Ionic CLI**: `npm install -g @ionic/cli`
 
-### For Mobile Development
-
-- **iOS**: Xcode 14+ (macOS only)
-- **Android**: Android Studio with SDK 33+
-
-## 📦 Installation
+## 📦 Quick Start
 
 1. **Clone the repository**
 

@@ -1,6 +1,13 @@
 <app-header title="Explore Plants"></app-header>
 
 <ion-content [fullscreen]="true">
+  @if (showDismissOverlay) {
+  <div
+    class="dismiss-keyboard-overlay"
+    (click)="onDismissOverlayClick($event)"
+    aria-hidden="true"
+  ></div>
+  }
   <ion-list class="">
     <!-- No items found -->
     @if (items.length === 0) {

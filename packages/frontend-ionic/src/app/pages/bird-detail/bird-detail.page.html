@@ -1,12 +1,14 @@
 @if (loading) {
-<ion-content class="flex items-center justify-center h-full overflow-y-auto">
+<ion-content
+  class="flex items-center justify-center h-full overflow-y-auto safe-pad-bottom safe-pad-top"
+>
   <ion-label class="ion-text-center">
     <p>Loading...</p>
   </ion-label>
 </ion-content>
 } @else {
 
-<ion-content class="mt-0" style="--padding-bottom: 5rem">
+<ion-content class="mt-0 safe-pad-bottom safe-pad-top">
   <div class="bg-black pt-safe">
     <app-image-carousel [species]="species"></app-image-carousel>
   </div>

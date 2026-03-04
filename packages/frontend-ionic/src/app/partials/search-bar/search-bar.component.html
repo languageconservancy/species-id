@@ -7,6 +7,9 @@
       [debounce]="500"
       placeholder="Search..."
       (ionInput)="searchChanged($event)"
+      (ionFocus)="onSearchFocus()"
+      (ionBlur)="onSearchBlur()"
+      (keydown.enter)="onSearchKeydownEnter($event)"
       show-clear-button="always"
       color="light"
     ></ion-searchbar>

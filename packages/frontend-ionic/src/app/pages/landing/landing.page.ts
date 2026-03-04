@@ -7,6 +7,7 @@ import { bird } from '../../../assets/core/icon/bird';
 import { leaf } from '../../../assets/core/icon/leaf';
 import { SpeciesType } from 'app/models/species.model';
 import { ConfigService } from 'app/services/config.service';
+import { APP_VERSION } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-landing',
@@ -17,6 +18,7 @@ import { ConfigService } from 'app/services/config.service';
 export class LandingPage {
   SpeciesType = SpeciesType;
   mainMenuLabel: string = '';
+  readonly appVersion = APP_VERSION;
 
   constructor(
     private router: Router,

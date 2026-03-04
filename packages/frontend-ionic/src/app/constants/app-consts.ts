@@ -1,3 +1,8 @@
+import packageJson from '../../../package.json';
+
+/** App version; single source of truth is package.json. */
+export const APP_VERSION = (packageJson as { version?: string }).version ?? '0.0.0';
+
 // Asset paths used by multiple files
 export const ASSET_PATHS = {
   // Core assets

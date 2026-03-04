@@ -5,6 +5,7 @@ import { addIcons } from 'ionicons';
 import { close } from 'ionicons/icons';
 import { HeaderComponent } from 'app/partials/header/header.component';
 import { ConfigService } from 'app/services/config.service';
+import { APP_VERSION } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-about',
@@ -14,6 +15,7 @@ import { ConfigService } from 'app/services/config.service';
 })
 export class AboutPage {
   mainMenuLabel: string = '';
+  readonly appVersion = APP_VERSION;
 
   constructor(
     private navController: NavController,
