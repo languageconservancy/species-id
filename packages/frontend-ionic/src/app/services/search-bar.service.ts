@@ -35,7 +35,35 @@ export class SearchBarService {
   private gotUserPermissionToRecordAudio: boolean = false;
   private recordingTimeout: number = 0;
 
+  /** Timestamp when search input blurred; used to ignore the next tap (dismiss keyboard without opening item). */
+  private keyboardDismissedAt = 0;
+  private static readonly IGNORE_TAP_MS = 400;
+
+  /** Emits true to show overlay (on focus), false to hide it (on blur). Overlay captures the tap that dismisses the keyboard. */
+  private dismissOverlayVisibilitySubject = new Subject<boolean>();
+  public dismissOverlayVisibility$ = this.dismissOverlayVisibilitySubject.asObservable();
+
   constructor() {}
+
+  /** Call when the search bar gains focus (keyboard opens); explore page shows invisible overlay. */
+  notifySearchFocus(): void {
+    this.dismissOverlayVisibilitySubject.next(true);
+  }
+
+  /** Call when the search bar loses focus (e.g. user tapped outside to dismiss keyboard). */
+  notifySearchBlur(): void {
+    this.keyboardDismissedAt = Date.now();
+    this.dismissOverlayVisibilitySubject.next(false);
+  }
+
+  /** Returns true if the tap should be ignored (e.g. first tap after blur was only to dismiss keyboard). */
+  shouldIgnoreTap(): boolean {
+    if (Date.now() - this.keyboardDismissedAt < SearchBarService.IGNORE_TAP_MS) {
+      this.keyboardDismissedAt = 0;
+      return true;
+    }
+    return false;
+  }
 
   setSearch(query: string): void {
     this.searchSubject.next(query);

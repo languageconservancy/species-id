@@ -1,3 +1,10 @@
+.dismiss-keyboard-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  /* Invisible; captures the tap that dismissed the keyboard so the list item underneath doesn't get it. */
+}
+
 #container {
   text-align: center;
 

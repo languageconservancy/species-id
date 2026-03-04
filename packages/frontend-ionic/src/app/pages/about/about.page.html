@@ -1,8 +1,8 @@
 <app-header title="About"></app-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding safe-pad-bottom">
   <div class="flex flex-col gap-4 items-center justify-center h-full">
-    <h1 class="text-2xl font-bold mb-4">{{ mainMenuLabel }}</h1>
+    <h1 class="text-center text-2xl font-bold mb-4">{{ mainMenuLabel }}</h1>
     <p class="text-center">
       A comprehensive guide to birds and plants found in the Crow Country, in the Crow language.
     </p>
@@ -10,6 +10,6 @@
       This application helps users identify and learn about local birds and plants, with names in
       both Crow, English, and Latin, and descriptions in English.
     </p>
-    <p class="text-center mt-4 text-sm text-gray-500">Version 0.4.0</p>
+    <p class="text-center mt-4 text-sm text-gray-500">Version {{ appVersion }}</p>
   </div>
 </ion-content>

@@ -68,6 +68,37 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.searchBarService.setSearch(searchTerm);
   }
 
+  onSearchFocus(): void {
+    this.searchBarService.notifySearchFocus();
+    this._attachEnterKeyBlur();
+  }
+
+  onSearchBlur(): void {
+    this.searchBarService.notifySearchBlur();
+  }
+
+  /** Blur the search input so Return key dismisses the keyboard (template keydown may not fire from shadow DOM). */
+  private async _attachEnterKeyBlur(): Promise<void> {
+    try {
+      const input = await this.searchBar.getInputElement();
+      const handler = (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          input.blur();
+        }
+      };
+      input.addEventListener('keydown', handler, { once: true });
+    } catch {
+      // ignore
+    }
+  }
+
+  onSearchKeydownEnter(event: Event): void {
+    const e = event as KeyboardEvent;
+    e.preventDefault();
+    (e.target as HTMLInputElement | null)?.blur();
+  }
+
   async setSearchInput(searchTerm: string) {
     try {
       // Get the input element from the searchbar

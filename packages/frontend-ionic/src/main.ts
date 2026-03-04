@@ -20,7 +20,7 @@ import { ConfigService } from 'app/services/config.service';
 import { AnalyticsService } from 'app/services/analytics.service';
 import { Capacitor } from '@capacitor/core';
 
-StatusBar.hide();
+StatusBar.show();
 
 registerSwiperElements();
 

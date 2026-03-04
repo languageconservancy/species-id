@@ -17,6 +17,9 @@ const config: CapacitorConfig = {
     VoiceRecorder: {
       enabled: true,
     },
+    Keyboard: {
+      resize: 'native',
+    },
   },
   server: {
     allowNavigation: ['us.i.posthog.com', '*.posthog.com'],

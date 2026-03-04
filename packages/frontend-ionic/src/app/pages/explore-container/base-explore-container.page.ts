@@ -14,6 +14,9 @@ import { AnalyticsService } from 'app/services/analytics.service';
   standalone: true,
 })
 export class BaseExploreContainerComponent implements OnDestroy, OnInit {
+  /** When true, an invisible overlay is shown to absorb the tap that dismissed the keyboard. */
+  showDismissOverlay = false;
+
   itemsLoading = true;
   items: Species[] = [];
   itemsAll: Species[] = [];
@@ -61,6 +64,21 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
   ngOnInit() {
     this._loadSpecies();
     this._subscribeAndHandleSearches();
+    this._subscribeDismissOverlay();
+  }
+
+  private _subscribeDismissOverlay(): void {
+    const sub = this.searchBarService.dismissOverlayVisibility$.subscribe((show) => {
+      this.showDismissOverlay = show;
+    });
+    this.subscribers.add(sub);
+  }
+
+  /** Called when the invisible overlay is tapped; removes overlay and consumes the tap. */
+  onDismissOverlayClick(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.showDismissOverlay = false;
   }
 
   ngOnDestroy() {
@@ -92,10 +110,10 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
     }
     const exactMatches = this.itemsAll.filter((item: Species) => {
       return (
-        item.nameLocal.toLowerCase().includes(this.searchTerm) ||
-        item.nameScientific.toLowerCase().includes(this.searchTerm) ||
-        item.nameEn.toLowerCase().includes(this.searchTerm) ||
-        item.nameMeaningEn.toLowerCase().includes(this.searchTerm)
+        this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameLocal) ||
+        this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameScientific) ||
+        this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameEn) ||
+        this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameMeaningEn)
       );
     });
     const fuzzyMatches = this.itemsAll.filter((item: Species) => {

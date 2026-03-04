@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { IonIcon, IonImg, IonItem, NavController } from '@ionic/angular/standalone';
 import { Species } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
+import { SearchBarService } from 'app/services/search-bar.service';
 import { chevronForward } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { SettingsService, AppSettings } from 'app/services/settings.service';
@@ -27,7 +28,8 @@ export class PlantListItemComponent implements OnInit {
   constructor(
     public speciesService: SpeciesService,
     public navController: NavController,
-    public settingsService: SettingsService
+    public settingsService: SettingsService,
+    private searchBarService: SearchBarService
   ) {
     addIcons({ chevronForward });
   }
@@ -69,6 +71,9 @@ export class PlantListItemComponent implements OnInit {
   }
 
   onItemClick(item: Species) {
+    if (this.searchBarService.shouldIgnoreTap()) {
+      return;
+    }
     this.navController.navigateForward(['/tabs/plants', item.id], {
       animationDirection: 'forward',
       animated: true,

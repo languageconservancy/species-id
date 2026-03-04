@@ -1,6 +1,13 @@
 <app-header title="Explore Birds" />
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="safe-pad-bottom">
+  @if (showDismissOverlay) {
+  <div
+    class="dismiss-keyboard-overlay"
+    (click)="onDismissOverlayClick($event)"
+    aria-hidden="true"
+  ></div>
+  }
   <ion-list class="">
     <!-- No items found -->
     @if (items.length === 0) {
