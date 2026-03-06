@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ASSET_PATHS } from 'app/constants/app-consts';
 
+export interface DomainLabels {
+  bird?: string;
+  plant?: string;
+}
+
 export interface AppConfig {
   assetBaseUrl: string;
   dbName: string;
@@ -10,6 +15,10 @@ export interface AppConfig {
   dbReadOnly: boolean;
   mainMenuLabel: string;
   language: string;
+  /** Short description under the app title on the landing page. */
+  landingSubtitle?: string;
+  /** Display labels for the two domains (e.g. menu, buttons). */
+  domainLabels?: DomainLabels;
   [key: string]: any; // allow extensibility
 }
 
@@ -61,5 +70,25 @@ export class ConfigService {
    */
   getAll(): AppConfig {
     return this.config as AppConfig;
+  }
+
+  /**
+   * Returns domain display labels, supporting both object shape (bird/plant) and legacy array shape.
+   */
+  getDomainLabels(): DomainLabels {
+    const raw = this.config?.domainLabels;
+    if (!raw) return { bird: 'Birds', plant: 'Plants' };
+    if (Array.isArray(raw)) {
+      const out: DomainLabels = {};
+      for (const entry of raw as Array<{ domain?: string; label?: string }>) {
+        if (entry.domain === 'birds' && entry.label) out.bird = entry.label;
+        if (entry.domain === 'plants' && entry.label) out.plant = entry.label;
+      }
+      return { bird: out.bird ?? 'Birds', plant: out.plant ?? 'Plants' };
+    }
+    return {
+      bird: (raw as DomainLabels).bird ?? 'Birds',
+      plant: (raw as DomainLabels).plant ?? 'Plants',
+    };
   }
 }

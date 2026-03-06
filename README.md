@@ -34,8 +34,7 @@ A cross-platform mobile application for species identification, built with Ionic
 
    ```bash
    git clone <repository-url>
-   cd <repository>
-   git submodule
+   cd <repository-name>
    ```
 
 2. **Install dependencies**
@@ -57,22 +56,20 @@ A cross-platform mobile application for species identification, built with Ionic
    git clone <private-species-data-repo-url> src/assets/species-data
    ```
 
-4. **Prepare species data** (see [Data Management](#data-management))
+4. **Download assets and copy into species-data**
+
+   If your project stores images and audio in S3, download them and copy into `src/assets/species-data/`:
 
    ```bash
-   # Process CSV files into SQL
-   node scripts/process-bird-data.mjs --orders sheets/orders.csv --birds sheets/birds.csv --output bird_data.sql
-
-   # Convert SQL to SQLite database
-   sqlite3 species-production.db < bird_data.sql
-   ```
-
-5. **Download assets** (optional, for production data)
-   ```bash
-   ./scripts/download-s3-assets.sh
+   S3_BUCKET=your-bucket-name ./scripts/download-s3-assets.sh
    node scripts/generate-index-json.mjs
-   node scripts/validate-index-against-db.mjs src/assets/species-data/databases/species-production.db external-assets/index.json
+   ./scripts/copy-species-data-to-app.sh
    ```
+
+   Optionally validate that the index matches your database:
+   `node scripts/validate-index-against-db.mjs src/assets/species-data/databases/species-production.db external-assets/index.json`
+
+   Building the database (e.g. from CSV or other sources) is project-specific; see [Data Management](#data-management) for one approach.
 
 ## 🏃‍♂️ Development
 
@@ -210,6 +207,22 @@ This repository is designed to be **project-agnostic** and can be used for diffe
 - **Modularity**: Easy to swap datasets without changing application code
 - **Scalability**: Different projects can have different data structures while sharing core functionality
 
+### Using this app for your own project
+
+The repo is **language- and project-agnostic**: no project-specific content is required in the codebase.
+
+1. **Clone** this repository.
+2. **Add species-data**: Clone your species data repo into `src/assets/species-data/`, or create your own (see [Expected Species Data Structure](#expected-species-data-structure)).
+3. **Config**: Ensure `src/assets/species-data/config/config.json` exists. Copy from [docs/config.template.json](docs/config.template.json) and set `mainMenuLabel`, `landingSubtitle`, `domainLabels`, `appName`, `appId`, etc.
+4. **Branding (optional)**: To use your own app name, bundle ID, and icons, run **before** building:
+   ```bash
+   node scripts/apply-branding.mjs
+   ```
+   Then run `ionic build` and `ionic cap sync ios` (or `android`). The script writes `branding.generated.json` (gitignored); Capacitor reads it for app name and ID. Optionally place icon/splash assets in `species-data/branding/` (see [App icon and splash screen](#app-icon-and-splash-screen)).
+5. **Build and run** as in [Building & Deployment](#-building--deployment).
+
+Project-specific data, config, and branding live only in the species-data directory (or your own repo). The main app repo stays generic and safe to pull from upstream.
+
 ### Setup Requirements
 
 The `src/assets/species-data/` directory must be populated before the app will function. This can be done by:
@@ -224,6 +237,16 @@ The `src/assets/species-data/` directory should contain:
 
 ```
 src/assets/species-data/
+├── config/
+│   └── config.json            # App config (mainMenuLabel, landingSubtitle, domainLabels, appName, appId, etc.)
+├── branding/                  # Optional: project icon and splash (see App icon and splash screen)
+│   ├── favicon.png            # Web favicon
+│   ├── icon-no-bg.png         # In-app menu icon
+│   ├── icon.png               # Fallback for web if favicon/icon-no-bg missing
+│   ├── ios/                   # iOS assets (apply-branding copies into app)
+│   │   ├── AppIcon.png        # 1024×1024 app icon
+│   │   └── Splash.imageset/   # Launch screen image set
+│   └── android/               # Android res (mipmap-*, drawable*, values); apply-branding copies into app
 ├── audios/
 ├── databases/
 │   ├── db-config.json         # Database configuration
@@ -231,12 +254,14 @@ src/assets/species-data/
 ├── images/
 │   ├── birds/
 │   └── plants/
-├── templates/
-│   └── config.template.json   # Configuration template (optional)
 └── index.json                 # Asset index file (if using external assets)
 ```
 
+A template for `config.json` with all optional keys is in [docs/config.template.json](docs/config.template.json). Copy it to `src/assets/species-data/config/config.json` and fill in your values.
+
 #### Key Files Explained
+
+- **`config/config.json`**: Runtime and optional build-time config. Keys include `mainMenuLabel`, `landingSubtitle`, `domainLabels` (object with `bird` and `plant` display names), `assetBaseUrl`, `dbName`, `posthogApiKey`, `posthogHost`, and optionally `appName`, `appId`, `splashBackgroundColor` for the apply-branding script.
 
 - **`databases/db-config.json`**: Contains database connection settings
 
@@ -254,7 +279,15 @@ src/assets/species-data/
 
 - **`index.json`**: Index of all media assets (images/audio) with file hashes for integrity checking and download management
 
-- **`templates/config.template.json`**: Optional configuration template for different deployment environments
+#### App icon and splash screen
+
+Branding assets **live in** `species-data/branding/`. The **apply-branding** script copies them into the app at build time (web → `src/assets/core/icon/`, iOS → `ios/App/App/Assets.xcassets/`, Android → `android/app/src/main/res/`). The main app repo only holds generic defaults so upstream pulls never overwrite your branding.
+
+- **Web**: Put `favicon.png` and `icon-no-bg.png` (and optionally `icon.png`) in `species-data/branding/`. apply-branding copies them to `src/assets/core/icon/`.
+- **iOS**: Put `AppIcon.png` (1024×1024) and optionally `Splash.imageset/` in `species-data/branding/ios/`. apply-branding copies them into the app’s Assets.xcassets.
+- **Android**: Put the same structure as `android/app/src/main/res/` under `species-data/branding/android/` (e.g. `mipmap-mdpi/`, `mipmap-hdpi/`, …, `drawable/`, `drawable-hdpi/`, …, `values/ic_launcher_background.xml`). apply-branding copies them into the app’s `res/`.
+
+To **migrate** existing app icons into species-data (one-time), run `node scripts/copy-branding-to-species-data.mjs`: it copies from the app’s current web and native assets into `species-data/branding/`. Then commit `species-data/branding/` in the species-data repo and use `npm run apply-branding` before builds.
 
 ## 🔧 Configuration
 

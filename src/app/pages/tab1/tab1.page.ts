@@ -4,6 +4,7 @@ import { addIcons } from 'ionicons';
 import { search, options } from 'ionicons/icons';
 import { ActivatedRoute } from '@angular/router';
 import { SpeciesType } from 'app/models/species.model';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-tab1',
@@ -15,7 +16,17 @@ export class Tab1Page implements OnInit {
   public domain: SpeciesType = SpeciesType.Bird;
   public speciesType = SpeciesType;
 
-  constructor(private route: ActivatedRoute) {
+  get domainLabel(): string {
+    const labels = this.configService.getDomainLabels();
+    return this.domain === SpeciesType.Bird
+      ? (labels.bird ?? 'Birds')
+      : (labels.plant ?? 'Plants');
+  }
+
+  constructor(
+    private route: ActivatedRoute,
+    private configService: ConfigService
+  ) {
     addIcons({ search, options });
   }
 

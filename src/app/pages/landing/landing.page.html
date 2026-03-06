@@ -5,8 +5,7 @@
         {{ mainMenuLabel }}
       </h1>
       <p class="text-lg mb-8 text-gray-600">
-        A comprehensive guide to birds and plants found in the Crow Reservation, in the Crow
-        language.
+        {{ landingSubtitle }}
       </p>
     </div>
 
@@ -19,7 +18,7 @@
         color="primary"
       >
         <ion-icon slot="start" name="bird"></ion-icon>
-        Explore Birds
+        Explore {{ domainLabelBird }}
       </ion-button>
 
       <ion-button
@@ -30,7 +29,7 @@
         color="secondary"
       >
         <ion-icon slot="start" name="leaf"></ion-icon>
-        Explore Plants
+        Explore {{ domainLabelPlant }}
       </ion-button>
     </div>
 

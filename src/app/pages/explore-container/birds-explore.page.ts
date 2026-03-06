@@ -15,6 +15,7 @@ import { ListDividerComponent } from 'app/partials/list-divider/list-divider.com
 import { AnalyticsService } from 'app/services/analytics.service';
 import { FuzzySearchService } from 'app/services/fuzzy-search.service';
 import { ASSET_PATHS } from 'app/constants/app-consts';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-birds-explore-page',
@@ -35,9 +36,15 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
 export class BirdsExplorePage extends BaseExploreContainerComponent implements OnInit, OnDestroy {
   private preferencesSubscription?: Subscription;
   public speciesType = SpeciesType;
+
+  get domainLabel(): string {
+    return this.configService.getDomainLabels().bird ?? 'Birds';
+  }
+
   constructor(
     private birdQueriesService: BirdQueriesService,
     private birdPreferencesService: BirdPreferencesService,
+    private configService: ConfigService,
     protected override speciesService: SpeciesService,
     protected override searchBarService: SearchBarService,
     protected override fuzzySearchService: FuzzySearchService,

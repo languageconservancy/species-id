@@ -73,3 +73,6 @@ external-assets/
 config.json
 scripts/*.sql
 src/assets/species-data/
+
+# Build-time branding (generated from species-data by apply-branding script)
+branding.generated.json

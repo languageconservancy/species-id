@@ -50,35 +50,23 @@ interface MenuItem {
 })
 export class MainMenuComponent {
   mainMenuLabel: string = '';
-  // Define the menu items
-  menuItems: MenuItem[] = [
-    {
-      label: 'Home',
-      icon: 'home',
-      link: '/',
-    },
-    {
-      label: 'Birds',
-      icon: 'bird',
-      link: '/tabs/birds',
-    },
-    {
-      label: 'Plants',
-      icon: 'leaf',
-      link: '/tabs/plants',
-    },
-    {
-      label: 'About',
-      icon: 'information-circle',
-      link: '/tabs/about',
-    },
-  ];
+
+  get menuItems(): MenuItem[] {
+    const labels = this.configService.getDomainLabels();
+    return [
+      { label: 'Home', icon: 'home', link: '/' },
+      { label: labels.bird ?? 'Birds', icon: 'bird', link: '/tabs/birds' },
+      { label: labels.plant ?? 'Plants', icon: 'leaf', link: '/tabs/plants' },
+      { label: 'About', icon: 'information-circle', link: '/tabs/about' },
+    ];
+  }
+
   constructor(
     private router: Router,
     private modalController: ModalController,
     public configService: ConfigService
   ) {
-    this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Birds & Plants';
+    this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Species ID';
     // Add icons to the menu
     addIcons({
       leaf,

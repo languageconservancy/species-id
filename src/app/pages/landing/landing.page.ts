@@ -18,6 +18,9 @@ import { APP_VERSION } from 'app/constants/app-consts';
 export class LandingPage {
   SpeciesType = SpeciesType;
   mainMenuLabel: string = '';
+  landingSubtitle: string = '';
+  domainLabelBird: string = 'Birds';
+  domainLabelPlant: string = 'Plants';
   readonly appVersion = APP_VERSION;
 
   constructor(
@@ -25,7 +28,11 @@ export class LandingPage {
     private configService: ConfigService
   ) {
     addIcons({ bird, leaf });
-    this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Birds & Plants';
+    this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Species ID';
+    this.landingSubtitle = this.configService.get('landingSubtitle') ?? 'A guide to species in your region.';
+    const labels = this.configService.getDomainLabels();
+    this.domainLabelBird = labels.bird ?? 'Birds';
+    this.domainLabelPlant = labels.plant ?? 'Plants';
   }
 
   navigateToExplore(type: SpeciesType) {

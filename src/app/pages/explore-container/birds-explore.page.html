@@ -1,4 +1,4 @@
-<app-header title="Explore Birds" />
+<app-header [title]="'Explore ' + domainLabel" />
 
 <ion-content [fullscreen]="true" class="safe-pad-bottom">
   @if (showDismissOverlay) {

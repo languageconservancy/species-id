@@ -11,7 +11,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "version:sync": "node scripts/sync-version.mjs"
+    "version:sync": "node scripts/sync-version.mjs",
+    "apply-branding": "node scripts/apply-branding.mjs",
+    "copy-branding-to-species-data": "node scripts/copy-branding-to-species-data.mjs"
   },
   "private": true,
   "dependencies": {

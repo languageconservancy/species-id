@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#FFFFFF</color>
-    <!-- Yellow splash background (matches app secondary color #f3d30a) -->
-    <color name="splash_screen_background">#f3d30a</color>
+    <!-- Splash background (neutral default; override via apply-branding from species-data) -->
+    <color name="splash_screen_background">#E0E0E0</color>
 </resources>

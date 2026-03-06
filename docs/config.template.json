@@ -1,0 +1,16 @@
+{
+  "assetBaseUrl": "https://your-assets-bucket.s3.amazonaws.com/",
+  "dbName": "species-production",
+  "mainMenuLabel": "Species ID",
+  "language": "English",
+  "landingSubtitle": "A guide to species in your region.",
+  "domainLabels": {
+    "bird": "Birds",
+    "plant": "Plants"
+  },
+  "posthogApiKey": "",
+  "posthogHost": "https://us.i.posthog.com",
+  "_comment_appBranding": "Optional: add appName and appId for apply-branding script (native app name and bundle ID).",
+  "appName": "Species ID",
+  "appId": "org.speciesid.app"
+}
