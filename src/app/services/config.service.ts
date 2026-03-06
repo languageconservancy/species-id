@@ -19,6 +19,10 @@ export interface AppConfig {
   landingSubtitle?: string;
   /** Display labels for the two domains (e.g. menu, buttons). */
   domainLabels?: DomainLabels;
+  /** About page: short tagline (e.g. "A comprehensive guide to..."). */
+  aboutDescription?: string;
+  /** About page: longer body paragraph. */
+  aboutBody?: string;
   [key: string]: any; // allow extensibility
 }
 

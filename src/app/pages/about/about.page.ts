@@ -15,6 +15,8 @@ import { APP_VERSION } from 'app/constants/app-consts';
 })
 export class AboutPage {
   mainMenuLabel: string = '';
+  aboutDescription: string = '';
+  aboutBody: string = '';
   readonly appVersion = APP_VERSION;
 
   constructor(
@@ -22,7 +24,12 @@ export class AboutPage {
     private configService: ConfigService
   ) {
     addIcons({ close });
-    this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Birds & Plants';
+    this.mainMenuLabel = this.configService.get('mainMenuLabel') ?? 'Species ID';
+    this.aboutDescription =
+      this.configService.get('aboutDescription') ?? 'A guide to species in your region.';
+    this.aboutBody =
+      this.configService.get('aboutBody') ??
+      'This app helps you identify and learn about local species, with names and descriptions.';
   }
 
   close() {

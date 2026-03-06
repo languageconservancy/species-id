@@ -8,6 +8,8 @@
     "bird": "Birds",
     "plant": "Plants"
   },
+  "aboutDescription": "A guide to species in your region.",
+  "aboutBody": "This app helps you identify and learn about local species, with names and descriptions.",
   "posthogApiKey": "",
   "posthogHost": "https://us.i.posthog.com",
   "_comment_appBranding": "Optional: add appName and appId for apply-branding script (native app name and bundle ID).",

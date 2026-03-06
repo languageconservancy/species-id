@@ -71,6 +71,16 @@ A cross-platform mobile application for species identification, built with Ionic
 
    Building the database (e.g. from CSV or other sources) is project-specific; see [Data Management](#data-management) for one approach.
 
+5. **Run the app in the browser**
+
+   a) Run this command to serve the app to your browser
+
+   ```bash
+   npm run start
+   ```
+
+   b) Navigate to localhost:4200 to explore the app
+
 ## 🏃‍♂️ Development
 
 ### Web Development
@@ -261,7 +271,7 @@ A template for `config.json` with all optional keys is in [docs/config.template.
 
 #### Key Files Explained
 
-- **`config/config.json`**: Runtime and optional build-time config. Keys include `mainMenuLabel`, `landingSubtitle`, `domainLabels` (object with `bird` and `plant` display names), `assetBaseUrl`, `dbName`, `posthogApiKey`, `posthogHost`, and optionally `appName`, `appId`, `splashBackgroundColor` for the apply-branding script.
+- **`config/config.json`**: Runtime and optional build-time config. Keys include `mainMenuLabel`, `landingSubtitle`, `domainLabels` (object with `bird` and `plant` display names), `aboutDescription`, `aboutBody` (About page copy), `assetBaseUrl`, `dbName`, `posthogApiKey`, `posthogHost`, and optionally `appName`, `appId`, `splashBackgroundColor` for the apply-branding script.
 
 - **`databases/db-config.json`**: Contains database connection settings
 
