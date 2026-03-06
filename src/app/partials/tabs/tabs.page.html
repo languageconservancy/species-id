@@ -5,7 +5,7 @@
     </ion-tab-button>
     <ion-tab-button tab="birds" [routerLink]="['/tabs/birds']">
       @if (iconUrlBird) {
-        <img [src]="iconUrlBird" alt="" aria-hidden="true" class="tab-icon" />
+        <img [src]="iconUrlBird" alt="" aria-hidden="true" class="w-7 h-7 object-contain brightness-0 invert" />
       } @else {
         <ion-icon aria-hidden="true" color="light" name="bird"></ion-icon>
       }
@@ -13,7 +13,7 @@
     </ion-tab-button>
     <ion-tab-button tab="plants" [routerLink]="['/tabs/plants']">
       @if (iconUrlPlant) {
-        <img [src]="iconUrlPlant" alt="" aria-hidden="true" class="tab-icon" />
+        <img [src]="iconUrlPlant" alt="" aria-hidden="true" class="w-7 h-7 object-contain brightness-0 invert" />
       } @else {
         <ion-icon aria-hidden="true" color="light" name="leaf"></ion-icon>
       }

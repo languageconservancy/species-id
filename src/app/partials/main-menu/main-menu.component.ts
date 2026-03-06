@@ -31,7 +31,6 @@ interface MenuItem {
 @Component({
   selector: 'app-main-menu',
   templateUrl: './main-menu.component.html',
-  styleUrls: ['./main-menu.component.scss'],
   standalone: true,
   imports: [
     IonMenu,

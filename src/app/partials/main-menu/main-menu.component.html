@@ -15,7 +15,7 @@
         @for (item of menuItems; track item.link; let index = $index) {
           <ion-item button (click)="menuItemClicked(item.link)" color="primary">
             @if (item.iconUrl) {
-              <img [src]="item.iconUrl" alt="" slot="start" class="menu-item-icon" />
+              <img [src]="item.iconUrl" alt="" slot="start" class="w-6 h-6 object-contain me-4" />
             } @else {
               <ion-icon slot="start" [name]="item.icon"></ion-icon>
             }

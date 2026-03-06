@@ -18,7 +18,6 @@ import { ConfigService } from 'app/services/config.service';
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
-  styleUrls: ['tabs.page.scss'],
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, RouterLink],
 })
 export class TabsPage {
