@@ -50,7 +50,7 @@ Validates that all files referenced in the database are present in `index.json`,
 
 ### copy-branding-to-species-data.mjs
 
-- One-time or occasional: copies all branding from the app into `species-data/branding/` so the species-data repo owns it. Copies web assets (`src/assets/core/icon/`: favicon, icon-no-bg, icon, icon-1024), iOS (`AppIcon.png`, `Splash.imageset` → `branding/ios/`), and Android (mipmap-*, drawable*, values/ic_launcher_background.xml → `branding/android/`). Run when moving existing app icons into species-data; then commit `species-data/branding/` in the species-data repo and use `apply-branding.mjs` before builds.
+- One-time or occasional: copies all branding from the app into `species-data/branding/` so the species-data repo owns it. Copies web assets (`src/assets/core/icon/`: favicon, icon-no-bg, icon, icon-1024), menu/tab icons (tab1-icon.svg, tab2-icon.svg → `branding/icons/`), iOS (`AppIcon.png`, `Splash.imageset` → `branding/ios/`), and Android (mipmap-*, drawable*, values/ic_launcher_background.xml → `branding/android/`). Run when moving existing app icons into species-data; then commit `species-data/branding/` in the species-data repo and use `apply-branding.mjs` before builds.
 
 ### apply-branding.mjs
 

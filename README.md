@@ -256,6 +256,7 @@ src/assets/species-data/
 │   ├── ios/                   # iOS assets (apply-branding copies into app)
 │   │   ├── AppIcon.png        # 1024×1024 app icon
 │   │   └── Splash.imageset/   # Launch screen image set
+│   ├── icons/                 # Optional: tab1-icon.svg, tab2-icon.svg for menu and tab icons (see domainIconUrls in config)
 │   └── android/               # Android res (mipmap-*, drawable*, values); apply-branding copies into app
 ├── audios/
 ├── databases/
@@ -271,7 +272,7 @@ A template for `config.json` with all optional keys is in [docs/config.template.
 
 #### Key Files Explained
 
-- **`config/config.json`**: Runtime and optional build-time config. Keys include `mainMenuLabel`, `landingSubtitle`, `domainLabels` (object with `bird` and `plant` display names), `aboutDescription`, `aboutBody` (About page copy), `assetBaseUrl`, `dbName`, `posthogApiKey`, `posthogHost`, and optionally `appName`, `appId`, `splashBackgroundColor` for the apply-branding script.
+- **`config/config.json`**: Runtime and optional build-time config. Keys include `mainMenuLabel`, `landingSubtitle`, `domainLabels` (object with `bird` and `plant` display names), `tabLabels` (optional short labels for the tab bar; defaults to `domainLabels`), `domainIconUrls` (optional `bird`/`plant` image URLs for menu and tab icons, e.g. `assets/species-data/branding/icons/tab1-icon.svg`), `aboutDescription`, `aboutBody` (About page copy), `appVersion` (optional; when set, overrides package.json for the version shown in the app), `assetBaseUrl`, `dbName`, `posthogApiKey`, `posthogHost`, and optionally `appName`, `appId`, `splashBackgroundColor` for the apply-branding script.
 
 - **`databases/db-config.json`**: Contains database connection settings
 

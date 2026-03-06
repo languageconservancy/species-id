@@ -21,7 +21,9 @@ export class LandingPage {
   landingSubtitle: string = '';
   domainLabelBird: string = 'Birds';
   domainLabelPlant: string = 'Plants';
-  readonly appVersion = APP_VERSION;
+  get appVersion(): string {
+    return this.configService.get('appVersion') ?? APP_VERSION;
+  }
 
   constructor(
     private router: Router,

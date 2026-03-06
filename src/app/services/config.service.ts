@@ -6,6 +6,11 @@ export interface DomainLabels {
   plant?: string;
 }
 
+export interface DomainIconUrls {
+  bird?: string;
+  plant?: string;
+}
+
 export interface AppConfig {
   assetBaseUrl: string;
   dbName: string;
@@ -23,6 +28,12 @@ export interface AppConfig {
   aboutDescription?: string;
   /** About page: longer body paragraph. */
   aboutBody?: string;
+  /** Optional icon image URLs for menu/tabs (e.g. from species-data/branding/icons). */
+  domainIconUrls?: DomainIconUrls;
+  /** Optional short labels for tab bar (defaults to domainLabels). */
+  tabLabels?: DomainLabels;
+  /** Version string shown in the app (e.g. landing, about). When set, overrides package.json version. */
+  appVersion?: string;
   [key: string]: any; // allow extensibility
 }
 
@@ -94,5 +105,24 @@ export class ConfigService {
       bird: (raw as DomainLabels).bird ?? 'Birds',
       plant: (raw as DomainLabels).plant ?? 'Plants',
     };
+  }
+
+  /** Tab bar labels (defaults to domain labels). */
+  getTabLabels(): DomainLabels {
+    const tabLabels = this.config?.tabLabels as DomainLabels | undefined;
+    if (tabLabels?.bird || tabLabels?.plant) {
+      return {
+        bird: tabLabels.bird ?? this.getDomainLabels().bird ?? 'Birds',
+        plant: tabLabels.plant ?? this.getDomainLabels().plant ?? 'Plants',
+      };
+    }
+    return this.getDomainLabels();
+  }
+
+  /** Optional icon image URLs for domain menu/tab icons (from species-data/branding). */
+  getDomainIconUrls(): DomainIconUrls | null {
+    const urls = this.config?.domainIconUrls as DomainIconUrls | undefined;
+    if (!urls?.bird && !urls?.plant) return null;
+    return { bird: urls?.bird, plant: urls?.plant };
   }
 }

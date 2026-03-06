@@ -13,6 +13,7 @@ import { bird } from '../../../assets/core/icon/bird';
 import { leaf } from '../../../assets/core/icon/leaf';
 import { triangle, ellipse, square, search, menu, options } from 'ionicons/icons';
 import { SpeciesType } from 'app/models/species.model';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-tabs',
@@ -25,9 +26,24 @@ export class TabsPage {
   speciesType = SpeciesType;
   currentDomain: SpeciesType = SpeciesType.Bird;
 
-  constructor(private menuController: MenuController) {
+  get tabLabelBird(): string {
+    return this.configService.getTabLabels().bird ?? 'Birds';
+  }
+  get tabLabelPlant(): string {
+    return this.configService.getTabLabels().plant ?? 'Plants';
+  }
+  get iconUrlBird(): string | null {
+    return this.configService.getDomainIconUrls()?.bird ?? null;
+  }
+  get iconUrlPlant(): string | null {
+    return this.configService.getDomainIconUrls()?.plant ?? null;
+  }
+
+  constructor(
+    private menuController: MenuController,
+    private configService: ConfigService
+  ) {
     addIcons({ triangle, ellipse, square, search, menu, options, bird, leaf });
-    // this._getRouteData();
   }
 
   // private _getRouteData() {

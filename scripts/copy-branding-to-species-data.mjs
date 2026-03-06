@@ -58,6 +58,17 @@ function main() {
     console.log('Copied icon-1024.png -> species-data/branding/');
   }
 
+  // --- Menu/tab icons (tab1-icon.svg, tab2-icon.svg) -> species-data/branding/icons/ ---
+  const brandingIconsDir = path.join(BRANDING_DIR, 'icons');
+  fs.mkdirSync(brandingIconsDir, { recursive: true });
+  for (const name of ['tab1-icon.svg', 'tab2-icon.svg']) {
+    const src = path.join(ICON_DIR, name);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, path.join(brandingIconsDir, name));
+      console.log('Copied', name, '-> species-data/branding/icons/');
+    }
+  }
+
   // --- iOS: AppIcon and optional Splash ---
   const brandingIos = path.join(BRANDING_DIR, 'ios');
   fs.mkdirSync(brandingIos, { recursive: true });

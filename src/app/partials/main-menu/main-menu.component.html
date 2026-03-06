@@ -14,7 +14,11 @@
 
         @for (item of menuItems; track item.link; let index = $index) {
           <ion-item button (click)="menuItemClicked(item.link)" color="primary">
-            <ion-icon slot="start" [name]="item.icon"></ion-icon>
+            @if (item.iconUrl) {
+              <img [src]="item.iconUrl" alt="" slot="start" class="menu-item-icon" />
+            } @else {
+              <ion-icon slot="start" [name]="item.icon"></ion-icon>
+            }
             <h2 class="font-menuItems text-2xl font-bold py-2">{{ item.label }}</h2>
           </ion-item>
         }

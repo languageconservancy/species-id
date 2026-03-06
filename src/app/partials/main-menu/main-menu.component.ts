@@ -24,6 +24,8 @@ interface MenuItem {
   label: string;
   icon: string;
   link: string;
+  /** When set, use img instead of ion-icon (project icon from species-data). */
+  iconUrl?: string;
 }
 
 @Component({
@@ -53,10 +55,21 @@ export class MainMenuComponent {
 
   get menuItems(): MenuItem[] {
     const labels = this.configService.getDomainLabels();
+    const iconUrls = this.configService.getDomainIconUrls();
     return [
       { label: 'Home', icon: 'home', link: '/' },
-      { label: labels.bird ?? 'Birds', icon: 'bird', link: '/tabs/birds' },
-      { label: labels.plant ?? 'Plants', icon: 'leaf', link: '/tabs/plants' },
+      {
+        label: labels.bird ?? 'Birds',
+        icon: 'bird',
+        link: '/tabs/birds',
+        iconUrl: iconUrls?.bird ?? undefined,
+      },
+      {
+        label: labels.plant ?? 'Plants',
+        icon: 'leaf',
+        link: '/tabs/plants',
+        iconUrl: iconUrls?.plant ?? undefined,
+      },
       { label: 'About', icon: 'information-circle', link: '/tabs/about' },
     ];
   }

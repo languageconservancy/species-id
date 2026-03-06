@@ -4,12 +4,20 @@
       <ion-icon aria-hidden="true" color="light" name="menu"></ion-icon>
     </ion-tab-button>
     <ion-tab-button tab="birds" [routerLink]="['/tabs/birds']">
-      <ion-icon aria-hidden="true" color="light" name="bird"></ion-icon>
-      <ion-label class="text-sm font-localNames" color="light">Dakáake</ion-label>
+      @if (iconUrlBird) {
+        <img [src]="iconUrlBird" alt="" aria-hidden="true" class="tab-icon" />
+      } @else {
+        <ion-icon aria-hidden="true" color="light" name="bird"></ion-icon>
+      }
+      <ion-label class="text-sm font-localNames" color="light">{{ tabLabelBird }}</ion-label>
     </ion-tab-button>
     <ion-tab-button tab="plants" [routerLink]="['/tabs/plants']">
-      <ion-icon aria-hidden="true" color="light" name="leaf"></ion-icon>
-      <ion-label class="text-sm font-localNames" color="light">Baaapáale</ion-label>
+      @if (iconUrlPlant) {
+        <img [src]="iconUrlPlant" alt="" aria-hidden="true" class="tab-icon" />
+      } @else {
+        <ion-icon aria-hidden="true" color="light" name="leaf"></ion-icon>
+      }
+      <ion-label class="text-sm font-localNames" color="light">{{ tabLabelPlant }}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

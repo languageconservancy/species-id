@@ -1,6 +1,6 @@
 import packageJson from '../../../package.json';
 
-/** App version; single source of truth is package.json. */
+/** App version fallback when config.appVersion is not set (e.g. package.json in project-agnostic repo). */
 export const APP_VERSION = (packageJson as { version?: string }).version ?? '0.0.0';
 
 // Asset paths used by multiple files

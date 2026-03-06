@@ -17,7 +17,9 @@ export class AboutPage {
   mainMenuLabel: string = '';
   aboutDescription: string = '';
   aboutBody: string = '';
-  readonly appVersion = APP_VERSION;
+  get appVersion(): string {
+    return this.configService.get('appVersion') ?? APP_VERSION;
+  }
 
   constructor(
     private navController: NavController,
