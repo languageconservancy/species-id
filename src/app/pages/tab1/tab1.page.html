@@ -1,0 +1,11 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title> Explore {{ domainLabel }} </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+@switch (domain) { @case (speciesType.Bird) {
+<app-birds-explore-page></app-birds-explore-page>
+} @case (speciesType.Plant) {
+<app-plants-explore-page></app-plants-explore-page>
+} }

@@ -1,0 +1,38 @@
+<ion-menu menu-id="main-menu" contentId="main-content" side="start" type="overlay" color="primary">
+  <ion-content class="ion-padding safe-pad-bottom safe-pad-top" color="primary">
+    <div class="flex flex-col w-full h-full justify-end items-start pb-20">
+      <!-- App icon -->
+      <div class="flex flex-col items-center justify-center mx-auto">
+        <img src="assets/core/icon/icon-no-bg.png" alt="App Icon" class="w-32 h-32" />
+      </div>
+      <ion-list lines="inset" color="primary">
+        <ion-list-header class="pb-2" color="primary">
+          <ion-label class="ion-text-center text-wrap font-menuItems text-4xl font-bold">{{
+            configService.get('mainMenuLabel')
+          }}</ion-label>
+        </ion-list-header>
+
+        @for (item of menuItems; track item.link; let index = $index) {
+          <ion-item button (click)="menuItemClicked(item.link)" color="primary">
+            @if (item.iconUrl) {
+              <img [src]="item.iconUrl" alt="" slot="start" class="w-6 h-6 object-contain me-4" />
+            } @else {
+              <ion-icon slot="start" [name]="item.icon"></ion-icon>
+            }
+            <h2 class="font-menuItems text-2xl font-bold py-2">{{ item.label }}</h2>
+          </ion-item>
+        }
+        <ion-item button (click)="openSettingsModal()" color="primary">
+          <ion-icon slot="start" name="settings"></ion-icon>
+          <h2 class="font-menuItems text-2xl font-bold py-2">Settings</h2>
+        </ion-item>
+      </ion-list>
+      <!-- X close button -->
+      <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="bottom-safe pb-2">
+        <ion-fab-button (click)="closeMenu()" color="primary">
+          <ion-icon name="close" color="light"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </div>
+  </ion-content>
+</ion-menu>

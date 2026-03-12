@@ -1,0 +1,23 @@
+<ion-tabs color="primary">
+  <ion-tab-bar slot="bottom" color="primary" class="pt-1 safe-pad">
+    <ion-tab-button (click)="openMenu()">
+      <ion-icon aria-hidden="true" color="light" name="menu"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="birds" [routerLink]="['/tabs/birds']">
+      @if (iconUrlBird) {
+        <img [src]="iconUrlBird" alt="" aria-hidden="true" class="w-7 h-7 object-contain brightness-0 invert" />
+      } @else {
+        <ion-icon aria-hidden="true" color="light" name="bird"></ion-icon>
+      }
+      <ion-label class="text-sm font-localNames" color="light">{{ tabLabelBird }}</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="plants" [routerLink]="['/tabs/plants']">
+      @if (iconUrlPlant) {
+        <img [src]="iconUrlPlant" alt="" aria-hidden="true" class="w-7 h-7 object-contain brightness-0 invert" />
+      } @else {
+        <ion-icon aria-hidden="true" color="light" name="leaf"></ion-icon>
+      }
+      <ion-label class="text-sm font-localNames" color="light">{{ tabLabelPlant }}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

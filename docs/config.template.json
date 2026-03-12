@@ -1,0 +1,27 @@
+{
+  "assetBaseUrl": "https://your-assets-bucket.s3.amazonaws.com/",
+  "dbName": "species-production",
+  "mainMenuLabel": "Species ID",
+  "language": "English",
+  "landingSubtitle": "A guide to species in your region.",
+  "domainLabels": {
+    "bird": "Birds",
+    "plant": "Plants"
+  },
+  "tabLabels": {
+    "bird": "Birds",
+    "plant": "Plants"
+  },
+  "domainIconUrls": {
+    "bird": "assets/species-data/branding/icons/tab1-icon.svg",
+    "plant": "assets/species-data/branding/icons/tab2-icon.svg"
+  },
+  "aboutDescription": "A guide to species in your region.",
+  "aboutBody": "This app helps you identify and learn about local species, with names and descriptions.",
+  "posthogApiKey": "",
+  "posthogHost": "https://us.i.posthog.com",
+  "_comment_appBranding": "Optional: add appName and appId for apply-branding script (native app name and bundle ID).",
+  "appName": "Species ID",
+  "appId": "org.speciesid.app",
+  "_comment_appVersion": "Optional: set appVersion to override package.json for the version shown in the app (landing, about)."
+}
