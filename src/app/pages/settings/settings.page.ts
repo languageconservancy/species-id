@@ -19,6 +19,7 @@ import {
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from 'app/partials/header/header.component';
+import { IonRange } from '@ionic/angular/standalone';
 
 type BooleanSettings = Pick<AppSettings, 'useEnglish' | 'showScientificNames'>;
 
@@ -41,16 +42,19 @@ type BooleanSettings = Pick<AppSettings, 'useEnglish' | 'showScientificNames'>;
     IonButton,
     IonIcon,
     HeaderComponent,
+    IonRange,
   ],
 })
 export class SettingsPage implements OnInit, OnDestroy {
   settings: AppSettings = {
     useEnglish: true,
     showScientificNames: true,
+    textScale: 1,
   };
   originalSettings: AppSettings = {
     useEnglish: true,
     showScientificNames: true,
+    textScale: 1,
   };
   private settingsSubscription?: Subscription;
 
@@ -86,6 +90,11 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.settings = { ...this.originalSettings };
     await this.settingsService.updateSettings(this.settings);
     this.close();
+  }
+
+  onTextSizeChange(event: any) {
+    this.settings.textScale = event.detail.value;
+    this.settingsService.applyTextScale(this.settings.textScale);
   }
 
   close() {

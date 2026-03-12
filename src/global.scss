@@ -116,3 +116,11 @@
   //   font-size: 1.875rem; // lg: fixed ideal size
   // }
 }
+
+:root {
+  --app-text-scale: 1;
+}
+
+.scaled-text {
+  font-size: calc(1rem * var(--app-text-scale)) !important;
+}

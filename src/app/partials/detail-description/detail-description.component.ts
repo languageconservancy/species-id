@@ -16,6 +16,7 @@ export class DetailDescriptionComponent implements OnInit {
   @Input() settings: AppSettings = {
     useEnglish: true,
     showScientificNames: true,
+    textScale: 1,
   };
   protected subscribers: Subscription = new Subscription();
 
