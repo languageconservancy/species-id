@@ -2,7 +2,7 @@
 <app-header title="Options"></app-header>
 
 <ion-content class="ion-padding">
-  <ion-label class="ion-text-uppercase" color="medium">Sort by</ion-label>
+  <ion-label class="ion-text-uppercase scaled-text" color="medium">Sort by</ion-label>
   <ion-list [inset]="true">
     @for (option of sortOptions; track option.value) {
       <ion-item
@@ -11,12 +11,12 @@
         [color]="selectedSort === option.value ? 'secondary' : ''"
         (click)="selectedSort = option.value"
       >
-        <ion-label>{{ option.label }}</ion-label>
+        <ion-label class="scaled-text">{{ option.label }}</ion-label>
       </ion-item>
     }
   </ion-list>
 
-  <ion-label class="ion-text-uppercase" color="medium">Filter by</ion-label>
+  <ion-label class="ion-text-uppercase scaled-text" color="medium">Filter by</ion-label>
   <ion-list [inset]="true">
     @for (option of filterOptions; track option.value) {
       <ion-item
@@ -25,12 +25,12 @@
         [color]="selectedFilter === option.value ? 'secondary' : ''"
         (click)="selectedFilter = option.value"
       >
-        <ion-label>{{ option.label }}</ion-label>
+        <ion-label class="scaled-text">{{ option.label }}</ion-label>
       </ion-item>
     }
   </ion-list>
 
-  <ion-label class="ion-text-uppercase" color="medium">Sort Direction</ion-label>
+  <ion-label class="ion-text-uppercase scaled-text" color="medium">Sort Direction</ion-label>
   <ion-list [inset]="true">
     @for (option of sortDirectionOptions; track option) {
       <ion-item
@@ -39,7 +39,7 @@
         [color]="selectedSortDirection === option ? 'secondary' : ''"
         (click)="selectedSortDirection = option"
       >
-        <ion-label>{{ option | titlecase }}</ion-label>
+        <ion-label class="scaled-text">{{ option | titlecase }}</ion-label>
       </ion-item>
     }
   </ion-list>
@@ -50,15 +50,25 @@
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-button (click)="close()" class="px-4">
-        <ion-icon slot="icon-only" name="close" class="text-2xl"></ion-icon>
+        <ion-icon slot="icon-only" size="large" name="close" class="scaled-text"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="resetOptions()" class="px-4">
-        <ion-icon slot="icon-only" name="refresh-circle" class="text-2xl"></ion-icon>
+        <ion-icon
+          slot="icon-only"
+          size="large"
+          name="refresh-circle"
+          class="scaled-text"
+        ></ion-icon>
       </ion-button>
       <ion-button (click)="applyOptions()" class="px-4">
-        <ion-icon slot="icon-only" name="checkmark-circle" class="text-2xl"></ion-icon>
+        <ion-icon
+          slot="icon-only"
+          size="large"
+          name="checkmark-circle"
+          class="scaled-text"
+        ></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

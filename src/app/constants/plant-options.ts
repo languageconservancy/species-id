@@ -24,11 +24,11 @@ export function getPlantSortOptions(
   return [
     {
       value: 'alphabetical-local',
-      label: `Alphabetical (${languageName})`,
+      label: `${languageName}`,
     },
-    { value: 'alphabetical-english', label: 'Alphabetical (English)' },
-    { value: 'alphabetical-latin', label: 'Alphabetical (Latin)' },
-    { value: 'by-category', label: 'By Category' },
+    { value: 'alphabetical-english', label: 'English' },
+    { value: 'alphabetical-latin', label: 'Latin' },
+    { value: 'by-category', label: 'Category' },
   ];
 }
 

@@ -1,7 +1,7 @@
 <app-header title="Settings"></app-header>
 
 <ion-content class="ion-padding">
-  <ion-label class="ion-text-uppercase" color="medium">Content Visibility</ion-label>
+  <ion-label class="ion-text-uppercase scaled-text" color="medium">Content Visibility</ion-label>
   <ion-list [inset]="true" class="mb-4">
     <!-- Language Settings -->
     <ion-item>
@@ -24,7 +24,7 @@
     </ion-item>
   </ion-list>
 
-  <ion-label class="ion-text-uppercase" color="medium">Text Size</ion-label>
+  <ion-label class="ion-text-uppercase scaled-text" color="medium">Text Size</ion-label>
   <!-- ion range -->
   <ion-range
     aria-label="Text size"
@@ -45,12 +45,12 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="cancel()" class="px-4">
-        <ion-icon slot="icon-only" name="close" class="text-2xl"></ion-icon>
+        <ion-icon slot="icon-only" size="large" name="close" class="text-2xl"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="applySettings()" class="px-4">
-        <ion-icon slot="icon-only" name="checkmark-circle" class="text-2xl"></ion-icon>
+        <ion-icon slot="icon-only" size="large" name="checkmark-circle" class="text-2xl"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

@@ -7,9 +7,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export const TEXT_SCALE_VALUES = {
   1: 1.0,
   2: 1.15,
-  3: 1.3,
-  4: 1.45,
-  5: 1.6,
+  3: 1.35,
+  4: 1.55,
+  5: 1.75,
 };
 export const MAX_TEXT_SCALE = 5;
 
@@ -31,7 +31,7 @@ export class SettingsService extends BasePreferencesService {
   private settingsSubject = new BehaviorSubject<AppSettings>({
     useEnglish: true,
     showScientificNames: true,
-    textScale: 1,
+    textScale: 2,
   });
 
   constructor(
@@ -45,7 +45,7 @@ export class SettingsService extends BasePreferencesService {
   private async initSettings() {
     await this.storageReady.ready();
     const settings = (await this.storage.get(this.SETTINGS_KEY)) ?? this.settingsSubject.value;
-    settings.textScale = settings.textScale ?? 1;
+    settings.textScale = settings.textScale ?? 2;
     if (settings.textScale < 1 || settings.textScale > MAX_TEXT_SCALE) {
       settings.textScale = 1;
     }

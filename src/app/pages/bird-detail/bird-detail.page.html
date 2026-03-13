@@ -1,18 +1,15 @@
 @if (loading) {
-<ion-content
-  class="flex items-center justify-center h-full overflow-y-auto safe-pad-bottom safe-pad-top"
->
+<ion-content class="flex items-center justify-center h-full safe-pad-bottom safe-pad-top">
   <ion-label class="ion-text-center">
     <p>Loading...</p>
   </ion-label>
 </ion-content>
 } @else {
 
-<ion-content class="mt-0 safe-pad-bottom safe-pad-top">
-  <div class="bg-black pt-safe">
+<ion-content class="safe-pad-bottom safe-pad-top">
+  <div class="bg-black">
     <app-image-carousel [species]="species"></app-image-carousel>
   </div>
-
   <!-- Header section -->
   <div class="text-center p-6">
     <!-- Crow names section with audio playback -->
