@@ -48,7 +48,7 @@
 }
 
 .safe-pad-top {
-  --padding-top: max(var(--ion-safe-area-top), 16px);
+  --padding-top: max(var(--ion-safe-area-top), 0);
 }
 
 .bg-primary {
@@ -107,12 +107,37 @@
 // Ideal size when there's space; scales down smoothly when container is narrow.
 // Uses container width so zoom and padding are accounted for (not just viewport).
 .crow-name-title {
-  font-size: clamp(0.75rem, 6cqw, 1.5rem);
+  font-size: clamp(
+    calc(0.75rem * var(--app-text-scale, 1)),
+    calc(6cqw * var(--app-text-scale, 1)),
+    calc(1.5rem * var(--app-text-scale, 1))
+  );
+  line-height: calc(1.25 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
+}
 
-  // @container crow-names (min-width: 640px) {
-  //   font-size: clamp(1.25rem, 2.5cqw, 1.875rem);
-  // }
-  // @container crow-names (min-width: 1024px) {
-  //   font-size: 1.875rem; // lg: fixed ideal size
-  // }
+:root {
+  --app-text-scale: 1;
+}
+
+.scaled-text {
+  font-size: calc(1rem * var(--app-text-scale, 1)) !important; // ~text-sm
+}
+.scaled-line-height {
+  line-height: calc(1.25 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
+}
+@media (min-width: 640px) {
+  .scaled-text {
+    font-size: calc(1.25rem * var(--app-text-scale, 1)) !important; // ~text-base
+  }
+  .scaled-line-height {
+    line-height: calc(1.25 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
+  }
+}
+@media (min-width: 1024px) {
+  .scaled-text {
+    font-size: calc(1.5rem * var(--app-text-scale, 1)) !important; // ~text-lg
+  }
+  .scaled-line-height {
+    line-height: calc(1.25 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
+  }
 }

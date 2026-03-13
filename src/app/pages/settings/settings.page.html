@@ -1,11 +1,11 @@
 <app-header title="Settings"></app-header>
 
 <ion-content class="ion-padding">
-  <ion-label class="ion-text-uppercase" color="medium">Content Visibility</ion-label>
+  <ion-label class="ion-text-uppercase scaled-text" color="medium">Content Visibility</ion-label>
   <ion-list [inset]="true" class="mb-4">
     <!-- Language Settings -->
     <ion-item>
-      <ion-label>Show English Content</ion-label>
+      <ion-label class="scaled-text">Show English Content</ion-label>
       <ion-toggle
         slot="end"
         [checked]="settings.useEnglish"
@@ -15,7 +15,7 @@
 
     <!-- Scientific Names -->
     <ion-item>
-      <ion-label>Show Scientific Names</ion-label>
+      <ion-label class="scaled-text">Show Scientific Names</ion-label>
       <ion-toggle
         slot="end"
         [checked]="settings.showScientificNames"
@@ -23,18 +23,34 @@
       ></ion-toggle>
     </ion-item>
   </ion-list>
+
+  <ion-label class="ion-text-uppercase scaled-text" color="medium">Text Size</ion-label>
+  <!-- ion range -->
+  <ion-range
+    aria-label="Text size"
+    [ticks]="true"
+    [snaps]="true"
+    [min]="1"
+    [max]="5"
+    [step]="1"
+    [value]="settings.textScale"
+    (ionInput)="onTextSizeChange($event)"
+  >
+    <ion-label slot="start"><div class="text-sm">Aa</div></ion-label>
+    <ion-label slot="end"><div class="text-2xl">Aa</div></ion-label>
+  </ion-range>
 </ion-content>
 
 <ion-footer class="safe-pad-bottom">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="cancel()" class="px-4">
-        <ion-icon slot="icon-only" name="close" class="text-2xl"></ion-icon>
+        <ion-icon slot="icon-only" size="large" name="close" class="text-2xl"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="applySettings()" class="px-4">
-        <ion-icon slot="icon-only" name="checkmark-circle" class="text-2xl"></ion-icon>
+        <ion-icon slot="icon-only" size="large" name="checkmark-circle" class="text-2xl"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

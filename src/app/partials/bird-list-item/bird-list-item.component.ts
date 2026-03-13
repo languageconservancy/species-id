@@ -22,6 +22,7 @@ export class BirdListItemComponent implements OnInit, OnChanges {
   settings: AppSettings = {
     useEnglish: true,
     showScientificNames: true,
+    textScale: 1,
   };
   imageUrl: string = '';
 

@@ -41,6 +41,7 @@ export class BirdDetailPage implements OnInit {
   settings: AppSettings = {
     useEnglish: true,
     showScientificNames: true,
+    textScale: 1,
   };
   protected subscribers: Subscription = new Subscription();
   crowNames: Array<{ name: string; audios: TextAudio[] }> = [];

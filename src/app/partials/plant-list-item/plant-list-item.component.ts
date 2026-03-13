@@ -22,6 +22,7 @@ export class PlantListItemComponent implements OnInit {
   settings: AppSettings = {
     useEnglish: true,
     showScientificNames: true,
+    textScale: 1,
   };
   imageUrl: string = '';
 

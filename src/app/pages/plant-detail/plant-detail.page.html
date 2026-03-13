@@ -1,17 +1,13 @@
 @if (loading) {
-<ion-content class="ion-padding flex items-center justify-center h-full">
+<ion-content class="flex items-center justify-center h-full safe-pad-bottom safe-pad-top">
   <ion-label class="ion-text-center">
     <p>Loading...</p>
   </ion-label>
 </ion-content>
 } @else {
 
-<!-- <div class="bg-black pt-safe"> -->
-<!-- <app-image-carousel [species]="species"></app-image-carousel> -->
-<!-- </div> -->
-
-<ion-content class="mt-0" style="--padding-bottom: 5rem">
-  <div class="bg-black pt-safe">
+<ion-content class="safe-pad-bottom safe-pad-top">
+  <div class="bg-black">
     <app-image-carousel [species]="species"></app-image-carousel>
   </div>
   <!-- Header section -->
@@ -36,20 +32,20 @@
     <!-- Literal meanings section in single quotes -->
     <div class="flex flex-wrap justify-center items-center gap-1">
       @for (literalMeaning of literalMeanings; track $index) {<span
-        class="text-gray-600 text-base sm:text-lg lg:text-xl"
+        class="text-gray-600 text-base sm:text-lg lg:text-xl scaled-text"
         >'{{ literalMeaning || 'unknown' }}'</span
       >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
     </div>
     <!-- English names section -->
     <div class="flex flex-wrap justify-center items-center gap-1">
       @for (englishName of englishNames; track $index) {<span
-        class="text-gray-600 font-semibold text-base sm:text-lg lg:text-xl"
+        class="text-gray-600 font-semibold text-base sm:text-lg lg:text-xl scaled-text"
         >{{ englishName }}</span
       >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
     </div>
     <!-- Scientific names section -->
     @if (settings.showScientificNames && scientificNames.length > 0) {
-    <p class="italic text-gray-700 text-base sm:text-lg lg:text-xl">
+    <p class="italic text-gray-700 text-base sm:text-lg lg:text-xl scaled-text">
       (@for (scientificName of scientificNames; track $index) {{{ scientificName }}@if (!$last)
       {<span class="text-gray-600">;&nbsp;</span>}})
     </p>

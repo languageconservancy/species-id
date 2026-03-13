@@ -1,10 +1,12 @@
 <ion-content class="safe-pad-bottom safe-pad-top">
   <div class="flex flex-col items-center justify-center h-full gap-8 ion-padding">
     <div class="text-center">
-      <h1 class="text-4xl font-semibold mb-4 tracking-wide font-englishTitles text-shadow-lg">
+      <h1
+        class="text-4xl font-semibold mb-4 tracking-wide font-englishTitles text-shadow-lg sm:text-5xl lg:text-6xl"
+      >
         {{ mainMenuLabel }}
       </h1>
-      <p class="text-lg mb-8 text-gray-600">
+      <p class="text-lg mb-8 text-gray-600 scaled-text sm:text-xl lg:text-2xl">
         {{ landingSubtitle }}
       </p>
     </div>
@@ -16,6 +18,7 @@
         shape="round"
         (click)="navigateToExplore(SpeciesType.Bird)"
         color="primary"
+        class="scaled-text sm:text-lg lg:text-xl"
       >
         <ion-icon slot="start" name="bird"></ion-icon>
         Explore {{ domainLabelBird }}
@@ -27,12 +30,13 @@
         shape="round"
         (click)="navigateToExplore(SpeciesType.Plant)"
         color="secondary"
+        class="scaled-text sm:text-lg lg:text-xl"
       >
         <ion-icon slot="start" name="leaf"></ion-icon>
         Explore {{ domainLabelPlant }}
       </ion-button>
     </div>
 
-    <p class="text-sm text-gray-500 mt-8">Version {{ appVersion }}</p>
+    <p class="text-sm text-gray-500 mt-8 scaled-text">Version {{ appVersion }}</p>
   </div>
 </ion-content>
