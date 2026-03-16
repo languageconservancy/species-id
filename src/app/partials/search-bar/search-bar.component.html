@@ -15,7 +15,8 @@
     ></ion-searchbar>
 
     <div class="flex items-center gap-2 pr-2">
-      @if (
+      <!-- Uncomment when recording is implemented -->
+      <!-- @if (
         searchBarService.recordingState === RecordingStateEnum.Recording ||
         searchBarService.recordingState === RecordingStateEnum.NotRecording
       ) {
@@ -31,7 +32,7 @@
         searchBarService.recordingState === RecordingStateEnum.ConvertingBecauseMaxDurationReached
       ) {
         <ion-spinner name="dots" color="light" class="w-8"></ion-spinner>
-      }
+      } -->
 
       <ion-icon
         name="options"
@@ -43,11 +44,12 @@
     </div>
   </div>
 </ion-footer>
-<ion-toast
+<!-- Uncomment when recording is implemented -->
+<!-- <ion-toast
   [isOpen]="showRecordingMaxDurationToast"
   message="Max recording duration reached"
   swipeGesture="vertical"
   position="bottom"
   [duration]="2000"
   (didDismiss)="showRecordingMaxDurationToast = false"
-></ion-toast>
+></ion-toast> -->
