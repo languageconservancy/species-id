@@ -2,5 +2,5 @@
 <resources>
     <color name="ic_launcher_background">#FFFFFF</color>
     <!-- Splash background (neutral default; override via apply-branding from species-data) -->
-    <color name="splash_screen_background">#E0E0E0</color>
+    <color name="splash_screen_background">#f3d307</color>
 </resources>

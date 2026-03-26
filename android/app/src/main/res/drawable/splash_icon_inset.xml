@@ -2,7 +2,7 @@
 <!-- Inset keeps the app icon inside the splash circle so it isn't clipped. -->
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
     android:drawable="@mipmap/ic_launcher_foreground"
-    android:insetLeft="12dp"
-    android:insetTop="12dp"
-    android:insetRight="12dp"
-    android:insetBottom="12dp" />
+    android:insetLeft="48dp"
+    android:insetTop="48dp"
+    android:insetRight="48dp"
+    android:insetBottom="48dp" />
