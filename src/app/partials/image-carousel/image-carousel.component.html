@@ -1,45 +1,79 @@
 <!-- Images carousel -->
-<swiper-container pagination="false" navigation="true" class="h-60 sm:h-80 lg:h-96 w-full">
-  @for (image of species?.images; track image.fileName; let index = $index) {
-    <swiper-slide lazy="true" class="h-full flex relative">
-      <div class="w-full h-full overflow-hidden bg-slate-900 flex items-center justify-center">
-        @if (imageLoadStates[index] !== 'error') {
-          <img
-            class="w-full h-full object-contain object-center"
-            [src]="imageUrls[index]"
-            loading="lazy"
-            (load)="onImageLoad(index)"
-            (error)="onImageError(index)"
-          />
-        }
-        @if (imageLoadStates[index] === 'error') {
-          <div class="w-full h-full min-h-60 bg-gray-200 flex items-center justify-center">
-            <div class="text-center text-gray-500">
-              <ion-icon name="image-outline" class="text-4xl mb-2"></ion-icon>
-              <p class="text-sm">Image not available</p>
+<div class="carousel-wrapper h-60 sm:h-80 lg:h-96 w-full">
+  <swiper-container
+    #swiperEl
+    pagination="false"
+    navigation="false"
+    class="h-full w-full"
+    (swiperafterinit)="onSwiperStateChange()"
+    (swiperslidechange)="onSwiperStateChange()"
+  >
+    @for (image of species?.images; track image.fileName; let index = $index) {
+      <swiper-slide lazy="true" class="h-full flex relative">
+        <div class="w-full h-full overflow-hidden bg-slate-900 flex items-center justify-center">
+          @if (imageLoadStates[index] !== 'error') {
+            <img
+              class="w-full h-full object-contain object-center"
+              [src]="imageUrls[index]"
+              loading="lazy"
+              (load)="onImageLoad(index)"
+              (error)="onImageError(index)"
+            />
+          }
+          @if (imageLoadStates[index] === 'error') {
+            <div class="w-full h-full min-h-60 bg-gray-200 flex items-center justify-center">
+              <div class="text-center text-gray-500">
+                <ion-icon name="image-outline" class="text-4xl mb-2"></ion-icon>
+                <p class="text-sm">Image not available</p>
+              </div>
             </div>
-          </div>
+          }
+        </div>
+        <!-- credit -->
+        @if (image.credit) {
+          <p
+            class="text-xs sm:text-sm text-gray-200 font-medium absolute bottom-1 left-0 px-2 py-1 z-10"
+            style="
+              text-shadow:
+                0 1px 3px rgba(0, 0, 0, 0.8),
+                0 1px 2px rgba(0, 0, 0, 0.6);
+            "
+          >
+            {{ image.credit }}
+          </p>
         }
-      </div>
-      <!-- credit -->
-      @if (image.credit) {
-        <p
-          class="text-xs sm:text-sm text-gray-200 font-medium absolute bottom-1 left-0 px-2 py-1 z-10"
-          style="
-            text-shadow:
-              0 1px 3px rgba(0, 0, 0, 0.8),
-              0 1px 2px rgba(0, 0, 0, 0.6);
-          "
-        >
-          {{ image.credit }}
-        </p>
-      }
-    </swiper-slide>
-  }
+      </swiper-slide>
+    }
 
-  @if (!species?.images?.length) {
-    <div class="w-full h-60 bg-slate-900 bg-opacity-25 text-gray-200 text-center">
-      <p class="text-sm p1">No images available</p>
-    </div>
+    @if (!species?.images?.length) {
+      <div class="w-full h-60 bg-slate-900 bg-opacity-25 text-gray-200 text-center">
+        <p class="text-sm p1">No images available</p>
+      </div>
+    }
+  </swiper-container>
+
+  @if ((species?.images?.length ?? 0) > 1) {
+    <button
+      type="button"
+      class="carousel-nav carousel-nav-prev"
+      aria-label="Previous image"
+      [disabled]="!canSlidePrev"
+      (click)="slidePrev()"
+    >
+      <svg aria-hidden="true" viewBox="0 0 24 24" class="carousel-arrow-icon">
+        <path d="M15 5 L8 12 L15 19"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="carousel-nav carousel-nav-next"
+      aria-label="Next image"
+      [disabled]="!canSlideNext"
+      (click)="slideNext()"
+    >
+      <svg aria-hidden="true" viewBox="0 0 24 24" class="carousel-arrow-icon">
+        <path d="M9 5 L16 12 L9 19"></path>
+      </svg>
+    </button>
   }
-</swiper-container>
+</div>
