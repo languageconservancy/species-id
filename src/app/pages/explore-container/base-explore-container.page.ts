@@ -104,11 +104,9 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
     throw new Error('_loadSpecies must be implemented by child class');
   }
 
-  protected _applySearch(): Species[] {
-    if (!this.searchTerm) {
-      return this.itemsAll;
-    }
+  protected _applySearch(): { exactMatches: Species[], fuzzyMatches: Species[] } {
     const exactMatches = this.itemsAll.filter((item: Species) => {
+      // Check for exact matches in all fields
       return (
         this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameLocal) ||
         this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameScientific) ||
@@ -116,10 +114,12 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
         this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameMeaningEn)
       );
     });
+    // Check for fuzzy matches in just the local language names
     const fuzzyMatches = this.itemsAll.filter((item: Species) => {
       return this.fuzzySearchService.matches(this.searchTerm, item.nameLocal);
     });
-    return [...exactMatches, ...fuzzyMatches];
+
+    return { exactMatches, fuzzyMatches };
   }
 
   protected _applyFilters(items: Species[]): Species[] {
@@ -132,9 +132,37 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
   }
 
   protected async _setItems() {
-    this.items = this._applySearch();
-    this.items = this._applyFilters(this.items);
-    this.itemsGrouped = await this._groupAndSortItems(this.items);
+    if (!this.searchTerm) {
+      this.items = this.itemsAll;
+      this.items = this._removeDuplicates(this.items);
+      this.items = this._applyFilters(this.items);
+      this.itemsGrouped = await this._groupAndSortItems(this.items);
+    } else {
+      let { exactMatches, fuzzyMatches } = this._applySearch();
+      exactMatches = this._removeDuplicates(exactMatches);
+      fuzzyMatches = this._removeDuplicates(fuzzyMatches);
+      const exactNameLocals = new Set(exactMatches.map((s) => s.nameLocal));
+      fuzzyMatches = fuzzyMatches.filter((item) => !exactNameLocals.has(item.nameLocal));
+      exactMatches = this._applyFilters(exactMatches);
+      fuzzyMatches = this._applyFilters(fuzzyMatches);
+      this.itemsGrouped = [
+        {
+          name: 'Exact Matches',
+          items: exactMatches,
+        },
+        {
+          name: 'Near Matches',
+          items: fuzzyMatches,
+        },
+      ];
+    }
+
+  }
+
+  protected _removeDuplicates(items: Species[]): Species[] {
+    return items.filter((item, index, self) =>
+      index === self.findIndex((t) => t.nameLocal === item.nameLocal)
+    );
   }
 
   protected _removeAccents(text: string): string {
