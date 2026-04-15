@@ -48,13 +48,8 @@ export class FuzzySearchService {
   }
 
   includesExactMatch(query: string, target: string): boolean {
-    const normalizedQuery = this.normalizeApostrophes(query);
-    const normalizedTarget = this.normalizeApostrophes(target);
-    if (target.includes('grass')) {
-      console.log('normalizedQuery', normalizedQuery);
-      console.log('normalizedTarget', normalizedTarget);
-      console.log('includes', normalizedTarget.includes(normalizedQuery));
-    }
+    const normalizedQuery = this.normalizeApostrophes(query.toLowerCase());
+    const normalizedTarget = this.normalizeApostrophes(target.toLowerCase());
     return normalizedTarget.includes(normalizedQuery);
   }
 
@@ -73,9 +68,11 @@ export class FuzzySearchService {
       result = this.normalizeAffixes(result);
     }
 
-    // Collapse repeated letters and normalize phonetically similar sounds
+    // Collapse repeated letters
+    result = this.normalizeRepeatedLetters(result);
+
+    // Normalize phonetically similar sounds
     result = result
-      .replace(this.normalizeRepeatedLetters(result), '$1') // collapse repeated vowels
       .replace(/x/g, 'h')
       .replace(/h([qwrtypsdfgjklzxcvbnm])/g, '$1') // remove h before consonants
       .replace(/[stx]ch/g, 'ch')
@@ -100,10 +97,14 @@ export class FuzzySearchService {
    * Check if a search query fuzzy-matches a target string.
    */
   matches(query: string, target: string): boolean {
-    const normalizedQuery = this.approximate(query);
-    const normalizedTarget = this.approximate(target);
+    const normalizedQuery = this.approximate(query.toLowerCase());
+    const normalizedTarget = this.approximate(target.toLowerCase());
 
-    return normalizedTarget.includes(normalizedQuery);
+    const includes = normalizedTarget.includes(normalizedQuery);
+    if (includes) {
+      console.log('query', query, 'normalizedQuery', normalizedQuery, 'target', target, 'normalizedTarget', normalizedTarget);
+    }
+    return includes;
   }
 
   /**

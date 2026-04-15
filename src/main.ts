@@ -104,7 +104,6 @@ configService
     App.addListener('appStateChange', async ({ isActive }) => {
       // If the app is active, ensure the SQLite connection is established
       // This is useful for scenarios where the app might go to the background and come back
-      console.log('App state changed:', isActive ? 'Active' : 'Inactive');
       if (isActive) {
         await sqljsService.ensureConnection();
       }
