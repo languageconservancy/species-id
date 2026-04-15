@@ -83,18 +83,18 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capawesome/capacitor-posthog"
 
 SPEC CHECKSUMS:
-  Capacitor: 830fc6ff88e99bb5ba48350f02c01ab01ba3b2b8
-  CapacitorApp: d63334c052278caf5d81585d80b21905c6f93f39
-  CapacitorCommunitySqlite: 6501e7349acf998346acf24ef757861bb3f6fc2b
+  Capacitor: 47b825120c6b8b6d6f9f053e9350a8960d436710
+  CapacitorApp: febecbb9582cb353aed037e18ec765141f880fe9
+  CapacitorCommunitySqlite: b11e556cf5d149f9e0b6fbbb47959a6cd718c3d0
   CapacitorCordova: e8b76fd95fc1e157775abc484c59cc0de464095d
-  CapacitorFilesystem: f54cd6b76be06fa7ceb219cf313d32e0d626ea87
-  CapacitorHaptics: 70e47470fa1a6bd6338cd102552e3846b7f9a1b3
-  CapacitorKeyboard: 969647d0ca2e5c737d7300088e2517aa832434e2
-  CapacitorNetwork: 3d56050f929a8c86427a5b28558ce605e7cf61b3
-  CapacitorPreferences: d82a7e3b95fcab43a553268b803356522910d153
-  CapacitorStatusBar: b4bdcf487553983ffc68d81dfe1668bacb48252f
-  CapacitorVoiceRecorder: b136a5989c9a306d57f0c9fc530be79a06ccf7b2
-  CapawesomeCapacitorPosthog: 0b45d854823d7e6ab024baeb32349e59a7cf4797
+  CapacitorFilesystem: c63fc54df41e5a6761785a7f3c49dc696c22e296
+  CapacitorHaptics: 1f1e17041f435d8ead9ff2a34edd592c6aa6a8d6
+  CapacitorKeyboard: 09fd91dcde4f8a37313e7f11bde553ad1ed52036
+  CapacitorNetwork: b719d692a8d1310da8d26d6648d3aa1ef1e100e1
+  CapacitorPreferences: 69d9991307507aeab8ef8019c10b9babfda0e9ca
+  CapacitorStatusBar: 6de542f202c0dd3f9d0a73b240d4c9d3dddc49b4
+  CapacitorVoiceRecorder: 9158861be982f32d411769723a4d813d6ce46135
+  CapawesomeCapacitorPosthog: ed26f9dd90e39b2fca40744b1c5c333ce9ea6887
   IONFilesystemLib: dfa8706539ac9ab77ccfd6e5b3830ce9b5e57f6c
   PostHog: 49247855f4cfdc1d2750b4247e6f6c0ff921e142
   SQLCipher: eb79c64049cb002b4e9fcb30edb7979bf4706dfc
