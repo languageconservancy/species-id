@@ -14,7 +14,7 @@
   <div class="text-center p-6">
     <!-- Crow names section with audio playback -->
     <div class="crow-names-container flex flex-wrap justify-center items-center">
-      @for (crowName of crowNames; track crowName.name) {
+      @for (crowName of crowNames; track crowName.name; let last = $last) {
       <span
         class="flex align-center"
         (click)="crowName.audios.length === 0 ? null : playTextAudio(crowName.audios[0])"
@@ -27,7 +27,7 @@
           (click)="crowName.audios.length > 1 ? playTextAudio(audio) : null"
         ></ion-icon>
         } </span
-      >@if (!$last) {<span class="text-gray-600 font-localNames">&nbsp;</span>} }
+      >@if (!$last) {<span class="text-gray-600 font-localNames crow-name-title">;&nbsp;</span>} }
     </div>
     <!-- Literal meanings section in single quotes -->
     <div class="flex flex-wrap justify-center items-center gap-1">
