@@ -36,6 +36,7 @@ import { ConfigService } from 'app/services/config.service';
 export class PlantsExplorePage extends BaseExploreContainerComponent implements OnInit, OnDestroy {
   private preferencesSubscription?: Subscription;
   public speciesType = SpeciesType;
+  public sortType = 'alphabetical-local';
 
   get domainLabel(): string {
     return this.configService.getDomainLabels().plant ?? 'Plants';
@@ -80,11 +81,11 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
   }
 
   protected override async _groupAndSortItems(items: Species[]): Promise<SpeciesGroup[]> {
-    const sortType = await this.plantPreferencesService.getSort();
+    this.sortType = await this.plantPreferencesService.getSort();
     const sortDirection = await this.plantPreferencesService.getSortDirection();
 
     const getGroupKey = (item: Species): string => {
-      switch (sortType) {
+      switch (this.sortType) {
         case 'alphabetical-local':
           // Check first two letters first, since single letters will always be part of double letters.
           const firstTwoLetters: string = this._removeAccents(
@@ -114,7 +115,7 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
         case 'by-category':
           return `${(item as Plant).category}` || 'Other';
         default:
-          console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid sort type:', sortType);
+          console.error(ASSET_PATHS.ERROR_EMOJI, 'Invalid sort type:', this.sortType);
           return item.nameLocal.charAt(0).toUpperCase();
       }
     };
@@ -130,7 +131,7 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     );
 
     const getSortValue = (item: Species): string => {
-      switch (sortType) {
+      switch (this.sortType) {
         case 'alphabetical-local':
           return item.nameLocal;
         case 'alphabetical-english':
