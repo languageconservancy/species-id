@@ -25,6 +25,8 @@ export class BirdListItemComponent implements OnInit, OnChanges {
     textScale: 1,
   };
   imageUrl: string = '';
+  @Input() sortType!: string;
+  orderedNames: string[] = [];
 
   constructor(
     public speciesService: SpeciesService,
@@ -50,10 +52,47 @@ export class BirdListItemComponent implements OnInit, OnChanges {
     if (changes['item'] && changes['item'].currentValue) {
       this._loadImageUrl();
     }
+    if (changes['sortType'] && changes['sortType'].currentValue) {
+      this.sortType = changes['sortType'].currentValue;
+      this._updateOrderedText();
+    }
   }
 
   ngOnDestroy() {
     this.subscribers.unsubscribe();
+  }
+
+  protected _updateOrderedText() {
+    this.orderedNames = [];
+    if (this.sortType === 'alphabetical-local') {
+      this.orderedNames.push(this.item.nameLocal);
+      if (this.settings.useEnglish) {
+        this.orderedNames.push(this.item.nameEn);
+      }
+      if (this.settings.showScientificNames) {
+        this.orderedNames.push(`(${this.item.nameScientific})`);
+      }
+    } else if (this.sortType === 'alphabetical-english') {
+      this.orderedNames.push(this.item.nameEn);
+      this.orderedNames.push(this.item.nameLocal);
+      if (this.settings.showScientificNames) {
+        this.orderedNames.push(`(${this.item.nameScientific})`);
+      }
+    } else if (this.sortType === 'alphabetical-latin') {
+      this.orderedNames.push(`(${this.item.nameScientific})`);
+      this.orderedNames.push(this.item.nameLocal);
+      if (this.settings.useEnglish) {
+        this.orderedNames.push(this.item.nameEn);
+      }
+    } else {
+      this.orderedNames.push(this.item.nameLocal);
+      if (this.settings.useEnglish) {
+        this.orderedNames.push(this.item.nameEn);
+      }
+      if (this.settings.showScientificNames) {
+        this.orderedNames.push(`(${this.item.nameScientific})`);
+      }
+    }
   }
 
   protected _subscribeToSettings() {

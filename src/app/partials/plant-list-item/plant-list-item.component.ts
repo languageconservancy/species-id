@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { IonIcon, IonImg, IonItem, NavController } from '@ionic/angular/standalone';
 import { Species } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
@@ -15,9 +15,10 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
   standalone: true,
   imports: [IonIcon, IonItem, IonImg],
 })
-export class PlantListItemComponent implements OnInit {
+export class PlantListItemComponent implements OnInit, OnChanges {
   @Input() item!: Species;
   @Input() isLastItem!: boolean;
+  @Input() sortType!: string;
   protected subscribers: Subscription = new Subscription();
   settings: AppSettings = {
     useEnglish: true,
@@ -25,6 +26,7 @@ export class PlantListItemComponent implements OnInit {
     textScale: 1,
   };
   imageUrl: string = '';
+  orderedNames: string[] = [];
 
   constructor(
     public speciesService: SpeciesService,
@@ -38,6 +40,49 @@ export class PlantListItemComponent implements OnInit {
   ngOnInit() {
     this._subscribeToSettings();
     this._loadImageUrl();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['sortType'] && changes['sortType'].currentValue) {
+      this.sortType = changes['sortType'].currentValue;
+      this._updateOrderedText();
+    }
+  }
+
+  protected _updateOrderedText() {
+    this.orderedNames = [];
+    if (this.sortType === 'alphabetical-local') {
+      this.orderedNames.push(this.item.nameLocal);
+      if (this.settings.useEnglish) {
+        this.orderedNames.push(this.item.nameEn);
+      }
+      if (this.settings.showScientificNames) {
+        this.orderedNames.push(`(${this.item.nameScientific})`);
+      }
+    }
+    else if (this.sortType === 'alphabetical-english') {
+      this.orderedNames.push(this.item.nameEn);
+      this.orderedNames.push(this.item.nameLocal);
+      if (this.settings.showScientificNames) {
+        this.orderedNames.push(`(${this.item.nameScientific})`);
+      }
+    }
+    else if (this.sortType === 'alphabetical-latin') {
+      this.orderedNames.push(`(${this.item.nameScientific})`);
+      this.orderedNames.push(this.item.nameLocal);
+      if (this.settings.useEnglish) {
+        this.orderedNames.push(this.item.nameEn);
+      }
+    }
+    else {
+      this.orderedNames.push(this.item.nameLocal);
+      if (this.settings.useEnglish) {
+        this.orderedNames.push(this.item.nameEn);
+      }
+      if (this.settings.showScientificNames) {
+        this.orderedNames.push(`(${this.item.nameScientific})`);
+      }
+    }
   }
 
   get hyphenatedNameLocal(): string {

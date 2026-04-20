@@ -14,19 +14,19 @@
       class="font-localNames text-lg md:text-xl ion-text-capitalize min-w-32"
       style="max-width: calc(100% - 2rem); word-wrap: break-word; overflow-wrap: break-word"
     >
-      {{ hyphenatedNameLocal }}
+      {{ orderedNames[0] }}
     </h2>
-    @if (settings.useEnglish) {
+    @if (orderedNames[1]) {
       <p
         class="font-medium text-sm md:text-base ion-text-capitalize text-gray-600 dark:text-gray-700"
         color="medium"
       >
-        {{ item.nameEn }}
+        {{ orderedNames[1] }}
       </p>
     }
-    @if (settings.showScientificNames) {
+    @if (orderedNames[2]) {
       <p class="text-sm md:text-base italic text-gray-500 dark:text-gray-700" color="medium">
-        ({{ item.nameScientific }})
+        {{ orderedNames[2] }}
       </p>
     }
     <!-- Type-specific content will be projected here -->
