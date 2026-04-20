@@ -37,12 +37,14 @@
       >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
     </div>
     <!-- English names section -->
+    @if (settings.useEnglish && englishNames.length > 0) {
     <div class="flex flex-wrap justify-center items-center gap-1">
       @for (englishName of englishNames; track $index) {<span
         class="text-gray-600 font-semibold text-base sm:text-lg lg:text-xl scaled-text"
         >{{ englishName }}</span
       >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
     </div>
+    }
     <!-- Scientific names section -->
     @if (settings.showScientificNames && scientificNames.length > 0) {
     <p class="italic text-gray-700 text-base sm:text-lg lg:text-xl scaled-text">
