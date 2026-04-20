@@ -150,7 +150,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
       }
     };
 
-    return Object.entries(grouped)
+    let speciesGroups: SpeciesGroup[] = Object.entries(grouped)
       .map(([name, items]) => ({
         name,
         items: items.sort((a, b) => {
@@ -162,5 +162,33 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
         const result = a.name.localeCompare(b.name);
         return sortDirection === 'ascending' ? result : -result;
       });
+
+    speciesGroups.forEach((group: SpeciesGroup) => {
+      group.items.forEach((item: Species, itemIndex: number) => {
+        item.enableImage = this.enableImage(group.items, itemIndex);
+      });
+    });
+
+    return speciesGroups;
+  }
+
+  protected enableImage(items: Species[], index: number): boolean {
+    if (index === 0) {
+      return true;
+    }
+
+    const previousItem: Species = items[index - 1] || {};
+    const currentItem: Species = items[index] || {};
+    if (!previousItem.nameScientific || !currentItem.nameScientific) {
+      return true;
+    }
+    if (currentItem.nameScientific.toLowerCase() === "aquila chrysaetos") {
+      console.log(previousItem.nameScientific, currentItem.nameScientific);
+    }
+
+    if (previousItem.nameScientific === currentItem.nameScientific) {
+      return false;
+    }
+    return true;
   }
 }

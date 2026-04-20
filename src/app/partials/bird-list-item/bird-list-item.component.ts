@@ -18,6 +18,7 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
 export class BirdListItemComponent implements OnInit, OnChanges {
   @Input() item!: Species;
   @Input() isLastItem!: boolean;
+  @Input() enableImage!: boolean;
   protected subscribers: Subscription = new Subscription();
   settings: AppSettings = {
     useEnglish: true,
@@ -55,6 +56,9 @@ export class BirdListItemComponent implements OnInit, OnChanges {
     if (changes['sortType'] && changes['sortType'].currentValue) {
       this.sortType = changes['sortType'].currentValue;
       this._updateOrderedText();
+    }
+    if (changes['enableImage'] && changes['enableImage'].currentValue) {
+      this.enableImage = changes['enableImage'].currentValue;
     }
   }
 

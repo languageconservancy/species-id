@@ -17,6 +17,7 @@ export interface BaseSpecies {
   category: string;
   images?: SpeciesImage[];
   type: SpeciesType;
+  enableImage?: boolean;
 }
 
 export interface SpeciesGroup {
