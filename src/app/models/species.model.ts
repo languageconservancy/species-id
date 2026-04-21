@@ -17,7 +17,8 @@ export interface BaseSpecies {
   category: string;
   images?: SpeciesImage[];
   type: SpeciesType;
-  enableImage?: boolean;
+  /** Set on explore list rows when multiple adjacent DB rows were merged for display. */
+  mergedLocalNamesDisplay?: string;
 }
 
 export interface SpeciesGroup {

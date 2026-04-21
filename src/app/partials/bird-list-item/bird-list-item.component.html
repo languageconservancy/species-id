@@ -6,9 +6,7 @@
 >
   @if (item.images && item.images.length > 0) {
     <div class="rounded-md w-24 aspect-[4/3] flex-shrink-0 my-3">
-      @if (enableImage) {
       <ion-img class="object-contain w-full h-full" [src]="imageUrl"></ion-img>
-      }
     </div>
   }
   <div class="ml-4 flex-1 min-w-0">
