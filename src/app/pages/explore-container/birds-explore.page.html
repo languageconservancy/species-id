@@ -24,7 +24,7 @@
     </div>
     }
     <!-- Items grouped by user preference -->
-    @for (itemGroup of itemsGrouped; track itemGroup.name) {
+    @for (itemGroup of itemsGrouped; let index = $index; track itemGroup.name) {
     <ion-item-group>
       <app-list-divider [itemGroup]="itemGroup"></app-list-divider>
       @for (item of itemGroup.items; track item.id + '-' + $index; let last = $last) {

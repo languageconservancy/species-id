@@ -39,43 +39,55 @@ export class PlantListItemComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this._subscribeToSettings();
-    this._loadImageUrl();
+    if (this.item && this.sortType) {
+      this._updateOrderedText();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes['item'] && changes['item'].currentValue) {
+      this._loadImageUrl();
+      this._updateOrderedText();
+    }
     if (changes['sortType'] && changes['sortType'].currentValue) {
       this.sortType = changes['sortType'].currentValue;
       this._updateOrderedText();
     }
   }
 
+  /** Local-name line: merged Crow names when present, else single `nameLocal`. */
+  protected _displayLocalName(): string {
+    return this.item.mergedLocalNamesDisplay ?? this.item.nameLocal;
+  }
+
   protected _updateOrderedText() {
+    if (!this.item) {
+      return;
+    }
+    const local = this._displayLocalName();
     this.orderedNames = [];
     if (this.sortType === 'alphabetical-local') {
-      this.orderedNames.push(this.item.nameLocal);
+      this.orderedNames.push(local);
       if (this.settings.useEnglish) {
         this.orderedNames.push(this.item.nameEn);
       }
       if (this.settings.showScientificNames) {
         this.orderedNames.push(`(${this.item.nameScientific})`);
       }
-    }
-    else if (this.sortType === 'alphabetical-english') {
+    } else if (this.sortType === 'alphabetical-english') {
       this.orderedNames.push(this.item.nameEn);
-      this.orderedNames.push(this.item.nameLocal);
+      this.orderedNames.push(local);
       if (this.settings.showScientificNames) {
         this.orderedNames.push(`(${this.item.nameScientific})`);
       }
-    }
-    else if (this.sortType === 'alphabetical-latin') {
+    } else if (this.sortType === 'alphabetical-latin') {
       this.orderedNames.push(`(${this.item.nameScientific})`);
-      this.orderedNames.push(this.item.nameLocal);
+      this.orderedNames.push(local);
       if (this.settings.useEnglish) {
         this.orderedNames.push(this.item.nameEn);
       }
-    }
-    else {
-      this.orderedNames.push(this.item.nameLocal);
+    } else {
+      this.orderedNames.push(local);
       if (this.settings.useEnglish) {
         this.orderedNames.push(this.item.nameEn);
       }
@@ -98,6 +110,7 @@ export class PlantListItemComponent implements OnInit, OnChanges {
   protected _subscribeToSettings() {
     const sub = this.settingsService.getSettings().subscribe((settings: AppSettings) => {
       this.settings = settings;
+      this._updateOrderedText();
     });
     this.subscribers.add(sub);
   }

@@ -16,6 +16,7 @@ import { AnalyticsService } from 'app/services/analytics.service';
 import { FuzzySearchService } from 'app/services/fuzzy-search.service';
 import { ASSET_PATHS } from 'app/constants/app-consts';
 import { ConfigService } from 'app/services/config.service';
+import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-list-items';
 
 @Component({
   selector: 'app-plants-explore-page',
@@ -67,6 +68,19 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
   override ngOnDestroy() {
     this.preferencesSubscription?.unsubscribe();
     super.ngOnDestroy();
+  }
+
+  protected override async _setItems(): Promise<void> {
+    await super._setItems();
+    this._postProcessPlantExploreGroups();
+  }
+
+  /** Merge adjacent same-species rows for the rendered list. */
+  private _postProcessPlantExploreGroups(): void {
+    this.itemsGrouped = this.itemsGrouped.map((group) => ({
+      name: group.name,
+      items: mergeAdjacentSpeciesListItems(group.items),
+    }));
   }
 
   protected override async _loadSpecies() {

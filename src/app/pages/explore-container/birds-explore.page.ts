@@ -16,6 +16,7 @@ import { AnalyticsService } from 'app/services/analytics.service';
 import { FuzzySearchService } from 'app/services/fuzzy-search.service';
 import { ASSET_PATHS } from 'app/constants/app-consts';
 import { ConfigService } from 'app/services/config.service';
+import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-list-items';
 
 @Component({
   selector: 'app-birds-explore-page',
@@ -65,6 +66,19 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
   override ngOnDestroy() {
     this.preferencesSubscription?.unsubscribe();
     super.ngOnDestroy();
+  }
+
+  protected override async _setItems(): Promise<void> {
+    await super._setItems();
+    this._postProcessBirdExploreGroups();
+  }
+
+  /** Merge adjacent same-species rows for the rendered list. */
+  private _postProcessBirdExploreGroups(): void {
+    this.itemsGrouped = this.itemsGrouped.map((group) => ({
+      name: group.name,
+      items: mergeAdjacentSpeciesListItems(group.items),
+    }));
   }
 
   protected override async _loadSpecies() {
@@ -150,7 +164,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
       }
     };
 
-    return Object.entries(grouped)
+    let speciesGroups: SpeciesGroup[] = Object.entries(grouped)
       .map(([name, items]) => ({
         name,
         items: items.sort((a, b) => {
@@ -162,5 +176,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
         const result = a.name.localeCompare(b.name);
         return sortDirection === 'ascending' ? result : -result;
       });
+
+    return speciesGroups;
   }
 }
