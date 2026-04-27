@@ -5,7 +5,6 @@ import {
   IonTabBar,
   IonTabButton,
   IonIcon,
-  IonLabel,
   MenuController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -18,7 +17,7 @@ import { ConfigService } from 'app/services/config.service';
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
-  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, RouterLink],
+  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, RouterLink],
 })
 export class TabsPage {
   public environmentInjector = inject(EnvironmentInjector);

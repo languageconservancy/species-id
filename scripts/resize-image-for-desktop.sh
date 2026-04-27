@@ -24,7 +24,7 @@ if ! file "$INPUT" | grep -qE 'image|bitmap'; then
 fi
 OUTPUT="${2:-optimized.jpg}"
 MAX_DIM=800
-QUALITY=85
+QUALITY=100
 
 echo "Resizing to max dimension $MAX_DIM and compressing to quality $QUALITY"
 
