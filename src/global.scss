@@ -121,23 +121,17 @@
 
 .scaled-text {
   font-size: calc(1rem * var(--app-text-scale, 1)) !important; // ~text-sm
-}
-.scaled-line-height {
-  line-height: calc(1.25 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
+  line-height: calc(0.8 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
 }
 @media (min-width: 640px) {
   .scaled-text {
     font-size: calc(1.25rem * var(--app-text-scale, 1)) !important; // ~text-base
-  }
-  .scaled-line-height {
-    line-height: calc(1.25 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
+    line-height: calc(0.8 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
   }
 }
 @media (min-width: 1024px) {
   .scaled-text {
     font-size: calc(1.5rem * var(--app-text-scale, 1)) !important; // ~text-lg
-  }
-  .scaled-line-height {
-    line-height: calc(1.25 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
+    line-height: calc(0.9 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
   }
 }

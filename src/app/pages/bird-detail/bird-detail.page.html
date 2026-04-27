@@ -32,7 +32,7 @@
     <!-- Literal meanings section in single quotes -->
     <div class="flex flex-wrap justify-center items-center">
       @for (literalMeaning of literalMeanings; track $index; let last = $last) {
-      <span class="text-gray-600 text-base sm:text-lg lg:text-xl">
+      <span class="text-gray-600 text-base sm:text-lg lg:text-xl scaled-text">
         {{ literalMeaning ? `‘${literalMeaning}’` : 'unknown' }} @if (!$last) {<span>;&nbsp;</span>}
       </span>
       }
@@ -41,7 +41,7 @@
     @if (settings.useEnglish && englishNames.length > 0) {
     <div class="flex flex-wrap justify-center items-center">
       @for (englishName of englishNames; track $index; let last = $last) {
-      <span class="text-gray-600 font-semibold text-base sm:text-lg lg:text-xl">
+      <span class="text-gray-600 font-semibold text-base sm:text-lg lg:text-xl scaled-text">
         {{ englishName }}@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}
       </span>
       }
@@ -49,7 +49,7 @@
     }
     <!-- Scientific names section -->
     @if (settings.showScientificNames && scientificNames.length > 0) {
-    <p class="italic text-gray-700 text-base sm:text-lg lg-text-xl">
+    <p class="italic text-gray-700 text-base sm:text-lg lg-text-xl scaled-text">
       (@for (scientificName of scientificNames; track $index; let last = $last) {{{ scientificName
       }}@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}})
     </p>
@@ -61,6 +61,7 @@
   } @if (species?.mapImage) {
   <app-species-map [species]="species!"></app-species-map>
   }
+  <div class="pb-16"></div>
 </ion-content>
 }
 <app-back-button [addBottomSafePadding]="false"></app-back-button>
