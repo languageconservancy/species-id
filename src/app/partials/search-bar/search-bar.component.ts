@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { OptionsComponent } from 'app/modals/options/options.component';
 import { SearchBarService } from 'app/services/search-bar.service';
-import { IonSearchbar, IonIcon, ModalController, IonSpinner } from '@ionic/angular/standalone';
+import { IonSearchbar, IonIcon, ModalController } from '@ionic/angular/standalone';
 import { search, options, mic, stop } from 'ionicons/icons';
 import { SpeciesType } from 'app/models/species.model';
 import { addIcons } from 'ionicons';
@@ -21,7 +21,7 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
   templateUrl: './search-bar.component.html',
   styleUrls: ['./search-bar.component.scss'],
   standalone: true,
-  imports: [IonSearchbar, IonIcon, IonSpinner],
+  imports: [IonSearchbar, IonIcon],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
