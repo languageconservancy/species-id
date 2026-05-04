@@ -76,7 +76,7 @@ export class SettingsService extends BasePreferencesService {
     return [];
   }
 
-  getFilterOptions(): FilterOption[] {
+  async getFilterOptions(): Promise<FilterOption[]> {
     return [];
   }
 }

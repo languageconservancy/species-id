@@ -9,6 +9,24 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
 export class BirdQueriesService {
   constructor(private sqljsService: SqljsService) {}
 
+  async getBirdCategories(): Promise<string[]> {
+    try {
+      const result = await this.sqljsService.executeQuery(
+        `SELECT DISTINCT TRIM(category) AS category
+         FROM birds
+         WHERE category IS NOT NULL AND TRIM(category) <> ''
+         ORDER BY category;`
+      );
+
+      return result.values
+        .map((row: any[]) => row[0])
+        .filter((category: string | null) => !!category);
+    } catch (error) {
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading bird categories:', error);
+      return [];
+    }
+  }
+
   async getAllBirds(): Promise<Species[]> {
     try {
       const result = await this.sqljsService.executeQuery(
