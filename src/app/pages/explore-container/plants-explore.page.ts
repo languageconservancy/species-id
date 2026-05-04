@@ -38,6 +38,7 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
   private preferencesSubscription?: Subscription;
   public speciesType = SpeciesType;
   public sortType = 'alphabetical-local';
+  private selectedFilter = 'all';
 
   get domainLabel(): string {
     return this.configService.getDomainLabels().plant ?? 'Plants';
@@ -61,6 +62,7 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     this.preferencesSubscription = this.plantPreferencesService
       .getPreferences()
       .subscribe((preferences) => {
+        this.selectedFilter = preferences.filters['filter'] || 'all';
         this._setItems();
       });
   }
@@ -171,5 +173,13 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
         const result = a.name.localeCompare(b.name);
         return sortDirection === 'ascending' ? result : -result;
       });
+  }
+
+  protected override _applyFilters(items: Species[]): Species[] {
+    if (this.selectedFilter === 'all') {
+      return items;
+    }
+
+    return items.filter((item) => item.category?.trim() === this.selectedFilter);
   }
 }

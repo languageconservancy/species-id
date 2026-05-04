@@ -51,7 +51,7 @@ export abstract class BasePreferencesService {
   }
 
   abstract getSortOptions(): SortOption[];
-  abstract getFilterOptions(): FilterOption[];
+  abstract getFilterOptions(): Promise<FilterOption[]>;
 
   getPreferences(): Observable<Preferences> {
     return this.preferencesSubject.asObservable();

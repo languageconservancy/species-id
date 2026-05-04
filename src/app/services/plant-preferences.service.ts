@@ -7,19 +7,22 @@ import {
   FilterOption,
   SortOption,
 } from 'app/services/base-preferences.service';
-import { getPlantSortOptions, PLANT_FILTER_OPTIONS } from 'app/constants/plant-options';
+import { getPlantSortOptions } from 'app/constants/plant-options';
 import { ConfigService } from 'app/services/config.service';
+import { PlantQueriesService } from 'app/services/plant-queries.service';
 
 @Injectable({ providedIn: 'root' })
 export class PlantPreferencesService extends BasePreferencesService {
   protected readonly SORT_KEY = 'plantSort';
   protected readonly SORT_DIRECTION_KEY = 'plantSortDirection';
   protected readonly FILTERS_KEY = 'plantFilters';
+  private readonly allFilterOption: FilterOption = { value: 'all', label: 'All' };
 
   constructor(
     protected override storage: Storage,
     protected override storageReady: StorageReadyService,
-    protected configService: ConfigService
+    protected configService: ConfigService,
+    private plantQueriesService: PlantQueriesService
   ) {
     console.log('PlantPreferencesService constructor');
     super(storage, storageReady);
@@ -29,7 +32,13 @@ export class PlantPreferencesService extends BasePreferencesService {
     return getPlantSortOptions(this.configService);
   }
 
-  getFilterOptions(): FilterOption[] {
-    return PLANT_FILTER_OPTIONS;
+  async getFilterOptions(): Promise<FilterOption[]> {
+    const categories = await this.plantQueriesService.getPlantCategories();
+    const categoryOptions = categories.map((category) => ({
+      value: category,
+      label: category,
+    }));
+
+    return [this.allFilterOption, ...categoryOptions];
   }
 }

@@ -9,6 +9,24 @@ import { SqljsService } from 'app/services/sqljs.service';
 export class PlantQueriesService {
   constructor(private sqljsService: SqljsService) {}
 
+  async getPlantCategories(): Promise<string[]> {
+    try {
+      const result = await this.sqljsService.executeQuery(
+        `SELECT DISTINCT TRIM(category) AS category
+         FROM plants
+         WHERE category IS NOT NULL AND TRIM(category) <> ''
+         ORDER BY category;`
+      );
+
+      return result.values
+        .map((row: any[]) => row[0])
+        .filter((category: string | null) => !!category);
+    } catch (error) {
+      console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading plant categories:', error);
+      return [];
+    }
+  }
+
   async getFull(): Promise<Species[]> {
     try {
       const result = await this.sqljsService.executeQuery(

@@ -75,11 +75,17 @@ export class OptionsComponent implements OnInit, OnChanges {
 
   private async loadPreferences() {
     this.selectedSort = await this.preferencesService.getSort();
-    const filters = await this.preferencesService.getFilters();
-    this.selectedFilter = filters['filter'] || 'all';
     this.selectedSortDirection = await this.preferencesService.getSortDirection();
     this.sortOptions = this.preferencesService.getSortOptions();
-    this.filterOptions = this.preferencesService.getFilterOptions();
+    this.filterOptions = await this.preferencesService.getFilterOptions();
+    const filters = await this.preferencesService.getFilters();
+    const savedFilter = filters['filter'] || 'all';
+    const hasSavedFilter = this.filterOptions.some((option) => option.value === savedFilter);
+    this.selectedFilter = hasSavedFilter ? savedFilter : 'all';
+
+    if (!hasSavedFilter && savedFilter !== 'all') {
+      await this.preferencesService.setFilters({ filter: 'all' });
+    }
   }
 
   async applyOptions() {

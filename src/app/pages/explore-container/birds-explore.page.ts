@@ -38,6 +38,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
   private preferencesSubscription?: Subscription;
   public speciesType = SpeciesType;
   public sortType = 'alphabetical-local';
+  private selectedFilter = 'all';
 
   get domainLabel(): string {
     return this.configService.getDomainLabels().bird ?? 'Birds';
@@ -57,8 +58,8 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
 
   override ngOnInit() {
     super.ngOnInit();
-    this.preferencesSubscription = this.birdPreferencesService.getPreferences().subscribe(() => {
-      // We don't need the preferences here, since we get them in _groupAndSortItems()
+    this.preferencesSubscription = this.birdPreferencesService.getPreferences().subscribe((preferences) => {
+      this.selectedFilter = preferences.filters['filter'] || 'all';
       this._setItems();
     });
   }
@@ -178,5 +179,13 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
       });
 
     return speciesGroups;
+  }
+
+  protected override _applyFilters(items: Species[]): Species[] {
+    if (this.selectedFilter === 'all') {
+      return items;
+    }
+
+    return items.filter((item) => item.category?.trim() === this.selectedFilter);
   }
 }

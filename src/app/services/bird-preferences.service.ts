@@ -7,19 +7,22 @@ import {
   FilterOption,
   SortOption,
 } from 'app/services/base-preferences.service';
-import { getBirdSortOptions, BIRD_FILTER_OPTIONS } from 'app/constants/bird-options';
+import { getBirdSortOptions } from 'app/constants/bird-options';
 import { ConfigService } from 'app/services/config.service';
+import { BirdQueriesService } from 'app/services/bird-queries.service';
 
 @Injectable({ providedIn: 'root' })
 export class BirdPreferencesService extends BasePreferencesService {
   protected readonly SORT_KEY = 'birdSort';
   protected readonly SORT_DIRECTION_KEY = 'birdSortDirection';
   protected readonly FILTERS_KEY = 'birdFilters';
+  private readonly allFilterOption: FilterOption = { value: 'all', label: 'All' };
 
   constructor(
     protected override storage: Storage,
     protected override storageReady: StorageReadyService,
-    protected configService: ConfigService
+    protected configService: ConfigService,
+    private birdQueriesService: BirdQueriesService
   ) {
     console.log('BirdPreferencesService constructor');
     super(storage, storageReady);
@@ -29,7 +32,13 @@ export class BirdPreferencesService extends BasePreferencesService {
     return getBirdSortOptions(this.configService);
   }
 
-  getFilterOptions(): FilterOption[] {
-    return BIRD_FILTER_OPTIONS;
+  async getFilterOptions(): Promise<FilterOption[]> {
+    const categories = await this.birdQueriesService.getBirdCategories();
+    const categoryOptions = categories.map((category) => ({
+      value: category,
+      label: category,
+    }));
+
+    return [this.allFilterOption, ...categoryOptions];
   }
 }
