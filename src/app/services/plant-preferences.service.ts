@@ -16,6 +16,7 @@ export class PlantPreferencesService extends BasePreferencesService {
   protected readonly SORT_KEY = 'plantSort';
   protected readonly SORT_DIRECTION_KEY = 'plantSortDirection';
   protected readonly FILTERS_KEY = 'plantFilters';
+  protected readonly SEARCH_FIELDS_KEY = 'plantSearchFields';
   private readonly allFilterOption: FilterOption = { value: 'all', label: 'All' };
 
   constructor(

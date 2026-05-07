@@ -16,6 +16,7 @@ export class BirdPreferencesService extends BasePreferencesService {
   protected readonly SORT_KEY = 'birdSort';
   protected readonly SORT_DIRECTION_KEY = 'birdSortDirection';
   protected readonly FILTERS_KEY = 'birdFilters';
+  protected readonly SEARCH_FIELDS_KEY = 'birdSearchFields';
   private readonly allFilterOption: FilterOption = { value: 'all', label: 'All' };
 
   constructor(

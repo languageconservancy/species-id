@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { PlantQueriesService } from 'app/services/plant-queries.service';
 import { PlantPreferencesService } from 'app/services/plant-preferences.service';
 import { BaseExploreContainerComponent } from './base-explore-container.page';
@@ -17,6 +17,7 @@ import { FuzzySearchService } from 'app/services/fuzzy-search.service';
 import { ASSET_PATHS } from 'app/constants/app-consts';
 import { ConfigService } from 'app/services/config.service';
 import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-list-items';
+import { SettingsService } from 'app/services/settings.service';
 
 @Component({
   selector: 'app-plants-explore-page',
@@ -48,6 +49,7 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     private plantQueriesService: PlantQueriesService,
     private plantPreferencesService: PlantPreferencesService,
     private configService: ConfigService,
+    private settingsService: SettingsService,
     protected override speciesService: SpeciesService,
     protected override searchBarService: SearchBarService,
     protected override fuzzySearchService: FuzzySearchService,
@@ -58,13 +60,18 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
 
   override ngOnInit() {
     super.ngOnInit();
-    // Subscribe to preference changes
-    this.preferencesSubscription = this.plantPreferencesService
-      .getPreferences()
-      .subscribe((preferences) => {
-        this.selectedFilter = preferences.filters['filter'] || 'all';
-        this._setItems();
-      });
+    this.preferencesSubscription = combineLatest([
+      this.plantPreferencesService.getPreferences(),
+      this.settingsService.getSettings(),
+    ]).subscribe(([preferences, appSettings]) => {
+      this.selectedFilter = preferences.filters['filter'] || 'all';
+      this.effectiveSearchFields = {
+        english: preferences.searchFields.english && appSettings.useEnglish,
+        scientific: preferences.searchFields.scientific && appSettings.showScientificNames,
+        meaning: preferences.searchFields.meaning,
+      };
+      this._setItems();
+    });
   }
 
   override ngOnDestroy() {

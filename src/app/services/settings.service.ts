@@ -26,6 +26,7 @@ export class SettingsService extends BasePreferencesService {
   protected readonly SORT_KEY = 'app_settings_sort';
   protected readonly FILTERS_KEY = 'app_settings_filters';
   protected readonly SORT_DIRECTION_KEY = 'app_settings_sort_direction';
+  protected readonly SEARCH_FIELDS_KEY = 'app_settings_search_fields';
   private readonly SETTINGS_KEY = 'app_settings';
 
   private settingsSubject = new BehaviorSubject<AppSettings>({

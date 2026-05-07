@@ -8,7 +8,7 @@ import { SpeciesService } from 'app/services/species.service';
 import { SearchBarService } from 'app/services/search-bar.service';
 import { SpeciesType } from 'app/models/species.model';
 import { IonList, IonItemGroup, IonLabel, IonContent } from '@ionic/angular/standalone';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component';
 import { HeaderComponent } from 'app/partials/header/header.component';
 import { ListDividerComponent } from 'app/partials/list-divider/list-divider.component';
@@ -17,6 +17,7 @@ import { FuzzySearchService } from 'app/services/fuzzy-search.service';
 import { ASSET_PATHS } from 'app/constants/app-consts';
 import { ConfigService } from 'app/services/config.service';
 import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-list-items';
+import { SettingsService } from 'app/services/settings.service';
 
 @Component({
   selector: 'app-birds-explore-page',
@@ -48,6 +49,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
     private birdQueriesService: BirdQueriesService,
     private birdPreferencesService: BirdPreferencesService,
     private configService: ConfigService,
+    private settingsService: SettingsService,
     protected override speciesService: SpeciesService,
     protected override searchBarService: SearchBarService,
     protected override fuzzySearchService: FuzzySearchService,
@@ -58,8 +60,16 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
 
   override ngOnInit() {
     super.ngOnInit();
-    this.preferencesSubscription = this.birdPreferencesService.getPreferences().subscribe((preferences) => {
+    this.preferencesSubscription = combineLatest([
+      this.birdPreferencesService.getPreferences(),
+      this.settingsService.getSettings(),
+    ]).subscribe(([preferences, appSettings]) => {
       this.selectedFilter = preferences.filters['filter'] || 'all';
+      this.effectiveSearchFields = {
+        english: preferences.searchFields.english && appSettings.useEnglish,
+        scientific: preferences.searchFields.scientific && appSettings.showScientificNames,
+        meaning: preferences.searchFields.meaning,
+      };
       this._setItems();
     });
   }
