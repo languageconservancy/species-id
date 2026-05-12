@@ -39,13 +39,13 @@ function finishRun(run: Species[]): Species {
   const representative = run[0];
   return {
     ...representative,
-    mergedLocalNamesDisplay: locals.join('; '),
+    mergedLocalNamesDisplay: locals.join(';\n'),
   };
 }
 
 /**
  * Collapses consecutive list rows that refer to the same species (id), same English name,
- * and same scientific name, joining distinct local names with "; ".
+ * and same scientific name, joining distinct local names with ";" and a newline between each.
  */
 export function mergeAdjacentSpeciesListItems(items: Species[]): Species[] {
   if (items.length === 0) {
