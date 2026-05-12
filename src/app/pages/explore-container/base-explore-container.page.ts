@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { addIcons } from 'ionicons';
 import { search, options } from 'ionicons/icons';
 import { AnalyticsService } from 'app/services/analytics.service';
+import { SearchFields, DEFAULT_SEARCH_FIELDS } from 'app/services/base-preferences.service';
 
 @Component({
   template: '',
@@ -23,6 +24,8 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
   itemsGrouped: SpeciesGroup[] = [];
   protected subscribers: Subscription = new Subscription();
   searchTerm: string = '';
+  /** Effective search-field flags after combining per-domain toggles with global settings. */
+  protected effectiveSearchFields: SearchFields = { ...DEFAULT_SEARCH_FIELDS };
   protected CROW_ALPHABET: readonly string[] = [
     'a',
     'aa',
@@ -105,13 +108,18 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
   }
 
   protected _applySearch(): { exactMatches: Species[], fuzzyMatches: Species[] } {
+    const fields = this.effectiveSearchFields;
     const exactMatches = this.itemsAll.filter((item: Species) => {
-      // Check for exact matches in all fields
+      // Crow/local name is always searched; other fields gated by effectiveSearchFields
+      // (which combines per-domain toggles with global app settings).
       return (
         this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameLocal) ||
-        this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameScientific) ||
-        this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameEn) ||
-        this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameMeaningEn)
+        (fields.scientific &&
+          this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameScientific)) ||
+        (fields.english &&
+          this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameEn)) ||
+        (fields.meaning &&
+          this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameMeaningEn))
       );
     });
     // Check for fuzzy matches in just the local language names

@@ -13,10 +13,23 @@ export interface FilterOption {
   label: string;
 }
 
+export interface SearchFields {
+  english: boolean;
+  scientific: boolean;
+  meaning: boolean;
+}
+
+export const DEFAULT_SEARCH_FIELDS: SearchFields = {
+  english: true,
+  scientific: true,
+  meaning: true,
+};
+
 export interface Preferences {
   sort: string;
   filters: Record<string, any>;
   sortDirection: string;
+  searchFields: SearchFields;
 }
 
 @Injectable()
@@ -24,10 +37,12 @@ export abstract class BasePreferencesService {
   protected abstract readonly SORT_KEY: string;
   protected abstract readonly FILTERS_KEY: string;
   protected abstract readonly SORT_DIRECTION_KEY: string;
+  protected abstract readonly SEARCH_FIELDS_KEY: string;
   private preferencesSubject = new BehaviorSubject<Preferences>({
     sort: '',
     filters: {},
     sortDirection: 'ascending',
+    searchFields: { ...DEFAULT_SEARCH_FIELDS },
   });
 
   constructor(
@@ -47,7 +62,24 @@ export abstract class BasePreferencesService {
     const sort = (await this.storage.get(this.SORT_KEY)) ?? defaultSortValue;
     const filters = (await this.storage.get(this.FILTERS_KEY)) ?? {};
     const sortDirection = (await this.storage.get(this.SORT_DIRECTION_KEY)) ?? 'ascending';
-    this.preferencesSubject.next({ sort, filters, sortDirection });
+    const searchFields = this._normalizeSearchFields(
+      await this.storage.get(this.SEARCH_FIELDS_KEY)
+    );
+    this.preferencesSubject.next({ sort, filters, sortDirection, searchFields });
+  }
+
+  private _normalizeSearchFields(stored: any): SearchFields {
+    if (!stored || typeof stored !== 'object') {
+      return { ...DEFAULT_SEARCH_FIELDS };
+    }
+    return {
+      english: typeof stored.english === 'boolean' ? stored.english : DEFAULT_SEARCH_FIELDS.english,
+      scientific:
+        typeof stored.scientific === 'boolean'
+          ? stored.scientific
+          : DEFAULT_SEARCH_FIELDS.scientific,
+      meaning: typeof stored.meaning === 'boolean' ? stored.meaning : DEFAULT_SEARCH_FIELDS.meaning,
+    };
   }
 
   abstract getSortOptions(): SortOption[];
@@ -95,16 +127,31 @@ export abstract class BasePreferencesService {
     return (await this.storage.get(this.SORT_DIRECTION_KEY)) ?? 'ascending';
   }
 
+  async getSearchFields(): Promise<SearchFields> {
+    await this.storageReady.ready();
+    return this._normalizeSearchFields(await this.storage.get(this.SEARCH_FIELDS_KEY));
+  }
+
+  async setSearchFields(searchFields: SearchFields): Promise<void> {
+    await this.storageReady.ready();
+    const normalized = this._normalizeSearchFields(searchFields);
+    await this.storage.set(this.SEARCH_FIELDS_KEY, normalized);
+    const current = this.preferencesSubject.value;
+    this.preferencesSubject.next({ ...current, searchFields: normalized });
+  }
+
   async clearAll(): Promise<void> {
     await this.storageReady.ready();
     await this.storage.remove(this.SORT_KEY);
     await this.storage.remove(this.FILTERS_KEY);
+    await this.storage.remove(this.SEARCH_FIELDS_KEY);
     const sortOptions = this.getSortOptions();
     const defaultSortValue = sortOptions && sortOptions.length > 0 ? sortOptions[0].value : '';
     this.preferencesSubject.next({
       sort: defaultSortValue,
       filters: {},
       sortDirection: 'ascending',
+      searchFields: { ...DEFAULT_SEARCH_FIELDS },
     });
   }
 }

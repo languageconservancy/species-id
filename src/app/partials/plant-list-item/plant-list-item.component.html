@@ -2,17 +2,19 @@
   class="ion-activatable ripple-parent"
   [lines]="isLastItem ? 'none' : 'inset'"
   (click)="onItemClick(item)"
-  style="--inner-padding-end: 16px"
+  [style.--inner-padding-end]="'16px'"
+  [style.--inner-padding-bottom]="item.mergedLocalNamesDisplay ? '6px' : '0px'"
+  [style.--padding-top]="item.mergedLocalNamesDisplay ? '6px' : '0px'"
 >
   @if (item.images && item.images.length > 0) {
     <div class="rounded-md w-24 aspect-[4/3] flex-shrink-0 my-3">
       <ion-img class="object-contain w-full h-full" [src]="imageUrl"></ion-img>
     </div>
   }
-  <div class="ml-4 flex-1 min-w-0">
+  <div class="ml-4 flex-1 min-w-0 space-y-1">
     <h2
-      class="font-localNames text-lg md:text-xl ion-text-capitalize min-w-32"
-      style="max-width: calc(100% - 2rem); word-wrap: break-word; overflow-wrap: break-word"
+      appShrinkToFitText
+      class="font-localNames text-lg md:text-xl ion-text-capitalize block w-full leading-tight"
     >
       {{ orderedNames[0] }}
     </h2>

@@ -8,12 +8,13 @@ import { addIcons } from 'ionicons';
 import { SettingsService, AppSettings } from 'app/services/settings.service';
 import { Subscription } from 'rxjs';
 import { ASSET_PATHS } from 'app/constants/app-consts';
+import { ShrinkToFitTextDirective } from 'app/directives/shrink-to-fit-text.directive';
 
 @Component({
   selector: 'app-bird-list-item',
   templateUrl: './bird-list-item.component.html',
   standalone: true,
-  imports: [IonIcon, IonImg, IonItem],
+  imports: [IonIcon, IonImg, IonItem, ShrinkToFitTextDirective],
 })
 export class BirdListItemComponent implements OnInit, OnChanges {
   @Input() item!: Species;

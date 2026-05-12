@@ -8,12 +8,13 @@ import { addIcons } from 'ionicons';
 import { SettingsService, AppSettings } from 'app/services/settings.service';
 import { Subscription } from 'rxjs';
 import { ASSET_PATHS } from 'app/constants/app-consts';
+import { ShrinkToFitTextDirective } from 'app/directives/shrink-to-fit-text.directive';
 
 @Component({
   selector: 'app-plant-list-item',
   templateUrl: './plant-list-item.component.html',
   standalone: true,
-  imports: [IonIcon, IonItem, IonImg],
+  imports: [IonIcon, IonItem, IonImg, ShrinkToFitTextDirective],
 })
 export class PlantListItemComponent implements OnInit, OnChanges {
   @Input() item!: Species;

@@ -16,20 +16,6 @@
     }
   </ion-list>
 
-  <ion-label class="ion-text-uppercase scaled-text" color="medium">Filter by</ion-label>
-  <ion-list [inset]="true">
-    @for (option of filterOptions; track option.value) {
-      <ion-item
-        class="cursor-pointer"
-        [class.ion-color]="selectedFilter === option.value"
-        [color]="selectedFilter === option.value ? 'secondary' : ''"
-        (click)="selectedFilter = option.value"
-      >
-        <ion-label class="scaled-text">{{ option.label }}</ion-label>
-      </ion-item>
-    }
-  </ion-list>
-
   <ion-label class="ion-text-uppercase scaled-text" color="medium">Sort Direction</ion-label>
   <ion-list [inset]="true">
     @for (option of sortDirectionOptions; track option) {
@@ -40,6 +26,46 @@
         (click)="selectedSortDirection = option"
       >
         <ion-label class="scaled-text">{{ option | titlecase }}</ion-label>
+      </ion-item>
+    }
+  </ion-list>
+
+  <ion-label class="ion-text-uppercase scaled-text" color="medium">Also search in</ion-label>
+  <ion-list [inset]="true">
+    @for (row of searchFieldRows; track row.key) {
+      <ion-item
+        class="cursor-pointer"
+        [class.ion-color]="isSearchFieldActive(row)"
+        [class.opacity-50]="!!row.disabledHint"
+        [color]="isSearchFieldActive(row) ? 'secondary' : ''"
+        [disabled]="!!row.disabledHint"
+        (click)="toggleSearchField(row.key, !!row.disabledHint)"
+      >
+        <ion-label class="scaled-text">
+          {{ row.label }}
+          @if (row.disabledHint) {
+            <span class="text-xs opacity-70 ml-2">{{ row.disabledHint }}</span>
+          }
+        </ion-label>
+        <ion-icon
+          slot="end"
+          [name]="isSearchFieldActive(row) ? 'checkmark-circle' : 'ellipse-outline'"
+          aria-hidden="true"
+        ></ion-icon>
+      </ion-item>
+    }
+  </ion-list>
+
+  <ion-label class="ion-text-uppercase scaled-text" color="medium">Filter by</ion-label>
+  <ion-list [inset]="true">
+    @for (option of filterOptions; track option.value) {
+      <ion-item
+        class="cursor-pointer"
+        [class.ion-color]="selectedFilter === option.value"
+        [color]="selectedFilter === option.value ? 'secondary' : ''"
+        (click)="selectedFilter = option.value"
+      >
+        <ion-label class="scaled-text">{{ option.label }}</ion-label>
       </ion-item>
     }
   </ion-list>
