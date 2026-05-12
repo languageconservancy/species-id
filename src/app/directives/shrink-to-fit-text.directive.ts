@@ -10,8 +10,10 @@ import {
 } from '@angular/core';
 
 /**
- * Single-line titles: shrinks font-size until text fits (ResizeObserver + MutationObserver).
- * If the text contains a newline (e.g. merged Crow names), uses pre-line wrapping instead.
+ * Title layout:
+ * - Newlines (merged Crow names): `pre-line` wrapping.
+ * - Multiple words (whitespace): normal wrap at word boundaries only.
+ * - Single long token: shrink font to fit one line (ResizeObserver + MutationObserver).
  */
 @Directive({
   selector: '[appShrinkToFitText]',
@@ -69,10 +71,30 @@ export class ShrinkToFitTextDirective implements AfterViewInit, OnDestroy {
       return;
     }
 
-    // Merged Crow names use newlines; let them wrap as multiple lines (no single-line shrink).
     const text = el.textContent ?? '';
+    const trimmed = text.trim();
+
+    // Reset branch-specific styles before applying a mode (text can change between renders).
+    el.style.wordBreak = '';
+    el.style.overflowWrap = '';
+
+    // Merged Crow names use newlines; let them wrap as multiple lines (no single-line shrink).
     if (text.includes('\n')) {
       el.style.whiteSpace = 'pre-line';
+      el.style.display = 'block';
+      el.style.width = '100%';
+      el.style.maxWidth = '100%';
+      el.style.fontSize = '';
+      el.style.overflow = '';
+      el.style.textOverflow = '';
+      return;
+    }
+
+    // Multiple words: wrap at spaces only (no mid-word breaks, no single-line shrink).
+    if (trimmed.length > 0 && /\s/.test(trimmed)) {
+      el.style.whiteSpace = 'normal';
+      el.style.wordBreak = 'normal';
+      el.style.overflowWrap = 'normal';
       el.style.display = 'block';
       el.style.width = '100%';
       el.style.maxWidth = '100%';
