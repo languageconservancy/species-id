@@ -34,6 +34,10 @@ export interface AppConfig {
   tabLabels?: DomainLabels;
   /** Version string shown in the app (e.g. landing, about). When set, overrides package.json version. */
   appVersion?: string;
+  /** Primary credit line (e.g. authoring organization). */
+  creditsAuthor?: string;
+  /** Funding / program acknowledgment (e.g. MILP). Shown on landing and about. */
+  creditsAcknowledgment?: string;
   [key: string]: any; // allow extensibility
 }
 

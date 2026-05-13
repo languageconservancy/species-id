@@ -145,3 +145,28 @@
     line-height: calc(1 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
   }
 }
+
+/**
+ * Main menu app title: do not combine `.scaled-text` with `text-4xl` — `.scaled-text` sets
+ * a ~1rem base with `!important` and overrides Tailwind display sizes. This scales from a
+ * modest title rem base so accessibility text scale still applies.
+ */
+.main-menu-app-title {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  font-size: calc(1.2rem * var(--app-text-scale, 1)) !important; // ~text-2xl
+  line-height: 1.2 !important;
+}
+@media (min-width: 640px) {
+  .main-menu-app-title {
+    font-size: calc(1.5rem * var(--app-text-scale, 1)) !important; // between 2xl and 3xl
+  }
+}
+
+/* ion-list-header: space-between + extra start padding makes a lone title look off-center */
+ion-menu ion-list-header.main-menu-list-header {
+  justify-content: center !important;
+  padding-left: max(var(--ion-safe-area-left, 0px), 1rem) !important;
+  padding-right: max(var(--ion-safe-area-right, 0px), 1rem) !important;
+}

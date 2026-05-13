@@ -1,42 +1,52 @@
-<ion-content class="safe-pad-bottom safe-pad-top">
-  <div class="flex flex-col items-center justify-center h-full gap-8 ion-padding">
-    <div class="text-center">
-      <h1
-        class="text-4xl font-semibold mb-4 tracking-wide font-englishTitles text-shadow-lg sm:text-5xl lg:text-6xl"
-      >
-        {{ mainMenuLabel }}
-      </h1>
-      <p class="mb-8 text-gray-600 scaled-text">
-        {{ landingSubtitle }}
+<ion-content class="safe-pad-bottom safe-pad-top" [scrollY]="false">
+  <div class="flex h-full min-h-0 flex-col ion-padding">
+    <!-- Fills space above footer; title + buttons centered vertically in this region -->
+    <div class="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 sm:gap-8 w-full">
+      <div class="text-center">
+        <h1
+          class="text-4xl font-semibold mb-4 tracking-wide font-englishTitles text-shadow-lg sm:text-5xl lg:text-6xl"
+        >
+          {{ mainMenuLabel }}
+        </h1>
+        <p class="text-gray-600 scaled-text">
+          {{ landingSubtitle }}
+        </p>
+      </div>
+
+      <div class="flex w-full max-w-md flex-col gap-4">
+        <ion-button
+          style="--box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+          expand="block"
+          shape="round"
+          (click)="navigateToExplore(SpeciesType.Bird)"
+          color="primary"
+          class="scaled-text sm:text-lg lg:text-xl"
+        >
+          <ion-icon slot="start" name="bird"></ion-icon>
+          Explore {{ domainLabelBird }}
+        </ion-button>
+
+        <ion-button
+          style="--box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+          expand="block"
+          shape="round"
+          (click)="navigateToExplore(SpeciesType.Plant)"
+          color="secondary"
+          class="scaled-text sm:text-lg lg:text-xl"
+        >
+          <ion-icon slot="start" name="leaf"></ion-icon>
+          Explore {{ domainLabelPlant }}
+        </ion-button>
+      </div>
+    </div>
+
+    <footer
+      class="mx-auto w-full max-w-md shrink-0 border-t border-gray-200 dark:border-gray-700 pt-5 pb-1 text-center space-y-2"
+    >
+      <p class="text-sm font-medium text-gray-700 dark:text-gray-300 scaled-text">
+        {{ creditsAuthor }}
       </p>
-    </div>
-
-    <div class="flex flex-col gap-4 w-full max-w-md">
-      <ion-button
-        style="--box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
-        expand="block"
-        shape="round"
-        (click)="navigateToExplore(SpeciesType.Bird)"
-        color="primary"
-        class="scaled-text sm:text-lg lg:text-xl"
-      >
-        <ion-icon slot="start" name="bird"></ion-icon>
-        Explore {{ domainLabelBird }}
-      </ion-button>
-
-      <ion-button
-        style="--box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
-        expand="block"
-        shape="round"
-        (click)="navigateToExplore(SpeciesType.Plant)"
-        color="secondary"
-        class="scaled-text sm:text-lg lg:text-xl"
-      >
-        <ion-icon slot="start" name="leaf"></ion-icon>
-        Explore {{ domainLabelPlant }}
-      </ion-button>
-    </div>
-
-    <p class="text-sm text-gray-500 mt-8 scaled-text">Version {{ appVersion }}</p>
+      <p class="text-sm text-gray-500 scaled-text">Version {{ appVersion }}</p>
+    </footer>
   </div>
 </ion-content>
