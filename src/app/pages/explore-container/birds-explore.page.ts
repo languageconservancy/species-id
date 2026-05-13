@@ -160,26 +160,11 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
       {} as Record<string, Species[]>
     );
 
-    const getSortValue = (item: Species): string => {
-      switch (this.sortType) {
-        case 'alphabetical-local':
-          return item.nameLocal;
-        case 'alphabetical-english':
-          return item.nameEn;
-        case 'alphabetical-latin':
-          return item.nameScientific;
-        case 'by-category':
-          return item.nameLocal; // Sort by local name within category groups
-        default:
-          return item.nameLocal;
-      }
-    };
-
     let speciesGroups: SpeciesGroup[] = Object.entries(grouped)
-      .map(([name, items]) => ({
+      .map(([name, groupItems]) => ({
         name,
-        items: items.sort((a, b) => {
-          const result = getSortValue(a).localeCompare(getSortValue(b));
+        items: groupItems.sort((a, b) => {
+          const result = this._sortKeyForListItem(a).localeCompare(this._sortKeyForListItem(b));
           return sortDirection === 'ascending' ? result : -result;
         }),
       }))
@@ -189,6 +174,30 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
       });
 
     return speciesGroups;
+  }
+
+  protected override async _sortSearchResultItems(items: Species[]): Promise<Species[]> {
+    this.sortType = await this.birdPreferencesService.getSort();
+    const sortDirection = await this.birdPreferencesService.getSortDirection();
+    return [...items].sort((a, b) => {
+      const result = this._sortKeyForListItem(a).localeCompare(this._sortKeyForListItem(b));
+      return sortDirection === 'ascending' ? result : -result;
+    });
+  }
+
+  private _sortKeyForListItem(item: Species): string {
+    switch (this.sortType) {
+      case 'alphabetical-local':
+        return item.nameLocal;
+      case 'alphabetical-english':
+        return item.nameEn;
+      case 'alphabetical-latin':
+        return item.nameScientific;
+      case 'by-category':
+        return item.nameLocal;
+      default:
+        return item.nameLocal;
+    }
   }
 
   protected override _applyFilters(items: Species[]): Species[] {

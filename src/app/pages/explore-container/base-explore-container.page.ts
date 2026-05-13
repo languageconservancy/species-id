@@ -14,7 +14,7 @@ import { SearchFields, DEFAULT_SEARCH_FIELDS } from 'app/services/base-preferenc
   styleUrls: ['./base-explore-container.component.scss'],
   standalone: true,
 })
-export class BaseExploreContainerComponent implements OnDestroy, OnInit {
+export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit {
   /** When true, an invisible overlay is shown to absorb the tap that dismissed the keyboard. */
   showDismissOverlay = false;
 
@@ -130,6 +130,12 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
     return { exactMatches, fuzzyMatches };
   }
 
+  /**
+   * Sort a flat list using the same field and direction as the non-search explore list
+   * (within-group sort from {@link _groupAndSortItems}).
+   */
+  protected abstract _sortSearchResultItems(items: Species[]): Promise<Species[]>;
+
   protected _applyFilters(items: Species[]): Species[] {
     return items;
   }
@@ -153,6 +159,8 @@ export class BaseExploreContainerComponent implements OnDestroy, OnInit {
       fuzzyMatches = fuzzyMatches.filter((item) => !exactNameLocals.has(item.nameLocal));
       exactMatches = this._applyFilters(exactMatches);
       fuzzyMatches = this._applyFilters(fuzzyMatches);
+      exactMatches = await this._sortSearchResultItems(exactMatches);
+      fuzzyMatches = await this._sortSearchResultItems(fuzzyMatches);
       this.itemsGrouped = [
         {
           name: 'Exact Matches',
