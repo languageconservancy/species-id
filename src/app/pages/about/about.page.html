@@ -1,12 +1,36 @@
 <app-header title="About"></app-header>
 
-<ion-content class="ion-padding safe-pad-bottom">
-  <div class="flex flex-col gap-4 items-center justify-center h-full">
-    <h1 class="text-center text-2xl font-bold mb-4 scaled-text sm:text-3xl lg:text-4xl">
-      {{ mainMenuLabel }}
-    </h1>
-    <p class="text-center scaled-text sm:text-lg lg:text-xl">{{ aboutDescription }}</p>
-    <p class="text-center mb-4 scaled-text sm:text-lg lg:text-xl">{{ aboutBody }}</p>
-    <p class="text-center mt-4 text-sm text-gray-500 scaled-text">Version {{ appVersion }}</p>
+<ion-content class="ion-padding safe-pad-bottom safe-pad-top">
+  <div class="mx-auto flex max-w-2xl flex-col gap-8 pb-8 pt-10 sm:gap-10 sm:pb-10 sm:pt-14">
+    <header class="text-center">
+      <h1
+        class="font-englishTitles text-3xl font-semibold tracking-wide text-gray-900 text-shadow-lg dark:text-gray-50 sm:text-4xl md:text-5xl"
+      >
+        {{ mainMenuLabel }}
+      </h1>
+    </header>
+
+    <p
+      class="text-center text-lg font-medium leading-relaxed text-gray-600 dark:text-gray-300 scaled-text sm:text-xl"
+    >
+      {{ aboutDescription }}
+    </p>
+
+    <div class="border-t border-gray-200 pt-8 dark:border-gray-700">
+      <p class="text-center leading-relaxed text-gray-800 dark:text-gray-100 scaled-text sm:text-lg">
+        {{ aboutBody }}
+      </p>
+    </div>
+
+    <section class="border-t border-gray-200 pt-8 text-center dark:border-gray-700">
+      <p class="mb-3 text-lg font-semibold text-gray-900 dark:text-gray-50 scaled-text">
+        {{ creditsAuthor }}
+      </p>
+      <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300 scaled-text sm:text-base">
+        {{ creditsAcknowledgment }}
+      </p>
+    </section>
+
+    <p class="text-center text-xs text-gray-500 dark:text-gray-500 scaled-text">Version {{ appVersion }}</p>
   </div>
 </ion-content>

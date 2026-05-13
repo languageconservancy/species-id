@@ -7,7 +7,7 @@ import { bird } from '../../../assets/core/icon/bird';
 import { leaf } from '../../../assets/core/icon/leaf';
 import { SpeciesType } from 'app/models/species.model';
 import { ConfigService } from 'app/services/config.service';
-import { APP_VERSION } from 'app/constants/app-consts';
+import { APP_VERSION, DEFAULT_CREDITS_AUTHOR } from 'app/constants/app-consts';
 
 @Component({
   selector: 'app-landing',
@@ -21,6 +21,7 @@ export class LandingPage {
   landingSubtitle: string = '';
   domainLabelBird: string = 'Birds';
   domainLabelPlant: string = 'Plants';
+  creditsAuthor: string = '';
   get appVersion(): string {
     return this.configService.get('appVersion') ?? APP_VERSION;
   }
@@ -35,6 +36,8 @@ export class LandingPage {
     const labels = this.configService.getDomainLabels();
     this.domainLabelBird = labels.bird ?? 'Birds';
     this.domainLabelPlant = labels.plant ?? 'Plants';
+    this.creditsAuthor =
+      this.configService.get('creditsAuthor') ?? DEFAULT_CREDITS_AUTHOR;
   }
 
   navigateToExplore(type: SpeciesType) {
