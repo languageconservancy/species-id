@@ -18,6 +18,7 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
 import { ConfigService } from 'app/services/config.service';
 import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-list-items';
 import { SettingsService } from 'app/services/settings.service';
+import { LoaderService } from 'app/services/loader.service';
 
 @Component({
   selector: 'app-plants-explore-page',
@@ -50,6 +51,7 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     private plantPreferencesService: PlantPreferencesService,
     private configService: ConfigService,
     private settingsService: SettingsService,
+    private loader: LoaderService,
     protected override speciesService: SpeciesService,
     protected override searchBarService: SearchBarService,
     protected override fuzzySearchService: FuzzySearchService,
@@ -93,12 +95,14 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
   }
 
   protected override async _loadSpecies() {
+    this.loader.begin();
     try {
       this.itemsAll = await this.plantQueriesService.getFull();
       this._setItems();
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading plants:', error);
     } finally {
+      this.loader.end();
       this.itemsLoading = false;
     }
   }

@@ -18,6 +18,7 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
 import { ConfigService } from 'app/services/config.service';
 import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-list-items';
 import { SettingsService } from 'app/services/settings.service';
+import { LoaderService } from 'app/services/loader.service';
 
 @Component({
   selector: 'app-birds-explore-page',
@@ -50,6 +51,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
     private birdPreferencesService: BirdPreferencesService,
     private configService: ConfigService,
     private settingsService: SettingsService,
+    private loader: LoaderService,
     protected override speciesService: SpeciesService,
     protected override searchBarService: SearchBarService,
     protected override fuzzySearchService: FuzzySearchService,
@@ -93,14 +95,17 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
   }
 
   protected override async _loadSpecies() {
+    this.loader.begin();
     try {
       const result = await this.birdQueriesService.getAllBirds();
       this.itemsAll = result;
       this._setItems();
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading species:', error);
+    } finally {
+      this.loader.end();
+      this.itemsLoading = false;
     }
-    this.itemsLoading = false;
   }
 
   /**

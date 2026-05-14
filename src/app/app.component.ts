@@ -1,13 +1,14 @@
 import { Component, OnDestroy } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { MainMenuComponent } from './partials/main-menu/main-menu.component';
+import { LoaderComponent } from './partials/loader/loader.component';
 import { StorageReadyService } from './services/storage-ready.service';
 import { SqljsService } from './services/sqljs.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonApp, IonRouterOutlet, MainMenuComponent],
+  imports: [IonApp, IonRouterOutlet, MainMenuComponent, LoaderComponent],
 })
 export class AppComponent implements OnDestroy {
   constructor(
