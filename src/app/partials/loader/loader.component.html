@@ -1,0 +1,11 @@
+@if (loader.isLoading()) {
+  <div
+    class="pointer-events-none fixed inset-0 z-[100000] flex items-center justify-center"
+    role="status"
+    aria-live="polite"
+    aria-busy="true"
+  >
+    <ion-spinner name="circular" color="primary" class="h-12 w-12"></ion-spinner>
+    <span class="sr-only">Loading</span>
+  </div>
+}

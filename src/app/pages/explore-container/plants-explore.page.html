@@ -14,11 +14,11 @@
     <div class="ion-text-center flex items-center justify-center h-32">
       <ion-label>
         @if (itemsLoading) {
-        <p class="text-sm">Loading plants...</p>
+        <span class="text-lg lg:text-xl">Loading plants...</span>
         } @else if (itemsAll.length === 0) {
-        <p class="text-sm">No plants found in the database.</p>
+        <span class="text-lg lg:text-xl">No plants found in the database.</span>
         } @else {
-        <p class="text-sm">No plants found. Try a different search.</p>
+        <span class="text-lg lg:text-xl">No plants found. Try a different search.</span>
         }
       </ion-label>
     </div>
