@@ -1,6 +1,6 @@
 <app-header [title]="'Explore ' + domainLabel"></app-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="safe-pad-bottom explore-ion-content">
   @if (showDismissOverlay) {
   <div
     class="dismiss-keyboard-overlay"
@@ -8,7 +8,7 @@
     aria-hidden="true"
   ></div>
   }
-  <ion-list class="">
+  <ion-list lines="none">
     <!-- No items found -->
     @if (items.length === 0) {
     <div class="ion-text-center flex items-center justify-center h-32">
