@@ -10,6 +10,8 @@ import { SpeciesGroup } from 'app/models/species.model';
 })
 export class ListDividerComponent implements OnInit {
   @Input() itemGroup!: SpeciesGroup;
+  /** Sticky dividers break under CDK virtual scroll transforms; disable there. */
+  @Input() sticky = true;
 
   constructor() {}
 

@@ -1,6 +1,6 @@
 <app-header [title]="'Explore ' + domainLabel" />
 
-<ion-content [fullscreen]="true" class="safe-pad-bottom explore-ion-content">
+<ion-content [fullscreen]="true" [scrollY]="false" class="safe-pad-bottom explore-ion-content">
   @if (showDismissOverlay) {
   <div
     class="dismiss-keyboard-overlay"
@@ -8,9 +8,9 @@
     aria-hidden="true"
   ></div>
   }
+  <!-- No items found -->
+  @if (items.length === 0) {
   <ion-list lines="none">
-    <!-- No items found -->
-    @if (items.length === 0) {
     <div class="ion-text-center flex items-center justify-center h-32">
       <ion-label>
         @if (itemsLoading) {
@@ -22,17 +22,36 @@
         }
       </ion-label>
     </div>
-    }
-    <!-- Items grouped by user preference -->
-    @for (itemGroup of itemsGrouped; track itemGroup.name) {
-    <ion-item-group>
-      <app-list-divider [itemGroup]="itemGroup"></app-list-divider>
-      @for (item of itemGroup.items; track item.id + '-' + $index; let last = $last) {
-      <app-bird-list-item [item]="item" [isLastItem]="last" [sortType]="sortType"></app-bird-list-item>
-      }
-    </ion-item-group>
-    }
   </ion-list>
+  } @else {
+  <cdk-virtual-scroll-viewport
+    autosize
+    appendOnly
+    class="explore-virtual-scroll"
+    [minBufferPx]="200"
+    [maxBufferPx]="400"
+  >
+    <ion-list lines="none">
+      <div
+        *cdkVirtualFor="let row of exploreFlatRows; trackBy: trackExploreRow"
+        class="explore-virtual-row"
+      >
+        @switch (row.kind) {
+          @case ('divider') {
+          <app-list-divider [itemGroup]="row.group" [sticky]="false"></app-list-divider>
+          }
+          @case ('item') {
+          <app-bird-list-item
+            [item]="row.item"
+            [isLastItem]="row.isLastItem"
+            [sortType]="sortType"
+          ></app-bird-list-item>
+          }
+        }
+      </div>
+    </ion-list>
+  </cdk-virtual-scroll-viewport>
+  }
 </ion-content>
 
 <app-search-bar [domain]="speciesType.Bird"></app-search-bar>

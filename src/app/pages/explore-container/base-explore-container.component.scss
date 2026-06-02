@@ -11,6 +11,21 @@ app-header {
 ion-content.explore-ion-content {
   flex: 1;
   min-height: 0;
+  --overflow: hidden;
+}
+
+.explore-virtual-scroll {
+  height: 100%;
+  width: 100%;
+}
+
+.explore-virtual-scroll .cdk-virtual-scroll-content-wrapper {
+  width: 100%;
+}
+
+.explore-virtual-row {
+  display: block;
+  width: 100%;
 }
 
 app-search-bar {
