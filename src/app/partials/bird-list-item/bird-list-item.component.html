@@ -1,5 +1,5 @@
 <ion-item
-  class="ion-activatable ripple-parent"
+  class="ion-activatable ripple-parent w-full max-w-full overflow-hidden"
   [lines]="isLastItem ? 'none' : 'inset'"
   (click)="onItemClick(item)"
   [style.--inner-padding-end]="'16px'"
@@ -21,14 +21,14 @@
     </h2>
     @if (orderedNames[1]) {
       <p
-        class="font-medium scaled-text ion-text-capitalize text-gray-600 dark:text-gray-700"
+        class="font-medium scaled-text ion-text-capitalize text-gray-600 dark:text-gray-700 break-words min-w-0"
         color="medium"
       >
         {{ orderedNames[1] }}
       </p>
     }
     @if (orderedNames[2]) {
-      <p class="scaled-text italic text-gray-500 dark:text-gray-700" color="medium">
+      <p class="scaled-text italic text-gray-500 dark:text-gray-700 break-words min-w-0" color="medium">
         {{ orderedNames[2] }}
       </p>
     }

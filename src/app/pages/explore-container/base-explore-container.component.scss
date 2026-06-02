@@ -11,13 +11,20 @@ app-header {
 ion-content.explore-ion-content {
   flex: 1;
   min-height: 0;
+  max-width: 100%;
   --overflow: hidden;
+  overflow-x: hidden;
+
+  &::part(scroll) {
+    overflow-x: hidden;
+  }
 }
 
 .explore-virtual-scroll-host {
   position: relative;
   height: 100%;
   width: 100%;
+  max-width: 100%;
   overflow: hidden;
 }
 
@@ -29,21 +36,51 @@ ion-content.explore-ion-content {
   z-index: 3;
   pointer-events: none;
   background: var(--ion-color-secondary, #f3d307);
+  overflow: hidden;
 }
 
 .explore-virtual-scroll {
   height: 100%;
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .explore-virtual-scroll .cdk-virtual-scroll-content-wrapper {
   width: 100%;
   max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.explore-virtual-scroll .explore-virtual-list {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  contain: inline-size;
 }
 
 .explore-virtual-row {
   display: block;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+
+  app-bird-list-item,
+  app-plant-list-item,
+  app-list-divider {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
 }
 
 app-search-bar {

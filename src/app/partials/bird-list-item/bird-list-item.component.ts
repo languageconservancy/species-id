@@ -15,6 +15,22 @@ import { ShrinkToFitTextDirective } from 'app/directives/shrink-to-fit-text.dire
   templateUrl: './bird-list-item.component.html',
   standalone: true,
   imports: [IonIcon, IonImg, IonItem, ShrinkToFitTextDirective],
+  styles: [
+    `
+      :host {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      ion-item {
+        width: 100%;
+        max-width: 100%;
+        --inner-padding-end: 16px;
+      }
+    `,
+  ],
 })
 export class BirdListItemComponent implements OnInit, OnChanges {
   @Input() item!: Species;

@@ -7,6 +7,21 @@ import { SpeciesGroup } from 'app/models/species.model';
   templateUrl: './list-divider.component.html',
   standalone: true,
   imports: [IonItemDivider, IonLabel],
+  styles: [
+    `
+      :host {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      ion-item-divider {
+        width: 100%;
+        max-width: 100%;
+      }
+    `,
+  ],
 })
 export class ListDividerComponent implements OnInit {
   @Input() itemGroup!: SpeciesGroup;

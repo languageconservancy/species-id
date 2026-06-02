@@ -15,6 +15,22 @@ import { ShrinkToFitTextDirective } from 'app/directives/shrink-to-fit-text.dire
   templateUrl: './plant-list-item.component.html',
   standalone: true,
   imports: [IonIcon, IonItem, IonImg, ShrinkToFitTextDirective],
+  styles: [
+    `
+      :host {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      ion-item {
+        width: 100%;
+        max-width: 100%;
+        --inner-padding-end: 16px;
+      }
+    `,
+  ],
 })
 export class PlantListItemComponent implements OnInit, OnChanges {
   @Input() item!: Species;

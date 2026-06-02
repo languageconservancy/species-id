@@ -38,7 +38,7 @@
       [minBufferPx]="200"
       [maxBufferPx]="400"
     >
-      <ion-list lines="none">
+      <div class="explore-virtual-list">
         <div
           *cdkVirtualFor="let row of exploreFlatRows; trackBy: trackExploreRow; let index = index"
           [attr.data-explore-row-index]="index"
@@ -57,7 +57,7 @@
             }
           }
         </div>
-      </ion-list>
+      </div>
     </cdk-virtual-scroll-viewport>
   </div>
   }
