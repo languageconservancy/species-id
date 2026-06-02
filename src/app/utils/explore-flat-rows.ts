@@ -21,6 +21,46 @@ export function buildExploreFlatRows(groups: SpeciesGroup[]): ExploreFlatRow[] {
   return rows;
 }
 
+export function collectExploreDividerIndices(rows: ExploreFlatRow[]): number[] {
+  const indices: number[] = [];
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i].kind === 'divider') {
+      indices.push(i);
+    }
+  }
+  return indices;
+}
+
+/**
+ * Section for the sticky header overlay: last divider at or above the viewport top edge.
+ * Uses getBoundingClientRect tops (reliable with CDK content transforms).
+ */
+export function findActiveDividerByViewportTop(
+  rows: ExploreFlatRow[],
+  dividerIndices: number[],
+  viewportTop: number,
+  rowViewportTop: (index: number) => number | null
+): SpeciesGroup | null {
+  let active: SpeciesGroup | null = null;
+
+  for (const index of dividerIndices) {
+    const top = rowViewportTop(index);
+    if (top === null) {
+      continue;
+    }
+    if (top <= viewportTop + 2) {
+      const row = rows[index];
+      if (row.kind === 'divider') {
+        active = row.group;
+      }
+    } else {
+      break;
+    }
+  }
+
+  return active;
+}
+
 export function trackExploreFlatRow(index: number, row: ExploreFlatRow): string {
   if (row.kind === 'divider') {
     return `d:${row.group.name}`;

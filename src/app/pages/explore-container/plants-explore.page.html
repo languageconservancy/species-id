@@ -24,33 +24,42 @@
     </div>
   </ion-list>
   } @else {
-  <cdk-virtual-scroll-viewport
-    autosize
-    appendOnly
-    class="explore-virtual-scroll"
-    [minBufferPx]="200"
-    [maxBufferPx]="400"
-  >
-    <ion-list lines="none">
-      <div
-        *cdkVirtualFor="let row of exploreFlatRows; trackBy: trackExploreRow"
-        class="explore-virtual-row"
-      >
-        @switch (row.kind) {
-          @case ('divider') {
-          <app-list-divider [itemGroup]="row.group" [sticky]="false"></app-list-divider>
+  <div class="explore-virtual-scroll-host">
+    @if (stickyGroup) {
+    <div class="explore-sticky-group-header">
+      <app-list-divider [itemGroup]="stickyGroup" [sticky]="false"></app-list-divider>
+    </div>
+    }
+    <cdk-virtual-scroll-viewport
+      #virtualScrollViewport
+      autosize
+      appendOnly
+      class="explore-virtual-scroll"
+      [minBufferPx]="200"
+      [maxBufferPx]="400"
+    >
+      <ion-list lines="none">
+        <div
+          *cdkVirtualFor="let row of exploreFlatRows; trackBy: trackExploreRow; let index = index"
+          [attr.data-explore-row-index]="index"
+          class="explore-virtual-row"
+        >
+          @switch (row.kind) {
+            @case ('divider') {
+            <app-list-divider [itemGroup]="row.group" [sticky]="false"></app-list-divider>
+            }
+            @case ('item') {
+            <app-plant-list-item
+              [item]="row.item"
+              [isLastItem]="row.isLastItem"
+              [sortType]="sortType"
+            ></app-plant-list-item>
+            }
           }
-          @case ('item') {
-          <app-plant-list-item
-            [item]="row.item"
-            [isLastItem]="row.isLastItem"
-            [sortType]="sortType"
-          ></app-plant-list-item>
-          }
-        }
-      </div>
-    </ion-list>
-  </cdk-virtual-scroll-viewport>
+        </div>
+      </ion-list>
+    </cdk-virtual-scroll-viewport>
+  </div>
   }
 </ion-content>
 

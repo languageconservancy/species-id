@@ -14,6 +14,23 @@ ion-content.explore-ion-content {
   --overflow: hidden;
 }
 
+.explore-virtual-scroll-host {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.explore-sticky-group-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: var(--ion-color-secondary, #f3d307);
+}
+
 .explore-virtual-scroll {
   height: 100%;
   width: 100%;
@@ -21,6 +38,7 @@ ion-content.explore-ion-content {
 
 .explore-virtual-scroll .cdk-virtual-scroll-content-wrapper {
   width: 100%;
+  max-width: 100%;
 }
 
 .explore-virtual-row {

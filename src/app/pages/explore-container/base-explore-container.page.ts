@@ -1,13 +1,22 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Species, SpeciesGroup } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { SearchBarService } from 'app/services/search-bar.service';
 import { FuzzySearchService } from 'app/services/fuzzy-search.service';
-import { Subscription } from 'rxjs';
+import { Subscription, merge } from 'rxjs';
+import { auditTime } from 'rxjs/operators';
 import { addIcons } from 'ionicons';
 import { search, options } from 'ionicons/icons';
 import { AnalyticsService } from 'app/services/analytics.service';
 import { SearchFields, DEFAULT_SEARCH_FIELDS } from 'app/services/base-preferences.service';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import {
+  buildExploreFlatRows,
+  collectExploreDividerIndices,
+  ExploreFlatRow,
+  findActiveDividerByViewportTop,
+  trackExploreFlatRow,
+} from 'app/utils/explore-flat-rows';
 
 @Component({
   template: '',
@@ -22,6 +31,16 @@ export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit
   items: Species[] = [];
   itemsAll: Species[] = [];
   itemsGrouped: SpeciesGroup[] = [];
+  exploreFlatRows: ExploreFlatRow[] = [];
+  private exploreDividerIndices: number[] = [];
+  readonly trackExploreRow = trackExploreFlatRow;
+  /** Current section label for the virtual-scroll sticky header overlay. */
+  stickyGroup: SpeciesGroup | null = null;
+  protected virtualScrollViewport?: CdkVirtualScrollViewport;
+  private virtualScrollStickySub?: Subscription;
+  private stickyHeaderSyncRaf = 0;
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly ngZone = inject(NgZone);
   protected subscribers: Subscription = new Subscription();
   searchTerm: string = '';
   /** Effective search-field flags after combining per-domain toggles with global settings. */
@@ -70,6 +89,92 @@ export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit
     this._subscribeDismissOverlay();
   }
 
+  @ViewChild('virtualScrollViewport')
+  set virtualScrollViewportRef(viewport: CdkVirtualScrollViewport | undefined) {
+    this.virtualScrollViewport = viewport;
+    if (viewport) {
+      this._attachVirtualScrollStickyHeader();
+    } else {
+      this.virtualScrollStickySub?.unsubscribe();
+      this.stickyGroup = null;
+    }
+  }
+
+  /** Rebuild flat virtual rows after grouping changes and refresh sticky header state. */
+  protected _rebuildExploreFlatRows(): void {
+    this.exploreFlatRows = buildExploreFlatRows(this.itemsGrouped);
+    this.exploreDividerIndices = collectExploreDividerIndices(this.exploreFlatRows);
+    this._scheduleVirtualScrollStickyHeaderSync();
+  }
+
+  protected _attachVirtualScrollStickyHeader(): void {
+    const viewport = this.virtualScrollViewport;
+    if (!viewport) {
+      return;
+    }
+    this.virtualScrollStickySub?.unsubscribe();
+    this.virtualScrollStickySub = merge(viewport.elementScrolled(), viewport.renderedRangeStream)
+      .pipe(auditTime(0))
+      .subscribe(() => this._scheduleVirtualScrollStickyHeaderSync());
+    this._scheduleVirtualScrollStickyHeaderSync();
+  }
+
+  protected _scheduleVirtualScrollStickyHeaderSync(): void {
+    if (this.stickyHeaderSyncRaf) {
+      cancelAnimationFrame(this.stickyHeaderSyncRaf);
+    }
+    this.stickyHeaderSyncRaf = requestAnimationFrame(() => {
+      this.stickyHeaderSyncRaf = 0;
+      this._syncVirtualScrollStickyHeader();
+    });
+  }
+
+  protected _syncVirtualScrollStickyHeader(): void {
+    const viewport = this.virtualScrollViewport;
+    if (!viewport || this.exploreFlatRows.length === 0) {
+      this._setStickyGroup(null);
+      return;
+    }
+
+    const scrollTop = viewport.measureScrollOffset('top');
+    if (scrollTop <= 1) {
+      this._setStickyGroup(null);
+      return;
+    }
+
+    const viewportTop = viewport.elementRef.nativeElement.getBoundingClientRect().top;
+    const rowViewportTop = (index: number): number | null => {
+      const el = viewport.elementRef.nativeElement.querySelector(
+        `[data-explore-row-index="${index}"]`
+      ) as HTMLElement | null;
+      return el ? el.getBoundingClientRect().top : null;
+    };
+
+    let group = findActiveDividerByViewportTop(
+      this.exploreFlatRows,
+      this.exploreDividerIndices,
+      viewportTop,
+      rowViewportTop
+    );
+
+    if (!group) {
+      const firstDivider = this.exploreFlatRows.find((row) => row.kind === 'divider');
+      group = firstDivider?.kind === 'divider' ? firstDivider.group : null;
+    }
+
+    this._setStickyGroup(group);
+  }
+
+  private _setStickyGroup(group: SpeciesGroup | null): void {
+    if (this.stickyGroup === group) {
+      return;
+    }
+    this.ngZone.run(() => {
+      this.stickyGroup = group;
+      this.cdr.markForCheck();
+    });
+  }
+
   private _subscribeDismissOverlay(): void {
     const sub = this.searchBarService.dismissOverlayVisibility$.subscribe((show) => {
       this.showDismissOverlay = show;
@@ -85,6 +190,10 @@ export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit
   }
 
   ngOnDestroy() {
+    if (this.stickyHeaderSyncRaf) {
+      cancelAnimationFrame(this.stickyHeaderSyncRaf);
+    }
+    this.virtualScrollStickySub?.unsubscribe();
     this.searchBarService.setSearch('');
     this.subscribers.unsubscribe();
   }

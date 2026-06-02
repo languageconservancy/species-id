@@ -20,11 +20,6 @@ import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-
 import { SettingsService } from 'app/services/settings.service';
 import { CdkVirtualScrollViewport, CdkVirtualForOf } from '@angular/cdk/scrolling';
 import { CdkAutoSizeVirtualScroll } from '@angular/cdk-experimental/scrolling';
-import {
-  buildExploreFlatRows,
-  ExploreFlatRow,
-  trackExploreFlatRow,
-} from 'app/utils/explore-flat-rows';
 
 @Component({
   selector: 'app-birds-explore-page',
@@ -46,8 +41,6 @@ import {
 })
 export class BirdsExplorePage extends BaseExploreContainerComponent implements OnInit, OnDestroy {
   private preferencesSubscription?: Subscription;
-  exploreFlatRows: ExploreFlatRow[] = [];
-  readonly trackExploreRow = trackExploreFlatRow;
   public speciesType = SpeciesType;
   public sortType = 'alphabetical-local';
   private selectedFilter = 'all';
@@ -106,7 +99,7 @@ export class BirdsExplorePage extends BaseExploreContainerComponent implements O
       name: group.name,
       items: mergeAdjacentSpeciesListItems(group.items),
     }));
-    this.exploreFlatRows = buildExploreFlatRows(this.itemsGrouped);
+    this._rebuildExploreFlatRows();
   }
 
   protected override async _loadSpecies() {
