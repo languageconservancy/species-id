@@ -15,20 +15,20 @@
   <div class="ml-4 flex-1 min-w-0 space-y-1">
     <h2
       appShrinkToFitText
-      class="font-localNames text-lg md:text-xl ion-text-capitalize block w-full leading-tight"
+      class="font-localNames scaled-text ion-text-capitalize block w-full leading-tight"
     >
       {{ orderedNames[0] }}
     </h2>
     @if (orderedNames[1]) {
       <p
-        class="font-medium text-sm md:text-base ion-text-capitalize text-gray-600 dark:text-gray-700"
+        class="font-medium scaled-text ion-text-capitalize text-gray-600 dark:text-gray-700"
         color="medium"
       >
         {{ orderedNames[1] }}
       </p>
     }
     @if (orderedNames[2]) {
-      <p class="text-sm md:text-base italic text-gray-500 dark:text-gray-700" color="medium">
+      <p class="scaled-text italic text-gray-500 dark:text-gray-700" color="medium">
         {{ orderedNames[2] }}
       </p>
     }

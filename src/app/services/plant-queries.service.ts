@@ -27,7 +27,7 @@ export class PlantQueriesService {
     }
   }
 
-  async getFull(): Promise<Species[]> {
+  async getAllPlants(): Promise<Species[]> {
     try {
       const result = await this.sqljsService.executeQuery(
         `SELECT DISTINCT
@@ -37,15 +37,7 @@ export class PlantQueriesService {
           COALESCE(plant_english_names.english_name, '') AS species_name_en,
           plants.category AS species_category,
           COALESCE(plant_crow_names.literal_meaning, '') AS species_name_meaning_en,
-          COALESCE(plants.description_local, '') AS species_description_local,
-          COALESCE(plants.description_en, '') AS species_description_en,
-          COALESCE(plants.habitat_en, '') AS species_habitat_en,
-          COALESCE(plants.uses_en, '') AS species_uses_en,
-          plants.map_image AS species_map_image,
           (SELECT plant_images.file_name FROM plant_images WHERE plant_images.plant_id = plants.id ORDER BY plant_images.sort_order LIMIT 1) AS image_file_name,
-          (SELECT plant_images.caption FROM plant_images WHERE plant_images.plant_id = plants.id ORDER BY plant_images.sort_order LIMIT 1) AS image_caption,
-          (SELECT plant_images.credit FROM plant_images WHERE plant_images.plant_id = plants.id ORDER BY plant_images.sort_order LIMIT 1) AS image_credit,
-          (SELECT plant_images.sort_order FROM plant_images WHERE plant_images.plant_id = plants.id ORDER BY plant_images.sort_order LIMIT 1) AS image_sort_order,
           'plant' as species_type
         FROM plants
         LEFT JOIN plant_crow_name_mappings ON plants.id = plant_crow_name_mappings.plant_id

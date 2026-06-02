@@ -1,3 +1,22 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+app-header {
+  flex-shrink: 0;
+}
+
+ion-content.explore-ion-content {
+  flex: 1;
+  min-height: 0;
+}
+
+app-search-bar {
+  flex-shrink: 0;
+}
+
 .dismiss-keyboard-overlay {
   position: absolute;
   inset: 0;

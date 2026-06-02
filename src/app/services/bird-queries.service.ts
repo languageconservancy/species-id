@@ -37,20 +37,7 @@ export class BirdQueriesService {
           COALESCE(bird_english_names.english_name, '') AS species_name_en,
           birds.category AS species_category,
           COALESCE(bird_crow_names.literal_meaning, '') AS species_name_meaning_en,
-          COALESCE(birds.description_local, '') AS species_description_local,
-          COALESCE(birds.description_en, '') AS species_description_en,
-          COALESCE(birds.habitat_en, '') AS species_habitat_en,
-          COALESCE(birds.food_habits_en, '') AS species_food_habits_en,
-          COALESCE(birds.migration_en, '') AS species_migration_en,
-          COALESCE(birds.cultural_en, '') AS species_cultural_en,
-          birds.map_image AS species_map_image,
           (SELECT bird_images.file_name FROM bird_images WHERE bird_images.bird_id = birds.id ORDER BY bird_images.sort_order LIMIT 1) AS image_file_name,
-          (SELECT bird_images.caption FROM bird_images WHERE bird_images.bird_id = birds.id ORDER BY bird_images.sort_order LIMIT 1) AS image_caption,
-          (SELECT bird_images.credit FROM bird_images WHERE bird_images.bird_id = birds.id ORDER BY bird_images.sort_order LIMIT 1) AS image_credit,
-          (SELECT bird_images.sort_order FROM bird_images WHERE bird_images.bird_id = birds.id ORDER BY bird_images.sort_order LIMIT 1) AS image_sort_order,
-          (SELECT bird_song_audios.file_name FROM bird_song_audios WHERE bird_song_audios.bird_id = birds.id ORDER BY bird_song_audios.sort_order LIMIT 1) AS audio_file_name,
-          (SELECT bird_song_audios.caption FROM bird_song_audios WHERE bird_song_audios.bird_id = birds.id ORDER BY bird_song_audios.sort_order LIMIT 1) AS audio_caption,
-          (SELECT bird_song_audios.sort_order FROM bird_song_audios WHERE bird_song_audios.bird_id = birds.id ORDER BY bird_song_audios.sort_order LIMIT 1) AS audio_sort_order,
           'bird' as species_type
         FROM birds
         LEFT JOIN bird_crow_name_mappings ON birds.id = bird_crow_name_mappings.bird_id

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, combineLatest } from 'rxjs';
 import { PlantQueriesService } from 'app/services/plant-queries.service';
 import { PlantPreferencesService } from 'app/services/plant-preferences.service';
@@ -8,7 +8,7 @@ import { SpeciesService } from 'app/services/species.service';
 import { PlantListItemComponent } from 'app/partials/plant-list-item/plant-list-item.component';
 import { SearchBarService } from 'app/services/search-bar.service';
 import { SpeciesType } from 'app/models/species.model';
-import { IonList, IonItemGroup, IonLabel, IonContent } from '@ionic/angular/standalone';
+import { IonList, IonLabel, IonContent, IonItemGroup } from '@ionic/angular/standalone';
 import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component';
 import { HeaderComponent } from 'app/partials/header/header.component';
 import { ListDividerComponent } from 'app/partials/list-divider/list-divider.component';
@@ -18,7 +18,6 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
 import { ConfigService } from 'app/services/config.service';
 import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-list-items';
 import { SettingsService } from 'app/services/settings.service';
-import { LoaderService } from 'app/services/loader.service';
 
 @Component({
   selector: 'app-plants-explore-page',
@@ -51,7 +50,6 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     private plantPreferencesService: PlantPreferencesService,
     private configService: ConfigService,
     private settingsService: SettingsService,
-    private loader: LoaderService,
     protected override speciesService: SpeciesService,
     protected override searchBarService: SearchBarService,
     protected override fuzzySearchService: FuzzySearchService,
@@ -86,6 +84,11 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
     this._postProcessPlantExploreGroups();
   }
 
+  protected override async _resetItems(): Promise<void> {
+    await super._resetItems();
+    this._postProcessPlantExploreGroups();
+  }
+
   /** Merge adjacent same-species rows for the rendered list. */
   private _postProcessPlantExploreGroups(): void {
     this.itemsGrouped = this.itemsGrouped.map((group) => ({
@@ -95,14 +98,12 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
   }
 
   protected override async _loadSpecies() {
-    this.loader.begin();
     try {
-      this.itemsAll = await this.plantQueriesService.getFull();
-      this._setItems();
+      this.itemsAll = await this.plantQueriesService.getAllPlants();
+      await this._setItems();
     } catch (error) {
       console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading plants:', error);
     } finally {
-      this.loader.end();
       this.itemsLoading = false;
     }
   }
