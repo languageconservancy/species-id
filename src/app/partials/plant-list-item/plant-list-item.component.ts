@@ -42,9 +42,9 @@ import { ShrinkToFitTextDirective } from 'app/directives/shrink-to-fit-text.dire
         display: flex;
         flex: 1;
         align-items: center;
-        gap: 1rem;
+        gap: var(--species-list-content-gap);
         min-width: 0;
-        padding: 8px 0;
+        padding: var(--species-list-content-padding-y) 0;
       }
 
       .species-list-item__thumb {
@@ -52,16 +52,18 @@ import { ShrinkToFitTextDirective } from 'app/directives/shrink-to-fit-text.dire
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 4.5rem;
-        height: 4.5rem;
-        border-radius: 0.375rem;
-        overflow: hidden;
+        width: var(--species-list-thumb-size);
+        height: var(--species-list-thumb-size);
       }
 
       .species-list-item__thumb img {
+        display: block;
         max-width: 100%;
         max-height: 100%;
+        width: auto;
+        height: auto;
         object-fit: contain;
+        border-radius: 0.375rem;
       }
 
       ion-label.species-list-item__text {
