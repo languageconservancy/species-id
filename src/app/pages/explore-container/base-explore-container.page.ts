@@ -107,11 +107,9 @@ export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit
     throw new Error('_loadSpecies must be implemented by child class');
   }
 
-  protected _applySearch(): { exactMatches: Species[], fuzzyMatches: Species[] } {
+  protected _applySearch(): { exactMatches: Species[]; fuzzyMatches: Species[] } {
     const fields = this.effectiveSearchFields;
     const exactMatches = this.itemsAll.filter((item: Species) => {
-      // Crow/local name is always searched; other fields gated by effectiveSearchFields
-      // (which combines per-domain toggles with global app settings).
       return (
         this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameLocal) ||
         (fields.scientific &&
@@ -122,7 +120,6 @@ export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit
           this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameMeaningEn))
       );
     });
-    // Check for fuzzy matches in just the local language names
     const fuzzyMatches = this.itemsAll.filter((item: Species) => {
       return this.fuzzySearchService.matches(this.searchTerm, item.nameLocal);
     });
@@ -162,22 +159,15 @@ export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit
       exactMatches = await this._sortSearchResultItems(exactMatches);
       fuzzyMatches = await this._sortSearchResultItems(fuzzyMatches);
       this.itemsGrouped = [
-        {
-          name: 'Exact Matches',
-          items: exactMatches,
-        },
-        {
-          name: 'Near Matches',
-          items: fuzzyMatches,
-        },
-      ];
+        { name: 'Exact Matches', items: exactMatches },
+        { name: 'Near Matches', items: fuzzyMatches },
+      ].filter((group) => group.items.length > 0);
     }
-
   }
 
   protected _removeDuplicates(items: Species[]): Species[] {
-    return items.filter((item, index, self) =>
-      index === self.findIndex((t) => t.nameLocal === item.nameLocal)
+    return items.filter(
+      (item, index, self) => index === self.findIndex((t) => t.nameLocal === item.nameLocal)
     );
   }
 
@@ -198,7 +188,6 @@ export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit
   }
 
   protected async _groupAndSortItems(items: Species[]): Promise<SpeciesGroup[]> {
-    // To be implemented by child classes
     throw new Error('_groupAndSortItems must be implemented by child class');
   }
 }

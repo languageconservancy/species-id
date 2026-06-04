@@ -10,8 +10,8 @@ export class SpeciesService {
     // No initialization needed for bundled assets
   }
 
-  async getImageUrl(imageFileName: string, speciesType?: SpeciesType): Promise<string> {
-    // Build the path based on species type
+  /** Bundled asset path for a species list/detail image (sync — no I/O). */
+  buildImageUrl(imageFileName: string, speciesType?: SpeciesType): string {
     let imagePath: string;
     switch (speciesType) {
       case SpeciesType.Bird:
@@ -25,12 +25,14 @@ export class SpeciesService {
         return '';
     }
 
-    // Return the bundled asset path
-    const assetUrl = `${ASSET_PATHS.SPECIES_DATA}/${imagePath}`;
-    return assetUrl;
+    return `${ASSET_PATHS.SPECIES_DATA}/${imagePath}`;
   }
 
-  async getMapImageUrl(imageFileName: string, speciesType?: SpeciesType): Promise<string> {
+  async getImageUrl(imageFileName: string, speciesType?: SpeciesType): Promise<string> {
+    return this.buildImageUrl(imageFileName, speciesType);
+  }
+
+  buildMapImageUrl(imageFileName: string, speciesType?: SpeciesType): string {
     let imagePath: string;
     switch (speciesType) {
       case SpeciesType.Bird:
@@ -43,7 +45,10 @@ export class SpeciesService {
         console.error(ASSET_PATHS.ERROR_EMOJI, `Invalid species type: ${speciesType}`);
         return '';
     }
-    const assetUrl = `${ASSET_PATHS.SPECIES_DATA}/${imagePath}`;
-    return assetUrl;
+    return `${ASSET_PATHS.SPECIES_DATA}/${imagePath}`;
+  }
+
+  async getMapImageUrl(imageFileName: string, speciesType?: SpeciesType): Promise<string> {
+    return this.buildMapImageUrl(imageFileName, speciesType);
   }
 }

@@ -18,7 +18,6 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
 import { ConfigService } from 'app/services/config.service';
 import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-list-items';
 import { SettingsService } from 'app/services/settings.service';
-
 @Component({
   selector: 'app-birds-explore-page',
   templateUrl: './birds-explore.page.html',

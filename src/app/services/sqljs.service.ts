@@ -112,7 +112,7 @@ export class SqljsService {
   private async debugTables(): Promise<void> {
     try {
       const result = await this.executeQuery('SELECT name FROM sqlite_master WHERE type="table"');
-      console.log('SQL.js: Available tables:', result);
+      console.debug('SQL.js: Available tables:', result);
     } catch (error) {
       console.warn(ASSET_PATHS.WARNING_EMOJI, 'SQL.js: Could not query tables:', error);
     }
