@@ -8,7 +8,7 @@ import { SpeciesService } from 'app/services/species.service';
 import { PlantListItemComponent } from 'app/partials/plant-list-item/plant-list-item.component';
 import { SearchBarService } from 'app/services/search-bar.service';
 import { SpeciesType } from 'app/models/species.model';
-import { IonList, IonLabel, IonContent } from '@ionic/angular/standalone';
+import { IonList, IonLabel, IonContent, IonItemGroup } from '@ionic/angular/standalone';
 import { SearchBarComponent } from 'app/partials/search-bar/search-bar.component';
 import { HeaderComponent } from 'app/partials/header/header.component';
 import { ListDividerComponent } from 'app/partials/list-divider/list-divider.component';
@@ -18,9 +18,6 @@ import { ASSET_PATHS } from 'app/constants/app-consts';
 import { ConfigService } from 'app/services/config.service';
 import { mergeAdjacentSpeciesListItems } from 'app/utils/merge-adjacent-species-list-items';
 import { SettingsService } from 'app/services/settings.service';
-import { CdkVirtualScrollViewport, CdkVirtualForOf } from '@angular/cdk/scrolling';
-import { CdkAutoSizeVirtualScroll } from '@angular/cdk-experimental/scrolling';
-
 @Component({
   selector: 'app-plants-explore-page',
   templateUrl: './plants-explore.page.html',
@@ -29,14 +26,12 @@ import { CdkAutoSizeVirtualScroll } from '@angular/cdk-experimental/scrolling';
   imports: [
     IonContent,
     IonList,
+    IonItemGroup,
     PlantListItemComponent,
     IonLabel,
     SearchBarComponent,
     HeaderComponent,
     ListDividerComponent,
-    CdkVirtualScrollViewport,
-    CdkVirtualForOf,
-    CdkAutoSizeVirtualScroll,
   ],
 })
 export class PlantsExplorePage extends BaseExploreContainerComponent implements OnInit, OnDestroy {
@@ -99,7 +94,6 @@ export class PlantsExplorePage extends BaseExploreContainerComponent implements 
       name: group.name,
       items: mergeAdjacentSpeciesListItems(group.items),
     }));
-    this._rebuildExploreFlatRows();
   }
 
   protected override async _loadSpecies() {

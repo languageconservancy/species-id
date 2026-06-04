@@ -9,11 +9,9 @@ import { SpeciesGroup } from 'app/models/species.model';
   imports: [IonItemDivider, IonLabel],
   styles: [
     `
+      /* Let ion-item-divider participate in ion-item-group layout (required for sticky). */
       :host {
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
+        display: contents;
       }
 
       ion-item-divider {
@@ -25,7 +23,7 @@ import { SpeciesGroup } from 'app/models/species.model';
 })
 export class ListDividerComponent implements OnInit {
   @Input() itemGroup!: SpeciesGroup;
-  /** Sticky dividers break under CDK virtual scroll transforms; disable there. */
+  /** Native sticky headers; set false only if a parent breaks position:sticky (e.g. transformed scroll). */
   @Input() sticky = true;
 
   constructor() {}

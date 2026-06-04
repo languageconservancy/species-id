@@ -1,33 +1,33 @@
 import { TestBed } from '@angular/core/testing';
 import { BirdQueriesService } from './bird-queries.service';
-import { SqliteService } from './sqlite.service';
+import { SqljsService } from './sqljs.service';
 import { Species, SpeciesType } from 'app/models/species.model';
 import * as speciesModel from 'app/models/species.model';
 
 describe('BirdQueriesService', () => {
   let service: BirdQueriesService;
-  let sqliteServiceSpy: jasmine.SpyObj<SqliteService>;
+  let sqljsServiceSpy: jasmine.SpyObj<SqljsService>;
 
   beforeEach(async () => {
-    sqliteServiceSpy = jasmine.createSpyObj('SqliteService', ['executeQuery', 'init', 'close']);
-    sqliteServiceSpy.init.and.resolveTo();
-    sqliteServiceSpy.close.and.resolveTo();
+    sqljsServiceSpy = jasmine.createSpyObj('SqljsService', ['executeQuery', 'init', 'close']);
+    sqljsServiceSpy.init.and.resolveTo();
+    sqljsServiceSpy.close.and.resolveTo();
 
     TestBed.configureTestingModule({
-      providers: [BirdQueriesService, { provide: SqliteService, useValue: sqliteServiceSpy }],
+      providers: [BirdQueriesService, { provide: SqljsService, useValue: sqljsServiceSpy }],
     });
     service = TestBed.inject(BirdQueriesService);
-    await sqliteServiceSpy.init();
+    await sqljsServiceSpy.init();
   });
 
   afterEach(async () => {
-    await sqliteServiceSpy.close();
+    await sqljsServiceSpy.close();
   });
 
   describe('getFull', () => {
     it('should return mapped species from the database', async () => {
       const dbRows = [{ species_id: 1 }];
-      sqliteServiceSpy.executeQuery.and.resolveTo({ values: dbRows });
+      sqljsServiceSpy.executeQuery.and.resolveTo({ values: dbRows });
       const mapSpy = spyOn(speciesModel, 'mapSpeciesWithImagesAndOrder').and.returnValue([
         {
           type: SpeciesType.Bird,
@@ -35,14 +35,14 @@ describe('BirdQueriesService', () => {
         } as Species,
       ]);
       const result = await service.getAllBirds();
-      expect(sqliteServiceSpy.executeQuery).toHaveBeenCalled();
+      expect(sqljsServiceSpy.executeQuery).toHaveBeenCalled();
       expect(mapSpy).toHaveBeenCalledWith(dbRows);
       expect(result.length).toBe(1);
       expect(result[0].id).toBe(1);
     });
 
-    it('should throw if sqliteService throws', async () => {
-      sqliteServiceSpy.executeQuery.and.rejectWith(new Error('DB error'));
+    it('should throw if sqljsService throws', async () => {
+      sqljsServiceSpy.executeQuery.and.rejectWith(new Error('DB error'));
       await expectAsync(service.getAllBirds()).toBeRejectedWithError('DB error');
     });
   });
@@ -50,26 +50,26 @@ describe('BirdQueriesService', () => {
   describe('getById', () => {
     it('should return the mapped species if found', async () => {
       const dbRows = [{ species_id: 1 }];
-      sqliteServiceSpy.executeQuery.and.resolveTo({ values: dbRows });
+      sqljsServiceSpy.executeQuery.and.resolveTo({ values: dbRows });
       const mapSpy = spyOn(speciesModel, 'mapSpeciesWithImagesAndOrder').and.returnValue([
         { id: 1, type: SpeciesType.Bird } as Species,
       ]);
       const result = await service.getBirdById(1);
-      expect(sqliteServiceSpy.executeQuery).toHaveBeenCalledWith(jasmine.any(String), [1]);
+      expect(sqljsServiceSpy.executeQuery).toHaveBeenCalledWith(jasmine.any(String), [1]);
       expect(mapSpy).toHaveBeenCalledWith(dbRows);
       expect(result).toEqual(jasmine.objectContaining({ id: 1 }));
     });
 
     it('should return null if no species found', async () => {
-      sqliteServiceSpy.executeQuery.and.resolveTo({ values: [] });
+      sqljsServiceSpy.executeQuery.and.resolveTo({ values: [] });
       const mapSpy = spyOn(speciesModel, 'mapSpeciesWithImagesAndOrder');
       const result = await service.getBirdById(999);
       expect(result).toBeNull();
       expect(mapSpy).not.toHaveBeenCalled();
     });
 
-    it('should throw if sqliteService throws', async () => {
-      sqliteServiceSpy.executeQuery.and.rejectWith(new Error('DB error'));
+    it('should throw if sqljsService throws', async () => {
+      sqljsServiceSpy.executeQuery.and.rejectWith(new Error('DB error'));
       await expectAsync(service.getBirdById(1)).toBeRejectedWithError('DB error');
     });
   });

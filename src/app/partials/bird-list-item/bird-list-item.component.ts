@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { IonIcon, IonImg, IonItem, NavController } from '@ionic/angular/standalone';
+import { IonIcon, IonItem, IonLabel, NavController } from '@ionic/angular/standalone';
 import { Species } from 'app/models/species.model';
 import { SpeciesService } from 'app/services/species.service';
 import { SearchBarService } from 'app/services/search-bar.service';
@@ -14,7 +14,7 @@ import { ShrinkToFitTextDirective } from 'app/directives/shrink-to-fit-text.dire
   selector: 'app-bird-list-item',
   templateUrl: './bird-list-item.component.html',
   standalone: true,
-  imports: [IonIcon, IonImg, IonItem, ShrinkToFitTextDirective],
+  imports: [IonIcon, IonItem, IonLabel, ShrinkToFitTextDirective],
   styles: [
     `
       :host {
@@ -24,10 +24,58 @@ import { ShrinkToFitTextDirective } from 'app/directives/shrink-to-fit-text.dire
         min-width: 0;
       }
 
-      ion-item {
+      ion-item.species-list-item {
         width: 100%;
         max-width: 100%;
+        --padding-top: 0;
+        --padding-bottom: 0;
         --inner-padding-end: 16px;
+      }
+
+      ion-item.species-list-item ion-icon[slot='end'] {
+        margin-top: 0;
+        margin-bottom: 0;
+        align-self: center;
+      }
+
+      .species-list-item__content {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+        padding: 8px 0;
+      }
+
+      .species-list-item__thumb {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 4.5rem;
+        height: 4.5rem;
+        border-radius: 0.375rem;
+        overflow: hidden;
+      }
+
+      .species-list-item__thumb img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+
+      ion-label.species-list-item__text {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .species-list-item__text h2,
+      .species-list-item__text p {
+        margin: 0;
       }
     `,
   ],
@@ -41,7 +89,6 @@ export class BirdListItemComponent implements OnInit, OnChanges {
     showScientificNames: true,
     textScale: 1,
   };
-  imageUrl: string = '';
   @Input() sortType!: string;
   orderedNames: string[] = [];
 
@@ -67,9 +114,17 @@ export class BirdListItemComponent implements OnInit, OnChanges {
     return this.item.nameLocal.replace(/(.{4,6})/g, '$1\u00AD');
   }
 
+  /** First list thumbnail path; empty when the species has no image. */
+  get listImageUrl(): string {
+    const fileName = this.item?.images?.[0]?.fileName;
+    if (!fileName) {
+      return '';
+    }
+    return this.speciesService.buildImageUrl(fileName, this.item.type);
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['item'] && changes['item'].currentValue) {
-      this._loadImageUrl();
       this._updateOrderedText();
     }
     if (changes['sortType'] && changes['sortType'].currentValue) {
@@ -130,20 +185,6 @@ export class BirdListItemComponent implements OnInit, OnChanges {
       this._updateOrderedText();
     });
     this.subscribers.add(sub);
-  }
-
-  private async _loadImageUrl() {
-    if (this.item?.images && this.item.images.length > 0) {
-      try {
-        this.imageUrl = await this.speciesService.getImageUrl(
-          this.item.images[0].fileName,
-          this.item.type
-        );
-      } catch (error) {
-        console.error(ASSET_PATHS.ERROR_EMOJI, 'Error loading image URL:', error);
-        this.imageUrl = '';
-      }
-    }
   }
 
   onItemClick(item: Species) {

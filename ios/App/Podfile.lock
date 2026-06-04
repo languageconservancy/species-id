@@ -3,10 +3,6 @@ PODS:
     - CapacitorCordova
   - CapacitorApp (7.0.1):
     - Capacitor
-  - CapacitorCommunitySqlite (7.0.0):
-    - Capacitor
-    - SQLCipher
-    - ZIPFoundation
   - CapacitorCordova (8.1.0)
   - CapacitorFilesystem (7.1.8):
     - Capacitor
@@ -28,17 +24,10 @@ PODS:
     - PostHog (~> 3.19.1)
   - IONFilesystemLib (1.1.1)
   - PostHog (3.19.9)
-  - SQLCipher (4.10.0):
-    - SQLCipher/standard (= 4.10.0)
-  - SQLCipher/common (4.10.0)
-  - SQLCipher/standard (4.10.0):
-    - SQLCipher/common
-  - ZIPFoundation (0.9.20)
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
-  - "CapacitorCommunitySqlite (from `../../node_modules/@capacitor-community/sqlite`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
@@ -53,16 +42,12 @@ SPEC REPOS:
   trunk:
     - IONFilesystemLib
     - PostHog
-    - SQLCipher
-    - ZIPFoundation
 
 EXTERNAL SOURCES:
   Capacitor:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorApp:
     :path: "../../node_modules/@capacitor/app"
-  CapacitorCommunitySqlite:
-    :path: "../../node_modules/@capacitor-community/sqlite"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorFilesystem:
@@ -85,7 +70,6 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Capacitor: 47b825120c6b8b6d6f9f053e9350a8960d436710
   CapacitorApp: febecbb9582cb353aed037e18ec765141f880fe9
-  CapacitorCommunitySqlite: b11e556cf5d149f9e0b6fbbb47959a6cd718c3d0
   CapacitorCordova: e8b76fd95fc1e157775abc484c59cc0de464095d
   CapacitorFilesystem: c63fc54df41e5a6761785a7f3c49dc696c22e296
   CapacitorHaptics: 1f1e17041f435d8ead9ff2a34edd592c6aa6a8d6
@@ -97,9 +81,7 @@ SPEC CHECKSUMS:
   CapawesomeCapacitorPosthog: ed26f9dd90e39b2fca40744b1c5c333ce9ea6887
   IONFilesystemLib: dfa8706539ac9ab77ccfd6e5b3830ce9b5e57f6c
   PostHog: 49247855f4cfdc1d2750b4247e6f6c0ff921e142
-  SQLCipher: eb79c64049cb002b4e9fcb30edb7979bf4706dfc
-  ZIPFoundation: dfd3d681c4053ff7e2f7350bc4e53b5dba3f5351
 
-PODFILE CHECKSUM: febe08b064bc4047761b5448a80b2ecf7ff73351
+PODFILE CHECKSUM: ea8a42d768138734ecd3ad2150e1a14deec14bec
 
 COCOAPODS: 1.16.2

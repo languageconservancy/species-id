@@ -16,7 +16,7 @@ A cross-platform mobile application for species identification, built with Ionic
 ## 📱 Tech Stack
 
 - **Framework**: [Ionic](https://ionicframework.com/) with Angular
-- **Database**: SQLite with [sql.js](https://sql.js.org/) and [@capacitor-community/sqlite](https://github.com/capacitor-community/sqlite)
+- **Database**: SQLite with [sql.js](https://sql.js.org/) (in-memory WASM, bundled database assets)
 - **Mobile Runtime**: [Capacitor](https://capacitorjs.com/)
 - **Styling**: TailwindCSS + Ionic Components
 - **Audio Recording**: [capacitor-voice-recorder](https://github.com/tchvu3/capacitor-voice-recorder)

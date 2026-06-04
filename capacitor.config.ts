@@ -30,9 +30,6 @@ const config: CapacitorConfig = {
     CapacitorHttp: {
       enabled: true,
     },
-    CapacitorSQLite: {
-      iosDatabaseLocation: 'Library/NoCloud/databases',
-    },
     StatusBar: {
       overlaysWebView: false,
     },
