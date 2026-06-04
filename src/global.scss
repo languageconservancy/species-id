@@ -127,6 +127,25 @@
 
 :root {
   --app-text-scale: 1;
+  --species-list-thumb-size: 5.5rem;
+  --species-list-content-gap: 1rem;
+  --species-list-content-padding-y: 10px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --species-list-thumb-size: 7rem;
+    --species-list-content-gap: 1.375rem;
+    --species-list-content-padding-y: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --species-list-thumb-size: 8.5rem;
+    --species-list-content-gap: 1.625rem;
+    --species-list-content-padding-y: 14px;
+  }
 }
 
 .scaled-text {
