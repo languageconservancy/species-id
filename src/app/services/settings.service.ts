@@ -41,7 +41,7 @@ export class SettingsService extends BasePreferencesService {
   private settingsSubject = new BehaviorSubject<AppSettings>({
     useEnglish: true,
     showScientificNames: true,
-    textScale: 2,
+    textScale: 1,
   });
 
   constructor(
@@ -55,7 +55,7 @@ export class SettingsService extends BasePreferencesService {
   private async initSettings() {
     await this.storageReady.ready();
     const settings = (await this.storage.get(this.SETTINGS_KEY)) ?? this.settingsSubject.value;
-    settings.textScale = settings.textScale ?? 2;
+    settings.textScale = settings.textScale ?? 1;
     if (settings.textScale < 1 || settings.textScale > MAX_TEXT_SCALE) {
       settings.textScale = 1;
     }
