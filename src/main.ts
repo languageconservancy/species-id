@@ -15,12 +15,23 @@ import { AppComponent } from 'app/app.component';
 import { register as registerSwiperElements } from 'swiper/element/bundle';
 import { App } from '@capacitor/app';
 import { createAnimation } from '@ionic/angular';
+import { Capacitor, SystemBars } from '@capacitor/core';
 import { StatusBar } from '@capacitor/status-bar';
 import { ConfigService } from 'app/services/config.service';
 import { AnalyticsService } from 'app/services/analytics.service';
-import { Capacitor } from '@capacitor/core';
 
-StatusBar.show();
+async function initNativeChrome() {
+  if (!Capacitor.isNativePlatform()) {
+    return;
+  }
+  // Edge-to-edge: transparent system bars stay visible; Capacitor injects --safe-area-inset-*.
+  await SystemBars.show();
+  if (Capacitor.getPlatform() === 'ios') {
+    await StatusBar.show();
+  }
+}
+
+initNativeChrome();
 
 registerSwiperElements();
 

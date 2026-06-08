@@ -37,28 +37,55 @@
 // @import '@ionic/angular/css/palettes/dark.system.css';
 
 /**
- * Safe-area insets.
- * - Use real `padding-*` so non-Ionic nodes (e.g. `body.safe-pad` in index.html) actually inset.
- * - Also set `--padding-*` so Ionic hosts (`ion-content`, `ion-tab-bar`, etc.) that read those vars stay in sync.
- * - `env(safe-area-inset-*)` as fallback when `--ion-safe-area-*` is missing or 0 (common on some Android WebViews).
+ * Safe-area insets (Capacitor 8 + Ionic).
+ * - Capacitor SystemBars injects `--safe-area-inset-*` on Android where `env()` is often 0.
+ * - Bridge into `--ion-safe-area-*` so Ionic hosts (ion-tab-bar, ion-header, ion-fab, etc.) inset correctly.
+ * - `.safe-pad*` sets real `padding-*` and `--padding-*` for ion-content and other hosts that read those vars.
  */
+:root {
+  --app-safe-area-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --app-safe-area-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+  --app-safe-area-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --app-safe-area-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+
+  --ion-safe-area-top: var(--app-safe-area-top);
+  --ion-safe-area-right: var(--app-safe-area-right);
+  --ion-safe-area-bottom: var(--app-safe-area-bottom);
+  --ion-safe-area-left: var(--app-safe-area-left);
+}
+
+ion-app {
+  height: 100%;
+}
+
 .safe-pad {
-  padding-top: max(var(--ion-safe-area-top, env(safe-area-inset-top, 0px)), 16px);
-  padding-right: max(var(--ion-safe-area-right, env(safe-area-inset-right, 0px)), 16px);
-  padding-bottom: max(var(--ion-safe-area-bottom, env(safe-area-inset-bottom, 0px)), 16px);
-  padding-left: max(var(--ion-safe-area-left, env(safe-area-inset-left, 0px)), 16px);
-  --padding-top: max(var(--ion-safe-area-top, env(safe-area-inset-top, 0px)), 16px);
-  --padding-right: max(var(--ion-safe-area-right, env(safe-area-inset-right, 0px)), 16px);
-  --padding-bottom: max(var(--ion-safe-area-bottom, env(safe-area-inset-bottom, 0px)), 16px);
-  --padding-left: max(var(--ion-safe-area-left, env(safe-area-inset-left, 0px)), 16px);
+  padding-top: var(--app-safe-area-top);
+  padding-right: var(--app-safe-area-right);
+  padding-bottom: var(--app-safe-area-bottom);
+  padding-left: var(--app-safe-area-left);
+  --padding-top: var(--app-safe-area-top);
+  --padding-right: var(--app-safe-area-right);
+  --padding-bottom: var(--app-safe-area-bottom);
+  --padding-left: var(--app-safe-area-left);
 }
 
 .safe-pad-bottom {
-  --padding-bottom: max(var(--ion-safe-area-bottom, env(safe-area-inset-bottom, 0px)), 16px);
+  --padding-bottom: var(--app-safe-area-bottom);
 }
 
 .safe-pad-top {
-  --padding-top: max(var(--ion-safe-area-top, env(safe-area-inset-top, 0px)), 0px);
+  --padding-top: var(--app-safe-area-top);
+}
+
+/* Detail: reserve cutout space above the photo; black fill keeps status icons readable. */
+.detail-hero {
+  padding-top: var(--app-safe-area-top);
+}
+
+/* Tab bar: clear the Android gesture/home indicator (Tailwind py-* was overriding insets). */
+ion-tab-bar {
+  padding-top: 0.5rem;
+  padding-bottom: calc(0.5rem + var(--app-safe-area-bottom)) !important;
 }
 
 .bg-primary {
@@ -262,14 +289,14 @@ ion-menu::part(container) {
 
 ion-menu .main-menu-content {
   --background: var(--ion-color-primary, #77b5dc);
-  --padding-top: max(var(--ion-safe-area-top, env(safe-area-inset-top, 0px)), 0px);
+  --padding-top: var(--app-safe-area-top);
   --padding-start: var(--ion-padding, 16px);
   --padding-end: var(--ion-padding, 16px);
   --padding-bottom: 0;
   --overflow: hidden;
   height: 100%;
   /* ion-padding is not used — its padding-bottom would show as a white strip */
-  padding-top: max(var(--ion-safe-area-top, env(safe-area-inset-top, 0px)), 0px);
+  padding-top: var(--app-safe-area-top);
   padding-inline: var(--ion-padding, 16px);
   padding-bottom: 0;
 }
@@ -394,7 +421,7 @@ ion-menu .main-menu-content::part(scroll) {
   display: flex;
   justify-content: center;
   background: var(--ion-color-primary, #77b5dc);
-  padding: 0.5rem 0 max(0.5rem, var(--ion-safe-area-bottom, env(safe-area-inset-bottom, 0px)));
+  padding: 0.5rem 0 max(0.5rem, var(--app-safe-area-bottom));
 }
 
 .main-menu-list {
@@ -435,7 +462,7 @@ ion-menu ion-list-header.main-menu-list-header {
   justify-content: center !important;
   padding-top: 0 !important;
   padding-bottom: 0.25rem !important;
-  padding-left: max(var(--ion-safe-area-left, 0px), 1rem) !important;
-  padding-right: max(var(--ion-safe-area-right, 0px), 1rem) !important;
+  padding-left: max(var(--app-safe-area-left), 1rem) !important;
+  padding-right: max(var(--app-safe-area-right), 1rem) !important;
   min-height: auto;
 }
