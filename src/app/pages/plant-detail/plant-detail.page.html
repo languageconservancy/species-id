@@ -11,46 +11,52 @@
     <app-image-carousel [species]="species"></app-image-carousel>
   </div>
   <!-- Header section -->
-  <div class="text-center p-6">
+  <div class="detail-header text-center p-6">
     <!-- Crow names section with audio playback -->
-    <div class="crow-names-container flex flex-wrap justify-center items-center">
+    <div class="crow-names-container">
       @for (crowName of crowNames; track crowName.name; let last = $last) {
       <span
-        class="flex align-center"
+        class="crow-name-entry font-localNames"
         (click)="crowName.audios.length === 0 ? null : playTextAudio(crowName.audios[0])"
       >
-        <h1 class="font-localNames font-bold-force crow-name-title">{{ crowName.name }}</h1>
+        <h1 class="font-bold-force crow-name-title">{{ crowName.name }}</h1>
         @for (audio of crowName.audios; track audio.id) {
         <ion-icon
           name="volume-high"
-          class="ml-1 crow-name-title text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
+          class="crow-name-audio-icon text-blue-500 opacity-50 hover:opacity-100 cursor-pointer"
           (click)="crowName.audios.length > 1 ? playTextAudio(audio) : null"
         ></ion-icon>
-        } </span
-      >@if (!$last) {<span class="text-gray-600 font-localNames crow-name-title">;&nbsp;</span>} }
+        }
+        @if (!last) {
+        <span class="crow-name-sep" aria-hidden="true">;&nbsp;</span>
+        }
+      </span>
+      }
     </div>
     <!-- Literal meanings section in single quotes -->
-    <div class="flex flex-wrap justify-center items-center gap-1">
+    <div class="detail-header-line">
       @for (literalMeaning of literalMeanings; track $index) {<span
         class="text-gray-600 text-base sm:text-lg lg:text-xl scaled-text"
         >'{{ literalMeaning || 'unknown' }}'</span
-      >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
+        >@if (!$last) {<span class="detail-inline-sep">&nbsp;;&nbsp;</span>}}
     </div>
     <!-- English names section -->
     @if (settings.useEnglish && englishNames.length > 0) {
-    <div class="flex flex-wrap justify-center items-center gap-1">
+    <div class="detail-header-line">
       @for (englishName of englishNames; track $index) {<span
         class="text-gray-600 font-semibold text-base sm:text-lg lg:text-xl scaled-text"
         >{{ englishName }}</span
-      >@if (!$last) {<span class="text-gray-600">;&nbsp;</span>}}
+        >@if (!$last) {<span class="detail-inline-sep">&nbsp;;&nbsp;</span>}}
     </div>
     }
     <!-- Scientific names section -->
     @if (settings.showScientificNames && scientificNames.length > 0) {
-    <p class="italic text-gray-700 text-base sm:text-lg lg:text-xl scaled-text">
-      (@for (scientificName of scientificNames; track $index) {{{ scientificName }}@if (!$last)
-      {<span class="text-gray-600">;&nbsp;</span>}})
-    </p>
+    <div class="detail-header-line">
+      <p class="italic text-gray-700 text-base sm:text-lg lg:text-xl scaled-text">
+        (@for (scientificName of scientificNames; track $index) {{{ scientificName }}@if (!$last)
+        {<span class="detail-inline-sep">&nbsp;;&nbsp;</span>}})
+      </p>
+    </div>
     }
   </div>
 

@@ -17,9 +17,10 @@
     <ion-label class="species-list-item__text">
       <h2
         appShrinkToFitText
+        [appShrinkToFitTextMaxLines]="2"
         class="font-localNames scaled-text ion-text-capitalize block w-full leading-tight"
       >
-        {{ orderedNames[0] }}
+        {{ displayPrimaryName }}
       </h2>
       @if (orderedNames[1]) {
         <p

@@ -108,21 +108,87 @@
   }
 }
 
+// Detail page header: constrain width so large text scale cannot overflow horizontally.
+.detail-header {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.detail-header-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  gap: 0.25rem;
+
+  > span,
+  > p {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
 // Container for crow names: font size responds to *available width* (viewport + padding + zoom).
 .crow-names-container {
   container-type: inline-size;
   container-name: crow-names;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  text-align: center;
 }
 
-// Ideal size when there's space; scales down smoothly when container is narrow.
-// Uses container width so zoom and padding are accounted for (not just viewport).
-.crow-name-title {
+// Inline flow keeps the audio icon and semicolon on the last line of the name when they fit.
+.crow-name-entry {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: top;
+  text-align: center;
   font-size: clamp(
-    calc(0.75rem * var(--app-text-scale, 1)),
-    calc(6cqw * var(--app-text-scale, 1)),
-    calc(1.5rem * var(--app-text-scale, 1))
+    calc(1rem * var(--app-text-scale, 1)),
+    calc(7cqw * var(--app-text-scale, 1)),
+    calc(2.5rem * var(--app-text-scale, 1))
   );
-  line-height: calc(1.25 * var(--app-text-scale, 1)) !important; // ~leading-relaxed
+  line-height: calc(1.25 * var(--app-text-scale, 1));
+}
+
+// Title text inherits entry size; wraps instead of shrinking to illegible sizes.
+.crow-name-title {
+  display: inline;
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.crow-name-sep {
+  display: inline;
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--ion-color-medium, #666);
+  white-space: nowrap;
+}
+
+.crow-name-audio-icon {
+  display: inline-block;
+  vertical-align: super;
+  font-size: 0.8em;
+  line-height: 1;
+  margin-inline-start: 0.2em;
+  white-space: nowrap;
+}
+
+.detail-inline-sep {
+  font-size: inherit;
+  line-height: inherit;
 }
 
 :root {
@@ -183,9 +249,193 @@
   }
 }
 
+/* Main menu: icon stays visible; menu items scroll when text scale is large. */
+ion-menu {
+  --background: var(--ion-color-primary, #77b5dc);
+}
+
+/* menu-inner (shadow DOM); avoids white gap from default --ion-background-color */
+ion-menu::part(container) {
+  background: var(--ion-color-primary, #77b5dc);
+  justify-content: flex-start;
+}
+
+ion-menu .main-menu-content {
+  --background: var(--ion-color-primary, #77b5dc);
+  --padding-top: max(var(--ion-safe-area-top, env(safe-area-inset-top, 0px)), 0px);
+  --padding-start: var(--ion-padding, 16px);
+  --padding-end: var(--ion-padding, 16px);
+  --padding-bottom: 0;
+  --overflow: hidden;
+  height: 100%;
+  /* ion-padding is not used — its padding-bottom would show as a white strip */
+  padding-top: max(var(--ion-safe-area-top, env(safe-area-inset-top, 0px)), 0px);
+  padding-inline: var(--ion-padding, 16px);
+  padding-bottom: 0;
+}
+
+ion-menu .main-menu-content::part(background),
+ion-menu .main-menu-content::part(scroll) {
+  background: var(--ion-color-primary, #77b5dc);
+}
+
+ion-menu .main-menu-content::part(scroll) {
+  height: 100%;
+  overflow: hidden;
+}
+
+.main-menu-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--ion-color-primary, #77b5dc);
+}
+
+.main-menu-brand {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-inline: auto;
+  padding-block: 0.5rem 0.75rem;
+}
+
+.main-menu-brand__icon {
+  width: 8rem;
+  height: 8rem;
+  object-fit: contain;
+  margin-top: 0.75rem;
+}
+
+.main-menu-list-region {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--ion-color-primary, #77b5dc);
+}
+
+.main-menu-list-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  padding-bottom: 0.5rem;
+}
+
+.main-menu-scroll-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4.5rem;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0),
+    rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0.92) 55%,
+    var(--ion-color-primary, #3880ff)
+  );
+  transition: opacity 0.2s ease;
+}
+
+.main-menu-scroll-fade--hidden {
+  opacity: 0;
+}
+
+.main-menu-scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 0.65rem;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: 9999px;
+  background: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 0.15);
+  color: var(--ion-color-primary-contrast, #fff);
+  font-family: inherit;
+  font-size: calc(0.75rem * var(--app-text-scale, 1));
+  line-height: 1.1;
+  cursor: pointer;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 0.25);
+    outline: none;
+  }
+
+  &:active {
+    background: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 0.35);
+  }
+
+  ion-icon {
+    font-size: 1.35em;
+    pointer-events: none;
+  }
+
+  span {
+    pointer-events: none;
+  }
+}
+
+.main-menu-footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  background: var(--ion-color-primary, #77b5dc);
+  padding: 0.5rem 0 max(0.5rem, var(--ion-safe-area-bottom, env(safe-area-inset-bottom, 0px)));
+}
+
+.main-menu-list {
+  margin: 0;
+  padding: 0;
+  padding-bottom: 1.5rem;
+  --ion-background-color: var(--ion-color-primary, #77b5dc);
+  --ion-item-background: var(--ion-color-primary, #77b5dc);
+  background: var(--ion-color-primary, #77b5dc);
+}
+
+/* Ionic .list-ios / .list-md default to white item-background */
+ion-menu ion-list.list-ios,
+ion-menu ion-list.list-md,
+ion-menu ion-list.main-menu-list {
+  --ion-background-color: var(--ion-color-primary, #77b5dc);
+  --ion-item-background: var(--ion-color-primary, #77b5dc);
+  background: var(--ion-color-primary, #77b5dc);
+}
+
+ion-menu ion-item {
+  --min-height: auto;
+  --padding-top: calc(0.35rem + 0.15rem * var(--app-text-scale, 1));
+  --padding-bottom: calc(0.35rem + 0.15rem * var(--app-text-scale, 1));
+}
+
+ion-menu .main-menu-item-label {
+  margin: 0;
+  padding: 0;
+  line-height: 1.2 !important;
+}
+
 /* ion-list-header: space-between + extra start padding makes a lone title look off-center */
 ion-menu ion-list-header.main-menu-list-header {
+  --background: var(--ion-color-primary, #77b5dc);
+  --color: var(--ion-color-primary-contrast, #fff);
+  background: var(--ion-color-primary, #77b5dc);
   justify-content: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0.25rem !important;
   padding-left: max(var(--ion-safe-area-left, 0px), 1rem) !important;
   padding-right: max(var(--ion-safe-area-right, 0px), 1rem) !important;
+  min-height: auto;
 }

@@ -110,10 +110,13 @@ export class BirdListItemComponent implements OnInit, OnChanges {
     }
   }
 
-  get hyphenatedNameLocal(): string {
-    if (!this.item?.nameLocal) return '';
-    // Insert soft hyphens every 4-6 characters to enable better breaking
-    return this.item.nameLocal.replace(/(.{4,6})/g, '$1\u00AD');
+  /** Primary list title with soft hyphens so long Crow tokens can wrap without ugly mid-glyph breaks. */
+  get displayPrimaryName(): string {
+    const name = this.orderedNames[0] ?? '';
+    if (name.includes('\n') || /\s/.test(name.trim())) {
+      return name;
+    }
+    return name.replace(/(.{4,6})/g, '$1\u00AD');
   }
 
   /** First list thumbnail path; empty when the species has no image. */
