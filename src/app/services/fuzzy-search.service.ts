@@ -1,5 +1,18 @@
 import { Injectable } from '@angular/core';
 
+/**
+ * Search matching for species explore lists. Two separate fuzzy strategies:
+ *
+ * 1. Crow (nameLocal) — phonetic normalization via {@link approximate} + substring
+ *    check in {@link matches}. Collapses spelling variants (diacritics, similar sounds).
+ *
+ * 2. English/Latin (nameEn, scientific, meaning) — light text normalization via
+ *    {@link approximateEnglish}, then typo tolerance via {@link matchesEnglish} using
+ *    prefix matching and Levenshtein edit distance (not Crow phonetics).
+ *
+ * Exact-match tier uses {@link includesExactMatch} for Crow and
+ * {@link includesEnglishMatch} for English/Latin fields.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -47,9 +60,35 @@ export class FuzzySearchService {
     return str.replace(/([aeiou])\1+/g, '$1').replace(/([xtsmnhpk])\1+/g, '$1');
   }
 
+  /** Exact substring match for Crow names; only normalizes apostrophes and case. */
   includesExactMatch(query: string, target: string): boolean {
     const normalizedQuery = this.normalizeApostrophes(query.toLowerCase());
     const normalizedTarget = this.normalizeApostrophes(target.toLowerCase());
+    return normalizedTarget.includes(normalizedQuery);
+  }
+
+  /**
+   * Normalizes English/Latin text for substring search: lowercase, strip accents,
+   * unify apostrophes, and treat hyphens as word separators.
+   */
+  approximateEnglish(str: string): string {
+    let result = this.normalizeApostrophes(str).toLowerCase();
+    // Decompose accented letters (NFD), then drop combining marks so "é" and "e" match.
+    result = result.normalize('NFD').replace(/\p{M}/gu, '');
+    // Treat hyphens and slashes as word breaks so "red-tailed" matches "red tailed".
+    result = result.replace(/[-/]/g, ' ');
+    // Strip remaining punctuation (parens, commas, etc.); keep letters, digits, and spaces.
+    result = result.replace(/[^\p{L}\p{N}\s]/gu, ' ');
+    return result.replace(/\s+/g, ' ').trim();
+  }
+
+  /** Exact substring match for English/Latin fields after {@link approximateEnglish}. */
+  includesEnglishMatch(query: string, target: string): boolean {
+    const normalizedQuery = this.approximateEnglish(query);
+    const normalizedTarget = this.approximateEnglish(target);
+    if (!normalizedQuery || !normalizedTarget) {
+      return false;
+    }
     return normalizedTarget.includes(normalizedQuery);
   }
 
@@ -71,7 +110,8 @@ export class FuzzySearchService {
     // Collapse repeated letters
     result = this.normalizeRepeatedLetters(result);
 
-    // Normalize phonetically similar sounds
+    // Map Crow phonetically similar consonants/vowels to a shared form, then strip spaces.
+    // This is intentionally aggressive — English text must use matchesEnglish() instead.
     result = result
       .replace(/x/g, 'h')
       .replace(/h([qwrtypsdfgjklzxcvbnm])/g, '$1') // remove h before consonants
@@ -94,21 +134,133 @@ export class FuzzySearchService {
   }
 
   /**
-   * Check if a search query fuzzy-matches a target string.
+   * Crow near-match: phonetically normalize both strings, then check substring inclusion.
+   * Used for "Near Matches" on Crow names only — do not use for English text.
    */
   matches(query: string, target: string): boolean {
     const normalizedQuery = this.approximate(query.toLowerCase());
     const normalizedTarget = this.approximate(target.toLowerCase());
-
-    const includes = normalizedTarget.includes(normalizedQuery);
-    if (includes) {
-      console.log('query', query, 'normalizedQuery', normalizedQuery, 'target', target, 'normalizedTarget', normalizedTarget);
-    }
-    return includes;
+    return normalizedTarget.includes(normalizedQuery);
   }
 
   /**
-   * Filter an array of items by fuzzy-matching against a text field.
+   * English/Latin near-match: normalize text, then allow typos via edit distance.
+   * Each query word must match a target word (or fuzzy substring within one) within
+   * the Levenshtein threshold — e.g. "robn" → "robin", "woad" → "wood" (1 edit).
+   */
+  matchesEnglish(query: string, target: string): boolean {
+    const normalizedQuery = this.approximateEnglish(query);
+    const normalizedTarget = this.approximateEnglish(target);
+    if (!normalizedQuery || !normalizedTarget) {
+      return false;
+    }
+
+    // Normalized substring still counts as a near match (hyphen/space variants).
+    if (normalizedTarget.includes(normalizedQuery)) {
+      return true;
+    }
+
+    const queryWords = normalizedQuery.split(' ').filter((word) => word.length > 0);
+    if (queryWords.length === 0) {
+      return false;
+    }
+
+    const targetWords = normalizedTarget.split(' ').filter((word) => word.length > 0);
+    // Multi-word queries: every word must fuzzy-match somewhere in the target.
+    return queryWords.every(
+      (queryWord) =>
+        this.hasFuzzyEnglishWordMatch(queryWord, targetWords) ||
+        this.hasFuzzyEnglishSubstring(normalizedTarget, queryWord)
+    );
+  }
+
+  /** True if queryWord fuzzy-matches any whole word in the target. */
+  private hasFuzzyEnglishWordMatch(queryWord: string, targetWords: string[]): boolean {
+    return targetWords.some((targetWord) => this.isFuzzyEnglishWordMatch(queryWord, targetWord));
+  }
+
+  /**
+   * Word-level English fuzzy match: exact, prefix (partial typing), or Levenshtein.
+   * Words under 3 chars skip edit distance to limit false positives (e.g. "cat").
+   */
+  private isFuzzyEnglishWordMatch(queryWord: string, targetWord: string): boolean {
+    if (queryWord === targetWord) {
+      return true;
+    }
+    if (queryWord.length >= 3 && targetWord.startsWith(queryWord)) {
+      return true;
+    }
+    if (queryWord.length < 3) {
+      return false;
+    }
+
+    const maxDistance = queryWord.length <= 6 ? 1 : 2;
+    return this.levenshtein(queryWord, targetWord) <= maxDistance;
+  }
+
+  /**
+   * Slide a window across target words so typos can match inside longer tokens
+   * (e.g. query "eagel" against target word "eagle").
+   */
+  private hasFuzzyEnglishSubstring(target: string, queryWord: string): boolean {
+    if (queryWord.length < 4) {
+      return false;
+    }
+
+    const targetWords = target.split(' ').filter((word) => word.length > 0);
+    for (const targetWord of targetWords) {
+      if (targetWord.length < queryWord.length) {
+        continue;
+      }
+      for (let index = 0; index <= targetWord.length - queryWord.length; index++) {
+        const slice = targetWord.slice(index, index + queryWord.length);
+        if (this.isFuzzyEnglishWordMatch(queryWord, slice)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /** Minimum number of single-character insert/delete/substitute edits between two strings. */
+  private levenshtein(a: string, b: string): number {
+    if (a === b) {
+      return 0;
+    }
+    if (a.length === 0) {
+      return b.length;
+    }
+    if (b.length === 0) {
+      return a.length;
+    }
+
+    const previous = new Array<number>(b.length + 1);
+    const current = new Array<number>(b.length + 1);
+
+    for (let j = 0; j <= b.length; j++) {
+      previous[j] = j;
+    }
+
+    for (let i = 1; i <= a.length; i++) {
+      current[0] = i;
+      for (let j = 1; j <= b.length; j++) {
+        const substitutionCost = a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1;
+        current[j] = Math.min(
+          previous[j] + 1,
+          current[j - 1] + 1,
+          previous[j - 1] + substitutionCost
+        );
+      }
+      for (let j = 0; j <= b.length; j++) {
+        previous[j] = current[j];
+      }
+    }
+
+    return previous[b.length];
+  }
+
+  /**
+   * Filter items using Crow phonetic fuzzy matching ({@link approximate} + substring).
    */
   filter<T>(items: T[], query: string, textExtractor: (item: T) => string): T[] {
     if (!query.trim()) {
