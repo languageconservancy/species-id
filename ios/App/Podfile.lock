@@ -1,9 +1,9 @@
 PODS:
-  - Capacitor (8.1.0):
+  - Capacitor (8.4.0):
     - CapacitorCordova
   - CapacitorApp (7.0.1):
     - Capacitor
-  - CapacitorCordova (8.1.0)
+  - CapacitorCordova (8.4.0)
   - CapacitorFilesystem (7.1.8):
     - Capacitor
     - IONFilesystemLib (~> 1.1.1)
@@ -68,9 +68,9 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capawesome/capacitor-posthog"
 
 SPEC CHECKSUMS:
-  Capacitor: 47b825120c6b8b6d6f9f053e9350a8960d436710
+  Capacitor: 75bd117ba037a51bb0f19ded32c67f4b3bc16600
   CapacitorApp: febecbb9582cb353aed037e18ec765141f880fe9
-  CapacitorCordova: e8b76fd95fc1e157775abc484c59cc0de464095d
+  CapacitorCordova: 71d81f350e6c30bf2a846593b5c480fbd68e9bac
   CapacitorFilesystem: c63fc54df41e5a6761785a7f3c49dc696c22e296
   CapacitorHaptics: 1f1e17041f435d8ead9ff2a34edd592c6aa6a8d6
   CapacitorKeyboard: 09fd91dcde4f8a37313e7f11bde553ad1ed52036

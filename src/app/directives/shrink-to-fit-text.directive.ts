@@ -11,16 +11,19 @@ import {
 
 /**
  * Title layout:
+ * - `appShrinkToFitTextMaxLines` > 1: wrap up to N lines, ellipsis only if still too tall (list rows).
+ * - `appShrinkToFitTextMaxLines` === 1: legacy single-line shrink (unused in app today).
  * - Newlines (merged Crow names): `pre-line` wrapping.
  * - Multiple words (whitespace): normal wrap at word boundaries only.
- * - Single long token: shrink font to fit one line (ResizeObserver + MutationObserver).
  */
 @Directive({
   selector: '[appShrinkToFitText]',
   standalone: true,
 })
 export class ShrinkToFitTextDirective implements AfterViewInit, OnDestroy {
-  /** Minimum font size in px when shrinking (readability floor). */
+  /** When > 1, prefer readable multi-line wrap over font shrinking. */
+  @Input() appShrinkToFitTextMaxLines = 1;
+  /** Minimum font size in px when single-line shrink mode is used. */
   @Input() appShrinkToFitTextMin = 16;
 
   private resizeObserver?: ResizeObserver;
@@ -77,6 +80,17 @@ export class ShrinkToFitTextDirective implements AfterViewInit, OnDestroy {
     // Reset branch-specific styles before applying a mode (text can change between renders).
     el.style.wordBreak = '';
     el.style.overflowWrap = '';
+    el.style.display = '';
+    el.style.webkitBoxOrient = '';
+    el.style.webkitLineClamp = '';
+
+    if (this.appShrinkToFitTextMaxLines > 1) {
+      const lineLimit = text.includes('\n')
+        ? Math.max(this.appShrinkToFitTextMaxLines, 3)
+        : this.appShrinkToFitTextMaxLines;
+      this.applyLineClamp(el, lineLimit, text.includes('\n'));
+      return;
+    }
 
     // Merged Crow names use newlines; let them wrap as multiple lines (no single-line shrink).
     if (text.includes('\n')) {
@@ -155,5 +169,20 @@ export class ShrinkToFitTextDirective implements AfterViewInit, OnDestroy {
       el.style.overflow = 'hidden';
       el.style.textOverflow = 'ellipsis';
     }
+  }
+
+  /** Readable wrap with ellipsis only after the line budget is exceeded. */
+  private applyLineClamp(el: HTMLElement, maxLines: number, preline: boolean): void {
+    el.style.display = '-webkit-box';
+    el.style.webkitBoxOrient = 'vertical';
+    el.style.webkitLineClamp = String(maxLines);
+    el.style.overflow = 'hidden';
+    el.style.textOverflow = 'ellipsis';
+    el.style.whiteSpace = preline ? 'pre-line' : 'normal';
+    el.style.wordBreak = 'normal';
+    el.style.overflowWrap = 'normal';
+    el.style.width = '100%';
+    el.style.maxWidth = '100%';
+    el.style.fontSize = '';
   }
 }

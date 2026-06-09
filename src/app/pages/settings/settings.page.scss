@@ -20,3 +20,47 @@ ion-toggle {
 ion-select {
   min-width: 120px;
 }
+
+.text-scale-range {
+  ion-range {
+    padding-bottom: 0;
+  }
+
+  &__tick-labels {
+    display: flex;
+    align-items: flex-start;
+    margin-top: -2px;
+  }
+
+  &__tick-spacer {
+    flex: 0 0 auto;
+    visibility: hidden;
+    pointer-events: none;
+
+    &--start {
+      margin-inline-end: 16px;
+    }
+
+    &--end {
+      margin-inline-start: 16px;
+    }
+  }
+
+  &__tick-label-grid {
+    flex: 3;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    text-align: center;
+  }
+
+  &__tick-label {
+    color: var(--ion-color-medium);
+    font-size: 0.75rem;
+    line-height: 1.2;
+
+    &--active {
+      color: var(--ion-color-primary);
+      font-weight: 600;
+    }
+  }
+}

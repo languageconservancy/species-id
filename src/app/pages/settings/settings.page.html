@@ -25,20 +25,39 @@
   </ion-list>
 
   <ion-label class="ion-text-uppercase scaled-text" color="medium">Text Size</ion-label>
-  <!-- ion range -->
-  <ion-range
-    aria-label="Text size"
-    [ticks]="true"
-    [snaps]="true"
-    [min]="1"
-    [max]="5"
-    [step]="1"
-    [value]="settings.textScale"
-    (ionInput)="onTextSizeChange($event)"
-  >
-    <ion-label slot="start"><div class="text-sm">Aa</div></ion-label>
-    <ion-label slot="end"><div class="text-2xl">Aa</div></ion-label>
-  </ion-range>
+  <div class="text-scale-range">
+    <ion-range
+      aria-label="Text size"
+      [ticks]="true"
+      [snaps]="true"
+      [min]="1"
+      [max]="5"
+      [step]="1"
+      [value]="settings.textScale"
+      (ionInput)="onTextSizeChange($event)"
+    >
+      <ion-label slot="start"><div class="text-sm">Aa</div></ion-label>
+      <ion-label slot="end"><div class="text-2xl">Aa</div></ion-label>
+    </ion-range>
+    <div class="text-scale-range__tick-labels" aria-hidden="true">
+      <ion-label class="text-scale-range__tick-spacer text-scale-range__tick-spacer--start">
+        <div class="text-sm">Aa</div>
+      </ion-label>
+      <div class="text-scale-range__tick-label-grid">
+        @for (tick of textScaleTickLabels; track tick.value) {
+          <span
+            class="text-scale-range__tick-label"
+            [class.text-scale-range__tick-label--active]="settings.textScale === tick.value"
+          >
+            {{ tick.label }}
+          </span>
+        }
+      </div>
+      <ion-label class="text-scale-range__tick-spacer text-scale-range__tick-spacer--end">
+        <div class="text-2xl">Aa</div>
+      </ion-label>
+    </div>
+  </div>
 </ion-content>
 
 <ion-footer class="safe-pad-bottom">

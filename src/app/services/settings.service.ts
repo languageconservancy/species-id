@@ -10,8 +10,17 @@ export const TEXT_SCALE_VALUES = {
   3: 1.35,
   4: 1.55,
   5: 1.75,
-};
+} as const;
 export const MAX_TEXT_SCALE = 5;
+
+export type TextScaleStep = keyof typeof TEXT_SCALE_VALUES;
+
+const TEXT_SCALE_STEPS: TextScaleStep[] = [1, 2, 3, 4, 5];
+
+export const TEXT_SCALE_TICK_LABELS = TEXT_SCALE_STEPS.map((step) => ({
+  value: step,
+  label: `${TEXT_SCALE_VALUES[step]}×`,
+}));
 
 export interface AppSettings {
   useEnglish: boolean;
@@ -32,7 +41,7 @@ export class SettingsService extends BasePreferencesService {
   private settingsSubject = new BehaviorSubject<AppSettings>({
     useEnglish: true,
     showScientificNames: true,
-    textScale: 2,
+    textScale: 1,
   });
 
   constructor(
@@ -46,7 +55,7 @@ export class SettingsService extends BasePreferencesService {
   private async initSettings() {
     await this.storageReady.ready();
     const settings = (await this.storage.get(this.SETTINGS_KEY)) ?? this.settingsSubject.value;
-    settings.textScale = settings.textScale ?? 2;
+    settings.textScale = settings.textScale ?? 1;
     if (settings.textScale < 1 || settings.textScale > MAX_TEXT_SCALE) {
       settings.textScale = 1;
     }

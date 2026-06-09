@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { SettingsService, AppSettings } from 'app/services/settings.service';
+import { SettingsService, AppSettings, TEXT_SCALE_TICK_LABELS } from 'app/services/settings.service';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -46,6 +46,8 @@ type BooleanSettings = Pick<AppSettings, 'useEnglish' | 'showScientificNames'>;
   ],
 })
 export class SettingsPage implements OnInit, OnDestroy {
+  readonly textScaleTickLabels = TEXT_SCALE_TICK_LABELS;
+
   settings: AppSettings = {
     useEnglish: true,
     showScientificNames: true,

@@ -30,8 +30,9 @@ const config: CapacitorConfig = {
     CapacitorHttp: {
       enabled: true,
     },
-    StatusBar: {
-      overlaysWebView: false,
+    SystemBars: {
+      insetsHandling: 'css',
+      style: 'LIGHT',
     },
     VoiceRecorder: {
       enabled: true,
