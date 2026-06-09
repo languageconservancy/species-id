@@ -8,7 +8,6 @@ import {
   IonIcon,
   IonLabel,
   IonListHeader,
-  IonFab,
   IonFabButton,
   ModalController,
 } from '@ionic/angular/standalone';
@@ -49,7 +48,6 @@ interface MenuItem {
     IonLabel,
     IonListHeader,
     RouterModule,
-    IonFab,
     IonFabButton,
     IonContent,
     IonList,
