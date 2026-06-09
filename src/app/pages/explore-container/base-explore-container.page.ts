@@ -113,15 +113,33 @@ export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit
       return (
         this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameLocal) ||
         (fields.scientific &&
-          this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameScientific)) ||
+          this.fuzzySearchService.includesEnglishMatch(this.searchTerm, item.nameScientific)) ||
         (fields.english &&
-          this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameEn)) ||
+          this.fuzzySearchService.includesEnglishMatch(this.searchTerm, item.nameEn)) ||
         (fields.meaning &&
-          this.fuzzySearchService.includesExactMatch(this.searchTerm, item.nameMeaningEn))
+          this.fuzzySearchService.includesEnglishMatch(this.searchTerm, item.nameMeaningEn))
       );
     });
     const fuzzyMatches = this.itemsAll.filter((item: Species) => {
-      return this.fuzzySearchService.matches(this.searchTerm, item.nameLocal);
+      if (this.fuzzySearchService.matches(this.searchTerm, item.nameLocal)) {
+        return true;
+      }
+      if (fields.english && this.fuzzySearchService.matchesEnglish(this.searchTerm, item.nameEn)) {
+        return true;
+      }
+      if (
+        fields.scientific &&
+        this.fuzzySearchService.matchesEnglish(this.searchTerm, item.nameScientific)
+      ) {
+        return true;
+      }
+      if (
+        fields.meaning &&
+        this.fuzzySearchService.matchesEnglish(this.searchTerm, item.nameMeaningEn)
+      ) {
+        return true;
+      }
+      return false;
     });
 
     return { exactMatches, fuzzyMatches };
@@ -152,8 +170,8 @@ export abstract class BaseExploreContainerComponent implements OnDestroy, OnInit
       let { exactMatches, fuzzyMatches } = this._applySearch();
       exactMatches = this._removeDuplicates(exactMatches);
       fuzzyMatches = this._removeDuplicates(fuzzyMatches);
-      const exactNameLocals = new Set(exactMatches.map((s) => s.nameLocal));
-      fuzzyMatches = fuzzyMatches.filter((item) => !exactNameLocals.has(item.nameLocal));
+      const exactIds = new Set(exactMatches.map((s) => s.id));
+      fuzzyMatches = fuzzyMatches.filter((item) => !exactIds.has(item.id));
       exactMatches = this._applyFilters(exactMatches);
       fuzzyMatches = this._applyFilters(fuzzyMatches);
       exactMatches = await this._sortSearchResultItems(exactMatches);

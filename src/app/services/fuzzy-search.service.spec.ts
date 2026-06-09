@@ -56,6 +56,46 @@ describe('FuzzySearchService', () => {
     });
   });
 
+  describe('approximateEnglish()', () => {
+    it('lowercases and normalizes hyphens and apostrophes', () => {
+      expect(service.approximateEnglish('Red-tailed Hawk')).toBe('red tailed hawk');
+      expect(service.approximateEnglish("Cooper's Hawk")).toBe('cooper s hawk');
+      expect(service.approximateEnglish('Krider\u2019s Red-tailed Hawk')).toBe(
+        'krider s red tailed hawk'
+      );
+    });
+
+    it('strips accents and parenthetical text punctuation', () => {
+      expect(service.approximateEnglish('Golden Eagle (mature)')).toBe('golden eagle mature');
+    });
+  });
+
+  describe('includesEnglishMatch()', () => {
+    it('matches hyphen and space variants', () => {
+      expect(service.includesEnglishMatch('red tailed', 'Red-tailed Hawk')).toBe(true);
+      expect(service.includesEnglishMatch('cooper', "Cooper's Hawk")).toBe(true);
+    });
+  });
+
+  describe('matchesEnglish()', () => {
+    it('matches common English typos', () => {
+      expect(service.matchesEnglish('robn', 'American Robin')).toBe(true);
+      expect(service.matchesEnglish('eagel', 'Golden Eagle (mature)')).toBe(true);
+      expect(service.matchesEnglish('kestrel', 'American Kestral')).toBe(true);
+      expect(service.matchesEnglish('ospre', 'Osprey')).toBe(true);
+    });
+
+    it('matches hyphen and spacing differences without typos', () => {
+      expect(service.matchesEnglish('red tailed hawk', 'Red-tailed Hawk')).toBe(true);
+      expect(service.matchesEnglish('sharp shinned', 'Sharp-shinned Hawk')).toBe(true);
+    });
+
+    it('returns false for unrelated short or distant queries', () => {
+      expect(service.matchesEnglish('cat', 'Cooper\u2019s Hawk')).toBe(false);
+      expect(service.matchesEnglish('xyz', 'American Robin')).toBe(false);
+    });
+  });
+
   describe('matches()', () => {
     it('returns true when target contains query after normalization', () => {
       expect(service.matches('bile', 'Bííle')).toBe(true);
