@@ -103,13 +103,6 @@ configService
       // await analyticsService.testNetworkConnectivity();
       // await analyticsService.testPostHogConnectivity();
       // await analyticsService.testPostHogAPI();
-      await analyticsService.track('app_started', {
-        timestamp: Date.now(),
-        platform: Capacitor.getPlatform(),
-        version: await App.getInfo()
-          .then((info) => info.version)
-          .catch(() => 'unknown'),
-      });
     }, 2000);
 
     App.addListener('appStateChange', async ({ isActive }) => {
